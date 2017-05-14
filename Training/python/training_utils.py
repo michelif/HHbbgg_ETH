@@ -147,11 +147,12 @@ class preprocessing:
         #fare unico metodo che ti ritorna i due usando questi sotto            
         @staticmethod    
         def get_total_training_sample(x_sig,x_bkg,splitting=0.5):
-            halfSample = int((x_sig.size/len(x_sig.columns))*splitting)
-            return np.concatenate([np.split(x_sig,[halfSample])[0],np.split(x_bkg,[halfSample])[0]])
-        ####FIXME cosi' splitta in parti uguali X_sig e X_bkg ma si sprecano entries, splittare ognuno della sua meta
+            halfSample_sig = int((x_sig.size/len(x_sig.columns))*splitting)
+            halfSample_bkg = int((x_bkg.size/len(x_bkg.columns))*splitting)
+            return np.concatenate([np.split(x_sig,[halfSample_sig])[0],np.split(x_bkg,[halfSample_bkg])[0]])
         
         @staticmethod    
         def get_total_test_sample(x_sig,x_bkg,splitting=0.5):
-            halfSample = int((x_sig.size/len(x_sig.columns))*splitting)
-            return np.concatenate([np.split(x_sig,[halfSample])[1],np.split(x_bkg,[halfSample])[1]])
+            halfSample_sig = int((x_sig.size/len(x_sig.columns))*splitting)
+            halfSample_bkg = int((x_bkg.size/len(x_bkg.columns))*splitting)
+            return np.concatenate([np.split(x_sig,[halfSample_sig])[1],np.split(x_bkg,[halfSample_bkg])[1]])
