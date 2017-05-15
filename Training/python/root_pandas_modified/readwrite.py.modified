@@ -225,11 +225,11 @@ def read_root_LorentzVector(paths, key=None, columns=None, ignore=None, chunksiz
     branches = list_branches(seed_path, key)
     for l in columns_lorentz:
         for index,var in enumerate(columns_lorentz_var):
-            print l
+#            print l
             branches += (l + "." + columns_lorentz_var[index]).split(",")
             columns  += (l + "." + columns_lorentz_var[index]).split(",")
 
-    print branches
+#    print branches
 
 
     if not columns:
