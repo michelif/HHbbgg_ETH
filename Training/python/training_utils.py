@@ -23,6 +23,7 @@ import random
 class IO:
     ldata = os.path.expanduser("~/HHbbgg_ETH/root_files/")
     xdata = "~/HHbbgg_ETH/Training/output_files/"
+    plotFolder = os.path.expanduser("~/HHbbgg_ETH/Training/plots/")
     signalName=" "
     backgroundName = " "
     
@@ -229,5 +230,30 @@ class plotting:
             alabel.set_fontsize('small')
  
         # Save the result to png
-        plt.savefig("Sklearn_example.png")
+        plt.savefig(IO.plotFolder+"classifierOutputPlot.png")
+        plt.savefig(IO.plotFolder+"classifierOutputPlot.pdf")
 
+    @staticmethod
+    def plot_input_variables(X_sig,X_bkg):
+
+        ncolumns = X_sig.size/len(X_sig)
+
+        for i in range(ncolumns):
+
+            sig = X_sig[:,i]
+            bkg = X_bkg[:,i]
+
+            #trick to normalize
+            weights_sig = np.ones_like(sig)/float(len(sig)) 
+            weights_bkg = np.ones_like(bkg)/float(len(bkg)) 
+            
+            plt.hist(sig,color='b', alpha=0.5, bins=30, range =[0,1],
+                      label='Sig', weights=weights_sig)
+            plt.hist(bkg,color='r',  alpha=0.5, bins=30, range =[0,1],
+                     label='Bkg', weights=weights_bkg )
+
+            plt.savefig(IO.plotFolder+"variableDist"+str(i)+".png")
+            plt.savefig(IO.plotFolder+"variableDist"+str(i)+".pdf")
+
+
+            plt.show()
