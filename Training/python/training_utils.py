@@ -232,7 +232,7 @@ class plotting:
         plt.ylabel("Counts/Bin")
         
         # Make legend with smalll font
-        legend = ax1.legend(loc='upper center', shadow=True)
+        legend = ax1.legend(loc='upper center', shadow=True,ncol=2)
         for alabel in legend.get_texts():
             alabel.set_fontsize('small')
  
