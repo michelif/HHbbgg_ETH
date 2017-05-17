@@ -19,6 +19,12 @@ import scipy.stats as stats
 
 import random
 
+from sklearn import cross_validation
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import grid_search
+
+
 # ---------------------------------------------------------------------------------------------------
 class IO:
     ldata = os.path.expanduser("~/HHbbgg_ETH/root_files/")
@@ -169,7 +175,7 @@ class preprocessing:
 # ---------------------------------------------------------------------------------------------------
 class plotting:
     @staticmethod
-    def plot_classifier_output(clf,X_sig_train,X_bkg_train,X_sig_test,X_bkg_test):
+    def plot_classifier_output(clf,X_sig_train,X_bkg_train,X_sig_test,X_bkg_test,outString=None):
         Y_pred_sig_train = clf.decision_function(X_sig_train).ravel()
         Y_pred_bkg_train = clf.decision_function(X_bkg_train).ravel()
         Y_pred_sig_test = clf.decision_function(X_sig_test).ravel()
@@ -225,13 +231,13 @@ class plotting:
         plt.ylabel("Counts/Bin")
         
         # Make legend with smalll font
-        legend = ax1.legend(loc='upper center', shadow=True,ncol=2)
+        legend = ax1.legend(loc='upper center', shadow=True)
         for alabel in legend.get_texts():
             alabel.set_fontsize('small')
  
         # Save the result to png
-        plt.savefig(IO.plotFolder+"classifierOutputPlot.png")
-        plt.savefig(IO.plotFolder+"classifierOutputPlot.pdf")
+        plt.savefig(IO.plotFolder+"classifierOutputPlot"+outString+".png")
+        plt.savefig(IO.plotFolder+"classifierOutputPlot"+outString+".pdf")
 
     @staticmethod
     def plot_input_variables(X_sig,X_bkg):
@@ -257,3 +263,42 @@ class plotting:
 
 
             plt.show()
+
+# ---------------------------------------------------------------------------------------------------
+class optimization:
+    @staticmethod
+    def optimize_parameters_gridCV(classifier,X_total_train,y_total_train,param_grid,testSize=0.4,randomState=42):
+        print "=====Optimization with grid search cv====="
+        scores = cross_validation.cross_val_score(classifier,
+                                          X_total_train, y_total_train,
+                                          scoring="roc_auc",
+                                          n_jobs=6,
+                                          cv=3)
+        print "-Initial Accuracy-"
+        print "Accuracy: %0.5f (+/- %0.5f)"%(scores.mean(), scores.std())
+
+        
+#param_grid = {"n_estimators": [50,200,400,1000],
+#              "max_depth": [1, 3, 8],
+#              'learning_rate': [0.1, 0.2, 1.]}
+        
+        X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train, test_size=testSize, random_state=randomState)
+        
+        
+        clf = grid_search.GridSearchCV(classifier,
+                                       param_grid,
+                                       cv=3,
+                                       scoring='roc_auc',
+                                       n_jobs=8, verbose=1)
+        clf.fit(X_train, y_train)
+        
+        print "Best parameter set found on development set:"
+        print
+        print clf.best_estimator_
+        print
+        print "Grid scores on a subset of the development set:"
+        print
+        for params, mean_score, scores in clf.grid_scores_:
+            print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
+        
+        return clf.grid_scores_
