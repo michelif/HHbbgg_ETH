@@ -23,6 +23,7 @@ from sklearn import cross_validation
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import grid_search
+from sklearn.metrics import roc_curve, auc
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -236,11 +237,11 @@ class plotting:
             alabel.set_fontsize('small')
  
         # Save the result to png
-        plt.savefig(IO.plotFolder+"classifierOutputPlot"+outString+".png")
-        plt.savefig(IO.plotFolder+"classifierOutputPlot"+outString+".pdf")
+        plt.savefig(IO.plotFolder+"classifierOutputPlot_"+str(outString)+".png")
+        plt.savefig(IO.plotFolder+"classifierOutputPlot_"+str(outString)+".pdf")
 
     @staticmethod
-    def plot_input_variables(X_sig,X_bkg):
+    def plot_input_variables(X_sig,X_bkg,outString=None):
 
         ncolumns = X_sig.size/len(X_sig)
 
@@ -258,12 +259,34 @@ class plotting:
             plt.hist(bkg,color='r',  alpha=0.5, bins=30, range =[0,1],
                      label='Bkg', weights=weights_bkg )
 
-            plt.savefig(IO.plotFolder+"variableDist"+str(i)+".png")
-            plt.savefig(IO.plotFolder+"variableDist"+str(i)+".pdf")
+            plt.savefig(IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".png")
+            plt.savefig(IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".pdf")
 
 
             plt.show()
 
+    @staticmethod
+    def plot_roc_curve(x,y,clf,outString=None):
+        decisions = clf.decision_function(x)
+        # Compute ROC curve and area under the curve
+        fpr, tpr, thresholds = roc_curve(y, decisions)
+        roc_auc = auc(fpr, tpr)
+        import matplotlib.pyplot as plt
+        
+        plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f)'%(roc_auc))
+        
+        plt.xlim([-0.05, 1.05])
+        plt.ylim([-0.05, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curve')
+        plt.legend(loc="lower right")
+        plt.grid()
+
+        plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".png")
+        plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".pdf")
+
+        
 # ---------------------------------------------------------------------------------------------------
 class optimization:
     @staticmethod
