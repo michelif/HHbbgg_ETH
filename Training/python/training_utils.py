@@ -19,7 +19,7 @@ import scipy.stats as stats
 
 import random
 
-from sklearn import cross_validation
+from sklearn import model_selection
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import grid_search
@@ -176,23 +176,37 @@ class preprocessing:
 # ---------------------------------------------------------------------------------------------------
 class plotting:
     @staticmethod
-    def plot_classifier_output(clf,X_sig_train,X_bkg_train,X_sig_test,X_bkg_test,outString=None):
-        Y_pred_sig_train = clf.decision_function(X_sig_train).ravel()
-        Y_pred_bkg_train = clf.decision_function(X_bkg_train).ravel()
-        Y_pred_sig_test = clf.decision_function(X_sig_test).ravel()
-        Y_pred_bkg_test = clf.decision_function(X_bkg_test).ravel()
-
-
+    def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_test,outString=None):
         
+        sig_train = X_total_train[y_total_train == 1]
+        bkg_train = X_total_train[y_total_train == 0]
+        sig_test = X_total_test[y_total_test == 1]
+        bkg_test = X_total_test[y_total_test == 0]
+
+
+        Y_pred_sig_train = clf.predict_proba(sig_train)[:,1]
+        Y_pred_bkg_train = clf.predict_proba(bkg_train)[:,1]
+        Y_pred_sig_test = clf.predict_proba(sig_test)[:,1]
+        Y_pred_bkg_test = clf.predict_proba(bkg_test)[:,1]
+
+
+        weights_sig_train = (np.ones_like(sig_train)/float(len(sig_train)))[:,1]
+        weights_bkg_train = (np.ones_like(bkg_train)/float(len(bkg_train)))[:,1]
+        weights_sig_test = (np.ones_like(sig_test)/float(len(sig_test)))[:,1]
+        weights_bkg_test = (np.ones_like(bkg_test)/float(len(bkg_test)))[:,1]
+
+
+
         # This will be the min/max of our plots
         c_max = max(np.max(d) for d in np.concatenate([Y_pred_sig_train,Y_pred_bkg_train,Y_pred_sig_test,Y_pred_bkg_test]))
         c_min = min(np.min(d) for d in np.concatenate([Y_pred_sig_train,Y_pred_bkg_train,Y_pred_sig_test,Y_pred_bkg_test]))
 
         # Get histograms of the classifiers
-        Histo_training_S = np.histogram(Y_pred_sig_train,bins=40,range=(c_min,c_max),normed=True)
-        Histo_training_B = np.histogram(Y_pred_bkg_train,bins=40,range=(c_min,c_max),normed=True)
-        Histo_testing_S = np.histogram(Y_pred_sig_test,bins=40,range=(c_min,c_max),normed=True)
-        Histo_testing_B = np.histogram(Y_pred_bkg_test,bins=40,range=(c_min,c_max),normed=True)
+        Histo_training_S = np.histogram(Y_pred_sig_train,bins=40,range=(c_min,c_max),weights=weights_sig_train)
+        Histo_training_B = np.histogram(Y_pred_bkg_train,bins=40,range=(c_min,c_max),weights=weights_bkg_train)
+        Histo_testing_S = np.histogram(Y_pred_sig_test,bins=40,range=(c_min,c_max),weights=weights_sig_test)
+        Histo_testing_B = np.histogram(Y_pred_bkg_test,bins=40,range=(c_min,c_max),weights=weights_bkg_test)
+
         
         # Lets get the min/max of the Histograms
         AllHistos= [Histo_training_S,Histo_training_B,Histo_testing_S,Histo_testing_B]
@@ -208,6 +222,7 @@ class plotting:
         ErrorBar_testing_S = np.sqrt(Histo_testing_S[0]/Y_pred_sig_test.size)
         ErrorBar_testing_B = np.sqrt(Histo_testing_B[0]/Y_pred_bkg_test.size)
         
+
         # Draw objects
         ax1 = plt.subplot(111)
         
@@ -220,16 +235,16 @@ class plotting:
         ax1.errorbar(bin_centers, Histo_testing_B[0], yerr=ErrorBar_testing_B, xerr=None, ecolor='red',c='red',fmt='o',label='B (Test)')
         
         # Make a colorful backdrop to show the clasification regions in red and blue
-        ax1.axvspan(0.0, c_max, color='blue',alpha=0.08)
-        ax1.axvspan(c_min,0.0, color='red',alpha=0.08)
+        ax1.axvspan(0.5, c_max, color='blue',alpha=0.08)
+        ax1.axvspan(c_min,0.5, color='red',alpha=0.08)
  
         # Adjust the axis boundaries (just cosmetic)
         ax1.axis([c_min, c_max, h_min, h_max])
  
         # Make labels and title
-        plt.title("Classification with scikit-learn")
+#        plt.title("Classification with scikit-learn")
         plt.xlabel("Classifier output")
-        plt.ylabel("Counts/Bin")
+        plt.ylabel("Normalized Yields")
         
         # Make legend with smalll font
         legend = ax1.legend(loc='upper center', shadow=True,ncol=2)
@@ -267,7 +282,7 @@ class plotting:
 
     @staticmethod
     def plot_roc_curve(x,y,clf,outString=None):
-        decisions = clf.decision_function(x)
+        decisions = clf.predict_proba(x)[:,1]
         # Compute ROC curve and area under the curve
         fpr, tpr, thresholds = roc_curve(y, decisions)
         roc_auc = auc(fpr, tpr)
