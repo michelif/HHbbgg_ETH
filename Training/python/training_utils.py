@@ -31,13 +31,26 @@ class IO:
     ldata = os.path.expanduser("~/HHbbgg_ETH/root_files/")
     xdata = "~/HHbbgg_ETH/Training/output_files/"
     plotFolder = os.path.expanduser("~/HHbbgg_ETH/Training/plots/")
-    signalName=" "
-    backgroundName = " "
+    signalName = []
+    backgroundName = []
+    nSig=0
+    nBkg=0
+
+    @staticmethod
+    def add_signal(ntuples,sig):
+        IO.signalName.append(IO.ldata+ntuples+"/"+''.join(sig))
+        IO.nSig+=1
+
+    @staticmethod
+    def add_background(ntuples,bkg):
+        IO.backgroundName.append(IO.ldata+ntuples+"/"+''.join(bkg))
+        IO.nBkg+=1
     
     @staticmethod
     def set_signal_and_background(ntuples,sig,bkg):
-        IO.signalName=IO.ldata+ntuples+"/"+''.join(sig)
-        IO.backgroundName=IO.ldata+ntuples+"/"+''.join(bkg)
+        IO.add_signal(ntuples,sig)
+        IO.add_background(ntuples,bkg)
+
 
 
     @staticmethod
@@ -207,6 +220,7 @@ class plotting:
         Histo_testing_S = np.histogram(Y_pred_sig_test,bins=40,range=(c_min,c_max),weights=weights_sig_test)
         Histo_testing_B = np.histogram(Y_pred_bkg_test,bins=40,range=(c_min,c_max),weights=weights_bkg_test)
 
+
         
         # Lets get the min/max of the Histograms
         AllHistos= [Histo_training_S,Histo_training_B,Histo_testing_S,Histo_testing_B]
@@ -307,7 +321,7 @@ class optimization:
     @staticmethod
     def optimize_parameters_gridCV(classifier,X_total_train,y_total_train,param_grid,testSize=0.4,randomState=42):
         print "=====Optimization with grid search cv====="
-        scores = cross_validation.cross_val_score(classifier,
+        scores = model_selection.cross_val_score(classifier,
                                           X_total_train, y_total_train,
                                           scoring="roc_auc",
                                           n_jobs=6,
