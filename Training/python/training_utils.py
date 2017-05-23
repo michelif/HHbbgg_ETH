@@ -191,16 +191,19 @@ class plotting:
     @staticmethod
     def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_test,outString=None):
         
-        sig_train = X_total_train[y_total_train == 1]
-        bkg_train = X_total_train[y_total_train == 0]
-        sig_test = X_total_test[y_total_test == 1]
-        bkg_test = X_total_test[y_total_test == 0]
+
+        sig_train = X_total_train[y_total_train > 0]
+        bkg_train = X_total_train[y_total_train == -2]
+        sig_test = X_total_test[y_total_test > 0]
+        bkg_test = X_total_test[y_total_test == -2]
+
+        #if n_classses > 2 sig proba is the last one (in the way the code is written) 
+        Y_pred_sig_train = clf.predict_proba(sig_train)[:,clf.n_classes_-1]
+        Y_pred_bkg_train = clf.predict_proba(bkg_train)[:,clf.n_classes_-1]
+        Y_pred_sig_test = clf.predict_proba(sig_test)[:,clf.n_classes_-1]
+        Y_pred_bkg_test = clf.predict_proba(bkg_test)[:,clf.n_classes_-1]
 
 
-        Y_pred_sig_train = clf.predict_proba(sig_train)[:,1]
-        Y_pred_bkg_train = clf.predict_proba(bkg_train)[:,1]
-        Y_pred_sig_test = clf.predict_proba(sig_test)[:,1]
-        Y_pred_bkg_test = clf.predict_proba(bkg_test)[:,1]
 
 
         weights_sig_train = (np.ones_like(sig_train)/float(len(sig_train)))[:,1]
@@ -270,22 +273,28 @@ class plotting:
         plt.savefig(IO.plotFolder+"classifierOutputPlot_"+str(outString)+".pdf")
 
     @staticmethod
-    def plot_input_variables(X_sig,X_bkg,outString=None):
+    def plot_input_variables(X_sig,X_bkg,y_bkg=None,n_bins=30,outString=None,plotProcess=None):
 
         ncolumns = X_sig.size/len(X_sig)
+        if plotProcess != None:
+            X_bkg_2 = X_bkg[np.where(y_bkg==plotProcess),:][0] #this is to plot only one type of process
+        else:
+            X_bkg_2 = X_bkg
 
         for i in range(ncolumns):
 
             sig = X_sig[:,i]
-            bkg = X_bkg[:,i]
+            bkg = X_bkg_2[:,i]
+
+
 
             #trick to normalize
             weights_sig = np.ones_like(sig)/float(len(sig)) 
             weights_bkg = np.ones_like(bkg)/float(len(bkg)) 
             
-            plt.hist(sig,color='b', alpha=0.5, bins=30, range =[0,1],
+            plt.hist(sig,color='b', alpha=0.5, bins=n_bins, range =[0,1],
                       label='Sig', weights=weights_sig)
-            plt.hist(bkg,color='r',  alpha=0.5, bins=30, range =[0,1],
+            plt.hist(bkg,color='r',  alpha=0.5, bins=n_bins, range =[0,1],
                      label='Bkg', weights=weights_bkg )
 
             plt.savefig(IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".png")
