@@ -35,6 +35,13 @@ class IO:
     backgroundName = []
     nSig=0
     nBkg=0
+    signal_df = []
+    background_df = []
+    weights_sig = []
+    weights_bkg = []
+    
+    w_sig = []
+    w_bkg = []
 
     @staticmethod
     def add_signal(ntuples,sig):
@@ -50,7 +57,6 @@ class IO:
     def set_signal_and_background(ntuples,sig,bkg):
         IO.add_signal(ntuples,sig)
         IO.add_background(ntuples,bkg)
-
 
 
     @staticmethod
@@ -175,15 +181,98 @@ class preprocessing:
         #fare unico metodo che ti ritorna i due usando questi sotto            
         @staticmethod    
         def get_total_training_sample(x_sig,x_bkg,splitting=0.5):
-            halfSample_sig = int((x_sig.size/len(x_sig.columns))*splitting)
-            halfSample_bkg = int((x_bkg.size/len(x_bkg.columns))*splitting)
-            return np.concatenate([np.split(x_sig,[halfSample_sig])[0],np.split(x_bkg,[halfSample_bkg])[0]])
+            x_s=pd.DataFrame(x_sig)
+            x_b=pd.DataFrame(x_bkg)
+            halfSample_s = int((x_s.size/len(x_s.columns))*splitting)
+            halfSample_b = int((x_b.size/len(x_b.columns))*splitting)
+            return np.concatenate([np.split(x_s,[halfSample_s])[0],np.split(x_b,[halfSample_b])[0]])
         
         @staticmethod    
         def get_total_test_sample(x_sig,x_bkg,splitting=0.5):
-            halfSample_sig = int((x_sig.size/len(x_sig.columns))*splitting)
-            halfSample_bkg = int((x_bkg.size/len(x_bkg.columns))*splitting)
-            return np.concatenate([np.split(x_sig,[halfSample_sig])[1],np.split(x_bkg,[halfSample_bkg])[1]])
+            x_s=pd.DataFrame(x_sig)
+            x_b=pd.DataFrame(x_bkg)
+            halfSample_s = int((x_s.size/len(x_s.columns))*splitting)
+            halfSample_b = int((x_b.size/len(x_b.columns))*splitting)
+            return np.concatenate([np.split(x_s,[halfSample_s])[1],np.split(x_b,[halfSample_b])[1]])
+
+        @staticmethod
+        def set_signals(treeName,branch_names,shuffle=True):
+            for i in range(IO.nSig):
+                IO.signal_df.append(rpd.read_root(IO.signalName[i],"bbggSelectionTree", columns = branch_names))
+                if shuffle:
+                    IO.signal_df[i]['random_index'] = np.random.permutation(range(IO.signal_df[i].index.size))
+                    IO.signal_df[i].sort_values(by='random_index',inplace=True)
+                    
+#                preprocessing.adjust_and_compress(IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
+                preprocessing.define_process_weight(IO.signal_df[i],i+1,IO.w_sig[i])
+            
+        @staticmethod
+        def set_backgrounds(treeName,branch_names,shuffle=True):
+            for i in range(IO.nBkg):
+                IO.background_df.append(rpd.read_root(IO.backgroundName[i],"bbggSelectionTree", columns = branch_names))
+                if shuffle:
+                    IO.background_df[i]['random_index'] = np.random.permutation(range(IO.background_df[i].index.size))
+                    IO.background_df[i].sort_values(by='random_index',inplace=True)
+
+#                preprocessing.adjust_and_compress(IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')                                                                                       
+                preprocessing.define_process_weight(IO.background_df[i],-(i+1),IO.w_bkg[i])
+
+        @staticmethod
+        def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
+            #signals will have positive process number while bkg negative ones
+            preprocessing.set_signals(treeName,branch_names,shuffle=True)
+            preprocessing.set_backgrounds(treeName,branch_names,shuffle=True)
+
+        @staticmethod
+        def randomize(X,y,w):
+            randomize=np.arange(len(X))
+            np.random.shuffle(randomize)
+            X = X[randomize]
+            y = np.asarray(y)[randomize]
+            w = np.asarray(w)[randomize]
+
+            return X,y,w
+
+        @staticmethod 
+        def set_variables(branch_names):
+            for i in range(IO.nSig):
+                if i ==0:
+                    y_sig = IO.signal_df[i][['proc']]
+                    IO.weights_sig = IO.signal_df[i][['weight']]
+                    for j in range(len(branch_names)):
+                        if j == 0:
+                            X_sig = IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]
+                        else:
+                            X_sig = np.concatenate([X_sig,IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
+                else:
+                    y_sig = np.concatenate((y_sig,IO.signal_df[i][['proc']]))
+                    IO.weights_sig = np.concatenate((IO.weights_sig,IO.signal_df[i][['weight']]))
+                    for j in range(len(branch_names)):
+                        if j == 0:
+                            X_sig_2 = IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]
+                        else:
+                            X_sig_2 = np.concatenate([X_sig_2,IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
+                    X_sig=np.concatenate((X_sig,X_sig_2))
+
+            for i in range(IO.nBkg):
+                if i ==0:
+                    y_bkg = IO.background_df[i][['proc']]
+                    IO.weights_bkg = IO.background_df[i][['weight']]
+                    for j in range(len(branch_names)):
+                        if j == 0:
+                            X_bkg = IO.background_df[i][[branch_names[j].replace('noexpand:','')]]
+                        else:
+                            X_bkg = np.concatenate([X_bkg,IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
+                else:
+                    y_bkg = np.concatenate((y_bkg,IO.background_df[i][['proc']]))
+                    IO.weights_bkg = np.concatenate((IO.weights_bkg,IO.background_df[i][['weight']]))
+                    for j in range(len(branch_names)):
+                        if j == 0:
+                            X_bkg_2 = IO.background_df[i][[branch_names[j].replace('noexpand:','')]]
+                        else:
+                            X_bkg_2 = np.concatenate([X_bkg_2,IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
+                    X_bkg=np.concatenate((X_bkg,X_bkg_2))
+
 
 
 # ---------------------------------------------------------------------------------------------------
