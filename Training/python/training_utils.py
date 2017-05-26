@@ -25,6 +25,8 @@ from sklearn.model_selection import train_test_split
 from sklearn import grid_search
 from sklearn.metrics import roc_curve, auc
 
+import json
+from pprint import pprint
 
 # ---------------------------------------------------------------------------------------------------
 class IO:
@@ -42,6 +44,8 @@ class IO:
     
     w_sig = []
     w_bkg = []
+
+    cross_sections = {}
 
     @staticmethod
     def add_signal(ntuples,sig):
@@ -86,46 +90,27 @@ class IO:
         return IO.catalog[ifil]
     
     @staticmethod
-    def get_cross_section(folder):
-        if IO.cross_sections == None:
-            with open("cross_sections.json") as fin:
-                IO.cross_sections = json.loads(fin.read())
-                fin.close()
-                
-        return IO.cross_sections.get(os.path.basename(folder),-1.)
+    def get_cross_sections(file):
+        with open(IO.ldata+"../Training/"+file) as fin:
+            IO.cross_sections = json.load(fin)
+            fin.close()
+#        pprint(IO.cross_sections)        
+        return IO.cross_sections
+
+    @staticmethod
+    def get_xs(sigBkg,proc,nFile):   
+        return   IO.cross_sections[sigBkg][proc]['files'][nFile]['xsec']*IO.cross_sections[sigBkg][proc]['files'][nFile]['br']*IO.cross_sections[sigBkg][proc]['files'][nFile]['sfactor']
         
     @staticmethod
-    def load_input_ntuples(folder,key="rflavourNtuplizer/tree",nfiles=None,nevents=None,shuffle=None,**kwargs):
+    def get_nevents(sigBkg,proc,nFile):   
+        return   IO.cross_sections[sigBkg][proc]['files'][nFile]['nevents']
 
-        files = list( IO.list_files(folder,"*/*/*/*.root") )
-        if shuffle:
-            files = rnd.shuffle(files)
-        if nfiles != None:
-            files = files[:nfiles]
 
-        
-        # num_events = reduce(lambda x,y: x+y, map(lambda z: IO.get_num_events(z), files))
-        num_events = 0.
-        for ifil,fil in enumerate(files):
-            num_events += IO.get_num_events(fil)
-            if nevents and num_events >= nevents:
-                files = files[:ifil+1]
-                break
-            
-        xs = IO.get_cross_section(folder)["xs"]
-        print(num_events, xs)
-        weight = xs/float(num_events)
+    @staticmethod
+    def get_weight(sigBkg,proc, nFile):   
+        return IO.get_xs(sigBkg,proc,nFile)/IO.get_nevents(sigBkg,proc,nFile)
 
-        df = None
-        for ifil,fil in enumerate(files):            
-            try:
-                fdf = rpd.read_root(fil,key,**kwargs)
-                df = fdf if ifil == 0 else df.append(fdf)
-            except Exception, e:
-                print("Failed to read file %s: %s" % (fil, e) )
-        
-        return weight,df
-    
+
 
     @staticmethod
     def to_pickle(fname,obj):
@@ -273,7 +258,7 @@ class preprocessing:
                             X_bkg_2 = np.concatenate([X_bkg_2,IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
                     X_bkg=np.concatenate((X_bkg,X_bkg_2))
 
-
+            return X_bkg,y_bkg,X_sig,y_sig
 
 # ---------------------------------------------------------------------------------------------------
 class plotting:
