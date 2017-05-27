@@ -35,6 +35,8 @@ class IO:
     plotFolder = os.path.expanduser("~/HHbbgg_ETH/Training/plots/")
     signalName = []
     backgroundName = []
+    bkgProc = []
+    sigProc = []
     nSig=0
     nBkg=0
     signal_df = []
@@ -48,20 +50,17 @@ class IO:
     cross_sections = {}
 
     @staticmethod
-    def add_signal(ntuples,sig):
+    def add_signal(ntuples,sig, proc):
         IO.signalName.append(IO.ldata+ntuples+"/"+''.join(sig))
+        IO.sigProc.append(proc)
         IO.nSig+=1
 
     @staticmethod
-    def add_background(ntuples,bkg):
+    def add_background(ntuples,bkg,proc):
         IO.backgroundName.append(IO.ldata+ntuples+"/"+''.join(bkg))
+        IO.bkgProc.append(proc)
         IO.nBkg+=1
     
-    @staticmethod
-    def set_signal_and_background(ntuples,sig,bkg):
-        IO.add_signal(ntuples,sig)
-        IO.add_background(ntuples,bkg)
-
 
     @staticmethod
     def list_files(folder,pattern):
@@ -189,7 +188,7 @@ class preprocessing:
                     IO.signal_df[i].sort_values(by='random_index',inplace=True)
                     
 #                preprocessing.adjust_and_compress(IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
-                preprocessing.define_process_weight(IO.signal_df[i],i+1,IO.w_sig[i])
+                preprocessing.define_process_weight(IO.signal_df[i],IO.sigProc[i],IO.w_sig[i])
             
         @staticmethod
         def set_backgrounds(treeName,branch_names,shuffle=True):
@@ -199,8 +198,8 @@ class preprocessing:
                     IO.background_df[i]['random_index'] = np.random.permutation(range(IO.background_df[i].index.size))
                     IO.background_df[i].sort_values(by='random_index',inplace=True)
 
-#                preprocessing.adjust_and_compress(IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')                                                                                       
-                preprocessing.define_process_weight(IO.background_df[i],-(i+1),IO.w_bkg[i])
+#                preprocessing.adjust_and_compress(IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')
+                preprocessing.define_process_weight(IO.background_df[i],IO.bkgProc[i],IO.w_bkg[i])
 
         @staticmethod
         def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
