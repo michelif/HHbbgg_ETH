@@ -41,12 +41,7 @@ class IO:
     nBkg=0
     signal_df = []
     background_df = []
-    weights_sig = []
-    weights_bkg = []
     
-    w_sig = []
-    w_bkg = []
-
     cross_sections = {}
 
     @staticmethod
@@ -143,15 +138,47 @@ class preprocessing:
             return df
         
         @staticmethod
-        def define_process_weight(df,proc,weight):
+        def define_process_weight(df,proc,name):
             df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
-            df['weight'] = ( np.ones_like(df.index)*weight ).astype(np.float32)
-           
-        @staticmethod
-        def define_process_weight_bkg(df,proc,weight):
-            df['proc'] = ( np.zeros_like(df.index)*proc ).astype(np.int8)
-            df['weight'] = ( np.ones_like(df.index)*weight ).astype(np.float32)
-        
+#            df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
+            input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['genTotalWeight', 'lumiFactor'])
+            df['weight'] = np.multiply(input_df[['lumiFactor']],input_df[['genTotalWeight']])
+            
+        @staticmethod                       
+        def normalize_process_weights(w_b,y_b,w_s,y_s):
+            proc=999
+            sum_weights = 1
+            w_bkg = []
+            for i in range(IO.nBkg):
+                if IO.bkgProc[i] != proc:
+                    w_proc = np.asarray(w_b[np.asarray(y_b) == IO.bkgProc[i]])
+                    sum_weights = np.sum(w_proc)
+                    proc = IO.bkgProc[i]
+                if i==0:
+                    w_bkg = np.divide(w_proc,sum_weights)
+                else:
+                    w_bkg = np.concatenate((w_bkg, np.divide(w_proc,sum_weights)))
+                IO.background_df[i][['weight']] = np.divide(IO.background_df[i][['weight']],sum_weights)
+
+            proc=999
+            sum_weights = 1
+            w_sig = []
+            for i in range(IO.nSig):
+                if IO.sigProc[i] != proc:
+                    w_proc = np.asarray(w_s[np.asarray(y_s) == IO.sigProc[i]])
+                    sum_weights = np.sum(w_proc)
+                    proc = IO.sigProc[i]
+                if i==0:
+                    w_sig = np.divide(w_proc,sum_weights)
+                else:
+                    w_sig = np.concatenate((w_sig, np.divide(w_proc,sum_weights)))
+                IO.signal_df[i][['weight']] = np.divide(IO.signal_df[i][['weight']],sum_weights)
+
+
+
+            return w_bkg,w_sig
+                
+
         @staticmethod
         def get_training_sample(x,splitting=0.5):
             halfSample = int((x.size/len(x.columns))*splitting)
@@ -162,7 +189,6 @@ class preprocessing:
             halfSample = int((x.size/len(x.columns))*splitting)
             return np.split(x,[halfSample])[1]
         
-        #fare unico metodo che ti ritorna i due usando questi sotto            
         @staticmethod    
         def get_total_training_sample(x_sig,x_bkg,splitting=0.5):
             x_s=pd.DataFrame(x_sig)
@@ -188,7 +214,7 @@ class preprocessing:
                     IO.signal_df[i].sort_values(by='random_index',inplace=True)
                     
 #                preprocessing.adjust_and_compress(IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
-                preprocessing.define_process_weight(IO.signal_df[i],IO.sigProc[i],IO.w_sig[i])
+                preprocessing.define_process_weight(IO.signal_df[i],IO.sigProc[i],IO.signalName[i])
             
         @staticmethod
         def set_backgrounds(treeName,branch_names,shuffle=True):
@@ -199,7 +225,7 @@ class preprocessing:
                     IO.background_df[i].sort_values(by='random_index',inplace=True)
 
 #                preprocessing.adjust_and_compress(IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')
-                preprocessing.define_process_weight(IO.background_df[i],IO.bkgProc[i],IO.w_bkg[i])
+                preprocessing.define_process_weight(IO.background_df[i],IO.bkgProc[i],IO.backgroundName[i])
 
         @staticmethod
         def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
@@ -222,7 +248,7 @@ class preprocessing:
             for i in range(IO.nSig):
                 if i ==0:
                     y_sig = IO.signal_df[i][['proc']]
-                    IO.weights_sig = IO.signal_df[i][['weight']]
+                    w_sig = IO.signal_df[i][['weight']]
                     for j in range(len(branch_names)):
                         if j == 0:
                             X_sig = IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -230,7 +256,7 @@ class preprocessing:
                             X_sig = np.concatenate([X_sig,IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
                 else:
                     y_sig = np.concatenate((y_sig,IO.signal_df[i][['proc']]))
-                    IO.weights_sig = np.concatenate((IO.weights_sig,IO.signal_df[i][['weight']]))
+                    w_sig = np.concatenate((w_sig,IO.signal_df[i][['weight']]))
                     for j in range(len(branch_names)):
                         if j == 0:
                             X_sig_2 = IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -241,7 +267,7 @@ class preprocessing:
             for i in range(IO.nBkg):
                 if i ==0:
                     y_bkg = IO.background_df[i][['proc']]
-                    IO.weights_bkg = IO.background_df[i][['weight']]
+                    w_bkg = IO.background_df[i][['weight']]
                     for j in range(len(branch_names)):
                         if j == 0:
                             X_bkg = IO.background_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -249,7 +275,7 @@ class preprocessing:
                             X_bkg = np.concatenate([X_bkg,IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
                 else:
                     y_bkg = np.concatenate((y_bkg,IO.background_df[i][['proc']]))
-                    IO.weights_bkg = np.concatenate((IO.weights_bkg,IO.background_df[i][['weight']]))
+                    w_bkg = np.concatenate((w_bkg,IO.background_df[i][['weight']]))
                     for j in range(len(branch_names)):
                         if j == 0:
                             X_bkg_2 = IO.background_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -257,7 +283,7 @@ class preprocessing:
                             X_bkg_2 = np.concatenate([X_bkg_2,IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
                     X_bkg=np.concatenate((X_bkg,X_bkg_2))
 
-            return X_bkg,y_bkg,X_sig,y_sig
+            return X_bkg,y_bkg,w_bkg,X_sig,y_sig,w_sig
 
 # ---------------------------------------------------------------------------------------------------
 class plotting:
@@ -346,7 +372,7 @@ class plotting:
         plt.savefig(IO.plotFolder+"classifierOutputPlot_"+str(outString)+".pdf")
 
     @staticmethod
-    def plot_input_variables(X_sig,X_bkg,y_bkg=None,n_bins=30,outString=None,plotProcess=None):
+    def plot_input_variables(X_sig,X_bkg,branch_names,y_bkg=None,n_bins=30,outString=None,plotProcess=None):
 
         ncolumns = X_sig.size/len(X_sig)
         if plotProcess != None:
@@ -359,16 +385,37 @@ class plotting:
             sig = X_sig[:,i]
             bkg = X_bkg_2[:,i]
 
-
+            c_min=min(np.min(d) for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]]))
+            c_max=max(np.max(d) for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]]))
 
             #trick to normalize
             weights_sig = np.ones_like(sig)/float(len(sig)) 
             weights_bkg = np.ones_like(bkg)/float(len(bkg)) 
+
+            Histo_S = np.histogram(sig,bins=30,range=(c_min,c_max),weights=weights_sig)
+            Histo_B = np.histogram(bkg,bins=30,range=(c_min,c_max),weights=weights_bkg)
             
-            plt.hist(sig,color='b', alpha=0.5, bins=n_bins, range =[0,1],
-                      label='Sig', weights=weights_sig)
-            plt.hist(bkg,color='r',  alpha=0.5, bins=n_bins, range =[0,1],
-                     label='Bkg', weights=weights_bkg )
+            bin_edges = Histo_B[1]
+            bin_centers = ( bin_edges[:-1] + bin_edges[1:]  ) /2.
+            bin_widths = (bin_edges[1:] - bin_edges[:-1])
+
+            # Lets get the min/max of the Histograms
+            AllHistos= [Histo_S,Histo_B]
+            h_max = max([histo[0].max() for histo in AllHistos])*1.2
+            h_min = min([histo[0].min() for histo in AllHistos])
+
+        
+
+            ax1 = plt.subplot(111)
+
+            ax1.bar(bin_centers-bin_widths/2.,Histo_S[0],facecolor='blue',linewidth=0,width=bin_widths,label='S ',alpha=0.5)
+            ax1.bar(bin_centers-bin_widths/2.,Histo_B[0],facecolor='red',linewidth=0,width=bin_widths,label='B ',alpha=0.5)
+
+            # Adjust the axis boundaries (just cosmetic)
+            ax1.axis([c_min, c_max, h_min, h_max])
+            plt.xlabel(branch_names[i].replace('noexpand:',''))
+            plt.ylabel("Normalized Yields")
+
 
             plt.savefig(IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".png")
             plt.savefig(IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".pdf")
