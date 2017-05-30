@@ -455,7 +455,6 @@ class plotting:
         fpr, tpr, thresholds = roc_curve(y[:,classNumber].ravel(), decisions.ravel())
         roc_auc = auc(fpr, tpr)
         import matplotlib.pyplot as plt
-        
         plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f)'%(roc_auc))
         
         plt.xlim([-0.05, 1.05])
@@ -468,7 +467,17 @@ class plotting:
 
         plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".png")
         plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".pdf")
-
+        return fpr,tpr
+        
+    @staticmethod
+    def print_roc_report(fpr,tpr,step=0.05):
+        print "======== ROC report ========"
+        for i in range(int(1/step)):
+            print i
+            if fpr[np.where((tpr>step*i) & (tpr<step*i+0.00005))].size>0:
+                print "True positive rate: "+str(step*i)
+                print "False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.00005))][0])
+        print "============================"
         
 # ---------------------------------------------------------------------------------------------------
 class optimization:
