@@ -24,6 +24,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import grid_search
 from sklearn.metrics import roc_curve, auc
+from sklearn.preprocessing import label_binarize
 
 import json
 from pprint import pprint
@@ -425,9 +426,33 @@ class plotting:
 
     @staticmethod
     def plot_roc_curve(x,y,clf,outString=None):
-        decisions = clf.predict_proba(x)[:,1]
+        decisions = clf.predict_proba(x)[:,clf.n_classes_-1]
         # Compute ROC curve and area under the curve
         fpr, tpr, thresholds = roc_curve(y, decisions)
+        roc_auc = auc(fpr, tpr)
+        import matplotlib.pyplot as plt
+        
+        plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f)'%(roc_auc))
+        
+        plt.xlim([-0.05, 1.05])
+        plt.ylim([-0.05, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curve')
+        plt.legend(loc="lower right")
+        plt.grid()
+
+        plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".png")
+        plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".pdf")
+
+
+    @staticmethod
+    def plot_roc_curve_multiclass(x,y,clf,classesSchema=[-2,-1,1],classNumber=2,outString=None):
+        # plot micro-averaging roc. see http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html 
+        y=label_binarize(y,classes=classesSchema)
+        decisions = clf.predict_proba(x)[:,classNumber]
+        # Compute ROC curve and area under the curve
+        fpr, tpr, thresholds = roc_curve(y[:,classNumber].ravel(), decisions.ravel())
         roc_auc = auc(fpr, tpr)
         import matplotlib.pyplot as plt
         
