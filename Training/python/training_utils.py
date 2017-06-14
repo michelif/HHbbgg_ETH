@@ -468,6 +468,33 @@ class plotting:
         plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".png")
         plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".pdf")
         return fpr,tpr
+
+    @staticmethod
+    def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClassOutput=1,outString=None):
+        x_bkg=np.asarray(x)[np.where(np.asarray(y)==backgroundClassOutput)]
+        x_sig=np.asarray(x)[np.where(np.asarray(y)==signalClassOutput)]
+        x_tot=np.concatenate((x_bkg,x_sig))
+        
+        y_bkg=np.asarray(y)[np.where(np.asarray(y)==backgroundClassOutput)]
+        y_sig=np.asarray(y)[np.where(np.asarray(y)==signalClassOutput)]
+        y_tot=np.concatenate((y_bkg,y_sig))
+        
+        decisions = clf.predict_proba(x_tot)[:,clf.n_classes_-1]
+        # Compute ROC curve and area under the curve
+        fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput)
+        roc_auc = auc(fpr, tpr)
+        import matplotlib.pyplot as plt
+            
+        plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f)'%(roc_auc))
+        
+        plt.xlim([-0.05, 1.05])
+        plt.ylim([-0.05, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curve')
+        plt.legend(loc="lower right")
+        plt.grid()
+
         
     @staticmethod
     def print_roc_report(fpr,tpr,step=0.05):
