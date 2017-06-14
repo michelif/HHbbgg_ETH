@@ -139,11 +139,17 @@ class preprocessing:
             return df
         
         @staticmethod
-        def define_process_weight(df,proc,name):
+        def define_process_weight(df,proc,name,cleanSignal=True):
             df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
 #            df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
-            input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['genTotalWeight', 'lumiFactor'])
+            input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['genTotalWeight', 'lumiFactor','isSignal'])
             df['weight'] = np.multiply(input_df[['lumiFactor']],input_df[['genTotalWeight']])
+            if cleanSignal:#some trees include also the control region,select only good events
+                df['weight']= np.multiply(df[['weight']],input_df[['isSignal']])
+        @staticmethod 
+        def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s):#some trees include also the control region,select only good events
+            return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], y_s[np.where(w_s!=0)],w_s[np.where(w_s!=0)]
+
             
         @staticmethod                       
         def normalize_process_weights(w_b,y_b,w_s,y_s):
@@ -179,6 +185,16 @@ class preprocessing:
 
             return w_bkg,w_sig
                 
+        @staticmethod
+        def weight_signal_with_resolution(w_s,y_s):
+            proc=999
+            for i in range(IO.nSig):
+#                w_sig = np.asarray(w_s[np.asarray(y_s) == IO.sigProc[i]])
+                proc = IO.sigProc[i]
+                IO.signal_df[i][['weight']] = np.divide(IO.signal_df[i][['weight']],IO.signal_df[i][['sigmaMOverMDecorr']])
+
+            return IO.signal_df[i][['weight']]
+
 
         @staticmethod
         def get_training_sample(x,splitting=0.5):
@@ -243,6 +259,7 @@ class preprocessing:
             w = np.asarray(w)[randomize]
 
             return X,y,w
+
 
         @staticmethod 
         def set_variables(branch_names):
@@ -447,8 +464,7 @@ class plotting:
 
 
     @staticmethod
-    def plot_roc_curve_multiclass(x,y,clf,classesSchema=[-2,-1,1],classNumber=2,outString=None):
-        # plot micro-averaging roc. see http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html 
+    def plot_roc_curve_multiclass(x,y,clf,classesSchema=[-2,-1,1],classNumber=2,outString=None):#roc curve signal vs all bkg, each one normalized to one
         y=label_binarize(y,classes=classesSchema)
         decisions = clf.predict_proba(x)[:,classNumber]
         # Compute ROC curve and area under the curve
@@ -469,7 +485,7 @@ class plotting:
         plt.savefig(IO.plotFolder+"rocCurve"+"_"+str(outString)+".pdf")
         return fpr,tpr
 
-    @staticmethod
+    @staticmethod#roc curve signal vs one bkg
     def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClassOutput=1,outString=None):
         x_bkg=np.asarray(x)[np.where(np.asarray(y)==backgroundClassOutput)]
         x_sig=np.asarray(x)[np.where(np.asarray(y)==signalClassOutput)]
@@ -495,7 +511,7 @@ class plotting:
         plt.legend(loc="lower right")
         plt.grid()
         return fpr,tpr
-        
+
     @staticmethod
     def print_roc_report(fpr,tpr,step=0.05):
         print "======== ROC report ========"
