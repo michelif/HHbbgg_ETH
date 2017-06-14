@@ -494,16 +494,16 @@ class plotting:
         plt.title('ROC Curve')
         plt.legend(loc="lower right")
         plt.grid()
-
+        return fpr,tpr
         
     @staticmethod
     def print_roc_report(fpr,tpr,step=0.05):
         print "======== ROC report ========"
         for i in range(int(1/step)):
             print i
-            if fpr[np.where((tpr>step*i) & (tpr<step*i+0.00005))].size>0:
+            if fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))].size>0:
                 print "True positive rate: "+str(step*i)
-                print "False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.00005))][0])
+                print "False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))][0])
         print "============================"
         
 # ---------------------------------------------------------------------------------------------------
