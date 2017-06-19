@@ -512,15 +512,51 @@ class plotting:
         plt.grid()
         return fpr,tpr
 
+#    @staticmethod
+#    def print_roc_report(fpr,tpr,step=0.05):
+#        print "======== ROC report ========"
+#        for i in range(int(1/step)):
+#            print i
+#            if fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))].size>0:
+#                print "True positive rate: "+str(step*i)
+#                print "False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))][0])
+#        print "============================"
+
+
     @staticmethod
     def print_roc_report(fpr,tpr,step=0.05):
         print "======== ROC report ========"
         for i in range(int(1/step)):
             print i
-            if fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))].size>0:
-                print "True positive rate: "+str(step*i)
-                print "False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))][0])
-        print "============================"
+            index = plotting.bisection(tpr,step*i)
+            print "True positive rate: "+str(step*i)
+            print "False positive rate:"+str(fpr[index])
+            
+    @staticmethod
+    def bisection(array,value):#be careful, works with sorted arrays
+        '''Given an ``array`` , and given a ``value`` , returns an index j such that ``value`` is between array[j]
+        and array[j+1]. ``array`` must be monotonic increasing. j=-1 or j=len(array) is returned
+        to indicate that ``value`` is out of range below and above respectively.'''
+        n = len(array)
+        if (value < array[0]):
+            return -1
+        elif (value > array[n-1]):
+            return n
+        jl = 0# Initialize lower
+        ju = n-1# and upper limits.
+        while (ju-jl > 1):# If we are not yet done,
+            jm=(ju+jl) >> 1# compute a midpoint with a bitshift
+            if (value >= array[jm]):
+                jl=jm# and replace either the lower limit
+            else:
+                ju=jm# or the upper limit, as appropriate.
+            # Repeat until the test condition is satisfied.
+        if (value == array[0]):# edge cases at bottom
+            return 0
+        elif (value == array[n-1]):# and top
+            return n-1
+        else:
+            return jl
         
 # ---------------------------------------------------------------------------------------------------
 class optimization:
