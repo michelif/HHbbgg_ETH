@@ -22,7 +22,6 @@ import random
 from sklearn import model_selection
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
-from sklearn import grid_search
 from sklearn.metrics import roc_curve, auc
 from sklearn.preprocessing import label_binarize
 
@@ -561,13 +560,13 @@ class plotting:
 # ---------------------------------------------------------------------------------------------------
 class optimization:
     @staticmethod
-    def optimize_parameters_gridCV(classifier,X_total_train,y_total_train,param_grid,testSize=0.4,randomState=42):
+    def optimize_parameters_gridCV(classifier,X_total_train,y_total_train,param_grid,cvOpt=3,nJobs=10):
         print "=====Optimization with grid search cv====="
         scores = model_selection.cross_val_score(classifier,
                                           X_total_train, y_total_train,
                                           scoring="roc_auc",
-                                          n_jobs=6,
-                                          cv=3)
+                                          n_jobs=nJobs,
+                                          cv=cvOpt)
         print "-Initial Accuracy-"
         print "Accuracy: %0.5f (+/- %0.5f)"%(scores.mean(), scores.std())
 
@@ -576,14 +575,53 @@ class optimization:
 #              "max_depth": [1, 3, 8],
 #              'learning_rate': [0.1, 0.2, 1.]}
         
-        X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train, test_size=testSize, random_state=randomState)
+#        X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train, test_size=testSize, random_state=randomState)
+        X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train)
         
-        
-        clf = grid_search.GridSearchCV(classifier,
+        clf = model_selection.GridSearchCV(classifier,
                                        param_grid,
-                                       cv=3,
+                                       cv=cvOpt,
                                        scoring='roc_auc',
-                                       n_jobs=8, verbose=1)
+                                       n_jobs=nJobs, verbose=1)
+        clf.fit(X_train, y_train)
+        
+        print "Best parameter set found on development set:"
+        print
+        print clf.best_estimator_
+        print
+        print "Grid scores on a subset of the development set:"
+        print
+        for params, mean_score, scores in clf.grid_scores_:
+            print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
+        
+        return clf.grid_scores_
+
+
+    @staticmethod
+    def optimize_parameters_randomizedCV(classifier,X_total_train,y_total_train,param_grid,nIter=10,cvOpt=3,nJobs=10):
+        print "=====Optimization with randomized search cv====="
+        scores = model_selection.cross_val_score(classifier,
+                                          X_total_train, y_total_train,
+                                          scoring="roc_auc",
+                                          n_jobs=nJobs,
+                                          cv=cvOpt)
+        print "-Initial Accuracy-"
+        print "Accuracy: %0.5f (+/- %0.5f)"%(scores.mean(), scores.std())
+
+        
+#param_grid = {"n_estimators": [50,200,400,1000],
+#              "max_depth": [1, 3, 8],
+#              'learning_rate': [0.1, 0.2, 1.]}
+        
+#        X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train, test_size=testSize, random_state=randomState)
+        X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train)
+        
+        clf = model_selection.RandomizedSearchCV(classifier,
+                                       param_grid,
+                                       n_iter=nIter,
+                                       cv=cvOpt,
+                                       scoring='roc_auc',
+                                       n_jobs=nJobs, verbose=1)
         clf.fit(X_train, y_train)
         
         print "Best parameter set found on development set:"
