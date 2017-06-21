@@ -41,6 +41,7 @@ class IO:
     nBkg=0
     signal_df = []
     background_df = []
+    count_sig_df = []
     
     cross_sections = {}
 
@@ -309,9 +310,9 @@ class plotting:
         
 
         sig_train = X_total_train[y_total_train > 0]
-        bkg_train = X_total_train[y_total_train == -2]
+        bkg_train = X_total_train[y_total_train < 0]
         sig_test = X_total_test[y_total_test > 0]
-        bkg_test = X_total_test[y_total_test == -2]
+        bkg_test = X_total_test[y_total_test < 0]
 
         #if n_classses > 2 sig proba is the last one (in the way the code is written) 
         Y_pred_sig_train = clf.predict_proba(sig_train)[:,clf.n_classes_-1]
