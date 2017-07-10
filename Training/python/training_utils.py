@@ -28,6 +28,8 @@ from sklearn.preprocessing import label_binarize
 import json
 from pprint import pprint
 
+import math 
+
 # ---------------------------------------------------------------------------------------------------
 class IO:
     ldata = os.path.expanduser("~/HHbbgg_ETH/root_files/")
@@ -143,12 +145,18 @@ class preprocessing:
             df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
 #            df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
             input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['genTotalWeight', 'lumiFactor','isSignal'])
-            df['weight'] = np.multiply(input_df[['lumiFactor']],input_df[['genTotalWeight']])
+            w = np.multiply(input_df[['lumiFactor']],input_df[['genTotalWeight']])
+            df['lumiFactor'] = input_df[['lumiFactor']]
+            df['genTotalWeight'] = input_df[['genTotalWeight']]
+            df['isSignal'] = input_df[['isSignal']]
             if cleanSignal:#some trees include also the control region,select only good events
-                df['weight']= np.multiply(df[['weight']],input_df[['isSignal']])
+                df['weight']= np.multiply(w,input_df[['isSignal']])
+            else:
+                df['weight']=w
+
         @staticmethod 
         def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s):#some trees include also the control region,select only good events
-            return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], y_s[np.where(w_s!=0)],w_s[np.where(w_s!=0)]
+            return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], np.asarray(y_s)[np.where(w_s!=0)],np.asarray(w_s)[np.where(w_s!=0)]
 
             
         @staticmethod                       
@@ -223,32 +231,35 @@ class preprocessing:
             return np.concatenate([np.split(x_s,[halfSample_s])[1],np.split(x_b,[halfSample_b])[1]])
 
         @staticmethod
-        def set_signals(treeName,branch_names,shuffle=True):
+        def set_signals(treeName,branch_names,shuffle):
             for i in range(IO.nSig):
                 IO.signal_df.append(rpd.read_root(IO.signalName[i],"bbggSelectionTree", columns = branch_names))
+                preprocessing.define_process_weight(IO.signal_df[i],IO.sigProc[i],IO.signalName[i])
                 if shuffle:
+                    print "in shuffle"
                     IO.signal_df[i]['random_index'] = np.random.permutation(range(IO.signal_df[i].index.size))
                     IO.signal_df[i].sort_values(by='random_index',inplace=True)
                     
 #                preprocessing.adjust_and_compress(IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
-                preprocessing.define_process_weight(IO.signal_df[i],IO.sigProc[i],IO.signalName[i])
+
             
         @staticmethod
-        def set_backgrounds(treeName,branch_names,shuffle=True):
+        def set_backgrounds(treeName,branch_names,shuffle):
             for i in range(IO.nBkg):
                 IO.background_df.append(rpd.read_root(IO.backgroundName[i],"bbggSelectionTree", columns = branch_names))
+                preprocessing.define_process_weight(IO.background_df[i],IO.bkgProc[i],IO.backgroundName[i])
                 if shuffle:
                     IO.background_df[i]['random_index'] = np.random.permutation(range(IO.background_df[i].index.size))
                     IO.background_df[i].sort_values(by='random_index',inplace=True)
 
 #                preprocessing.adjust_and_compress(IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')
-                preprocessing.define_process_weight(IO.background_df[i],IO.bkgProc[i],IO.backgroundName[i])
+
 
         @staticmethod
         def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
             #signals will have positive process number while bkg negative ones
-            preprocessing.set_signals(treeName,branch_names,shuffle=True)
-            preprocessing.set_backgrounds(treeName,branch_names,shuffle=True)
+            preprocessing.set_signals(treeName,branch_names,shuffle)
+            preprocessing.set_backgrounds(treeName,branch_names,shuffle)
 
         @staticmethod
         def randomize(X,y,w):
@@ -301,7 +312,7 @@ class preprocessing:
                             X_bkg_2 = np.concatenate([X_bkg_2,IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
                     X_bkg=np.concatenate((X_bkg,X_bkg_2))
 
-            return X_bkg,y_bkg,w_bkg,X_sig,y_sig,w_sig
+            return np.round(X_bkg,3),y_bkg,w_bkg,np.round(X_sig,3),y_sig,w_sig
 
 # ---------------------------------------------------------------------------------------------------
 class plotting:
@@ -486,19 +497,28 @@ class plotting:
         return fpr,tpr
 
     @staticmethod#roc curve signal vs one bkg
-    def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClassOutput=1,outString=None):
+    def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClassOutput=1,outString=None,weights=None):
         x_bkg=np.asarray(x)[np.where(np.asarray(y)==backgroundClassOutput)]
         x_sig=np.asarray(x)[np.where(np.asarray(y)==signalClassOutput)]
         x_tot=np.concatenate((x_bkg,x_sig))
-        
+
+        if weights != None:
+            w_bkg = np.asarray(weights)[np.where(np.asarray(y)==backgroundClassOutput)]
+            w_sig=np.asarray(weights)[np.where(np.asarray(y)==signalClassOutput)]
+            w_tot=np.concatenate((w_bkg,w_sig))
+            
         y_bkg=np.asarray(y)[np.where(np.asarray(y)==backgroundClassOutput)]
         y_sig=np.asarray(y)[np.where(np.asarray(y)==signalClassOutput)]
         y_tot=np.concatenate((y_bkg,y_sig))
         
         decisions = clf.predict_proba(x_tot)[:,clf.n_classes_-1]
         # Compute ROC curve and area under the curve
-        fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput)
-        roc_auc = auc(fpr, tpr)
+        if weights == None:
+            fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput)
+        else:
+            fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput,sample_weight=w_tot.ravel())
+            
+        roc_auc = auc(fpr, tpr,reorder=True)
         import matplotlib.pyplot as plt
             
         plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f)'%(roc_auc))
@@ -511,6 +531,8 @@ class plotting:
         plt.legend(loc="lower right")
         plt.grid()
         return fpr,tpr
+
+
 
 #    @staticmethod
 #    def print_roc_report(fpr,tpr,step=0.05):
