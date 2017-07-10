@@ -312,7 +312,7 @@ class preprocessing:
                             X_bkg_2 = np.concatenate([X_bkg_2,IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
                     X_bkg=np.concatenate((X_bkg,X_bkg_2))
 
-            return np.round(X_bkg,3),y_bkg,w_bkg,np.round(X_sig,3),y_sig,w_sig
+            return np.round(X_bkg,5),y_bkg,w_bkg,np.round(X_sig,5),y_sig,w_sig
 
 # ---------------------------------------------------------------------------------------------------
 class plotting:
