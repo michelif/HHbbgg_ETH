@@ -37,13 +37,16 @@ class IO:
     plotFolder = os.path.expanduser("~/HHbbgg_ETH/Training/plots/")
     signalName = []
     backgroundName = []
-    bkgProc = []
+    dataName = []
     sigProc = []
+    bkgProc = []
+    dataProc = []
     nSig=0
     nBkg=0
+    nData=0
     signal_df = []
     background_df = []
-    count_sig_df = []
+    data_df= []
     
     cross_sections = {}
 
@@ -59,6 +62,12 @@ class IO:
         IO.bkgProc.append(proc)
         IO.nBkg+=1
     
+    @staticmethod
+    def add_data(ntuples,data,proc):
+        IO.dataName.append(IO.ldata+ntuples+"/"+''.join(data))
+        IO.dataProc.append(proc)
+        IO.nData+=1
+
 
     @staticmethod
     def list_files(folder,pattern):
@@ -158,6 +167,9 @@ class preprocessing:
         def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s):#some trees include also the control region,select only good events
             return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], np.asarray(y_s)[np.where(w_s!=0)],np.asarray(w_s)[np.where(w_s!=0)]
 
+        @staticmethod 
+        def clean_signal_events_single_dataset(x_b, y_b, w_b):#some trees include also the control region,select only good events
+            return x_b[np.where(w_b!=0),:][0],np.asarray(y_b)[np.where(w_b!=0)],np.asarray(w_b)[np.where(w_b!=0)]
             
         @staticmethod                       
         def normalize_process_weights(w_b,y_b,w_s,y_s):
@@ -236,7 +248,6 @@ class preprocessing:
                 IO.signal_df.append(rpd.read_root(IO.signalName[i],"bbggSelectionTree", columns = branch_names))
                 preprocessing.define_process_weight(IO.signal_df[i],IO.sigProc[i],IO.signalName[i])
                 if shuffle:
-                    print "in shuffle"
                     IO.signal_df[i]['random_index'] = np.random.permutation(range(IO.signal_df[i].index.size))
                     IO.signal_df[i].sort_values(by='random_index',inplace=True)
                     
@@ -254,6 +265,27 @@ class preprocessing:
 
 #                preprocessing.adjust_and_compress(IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')
 
+
+        @staticmethod
+        def set_data(treeName,branch_names):
+            IO.data_df.append(rpd.read_root(IO.dataName[0],"bbggSelectionTree", columns = branch_names))
+            IO.data_df[0]['proc'] =  ( np.ones_like(IO.data_df[0].index)*IO.dataProc[0] ).astype(np.int8)
+            input_df=rpd.read_root(IO.dataName[0],"bbggSelectionTree", columns = ['isSignal'])
+            w = (np.ones_like(IO.data_df[0].index)).astype(np.int8)
+            IO.data_df[0]['weight'] = np.multiply(w,input_df['isSignal'])
+
+            y_data = IO.data_df[0][['proc']]
+            w_data = IO.data_df[0][['weight']]
+
+            for j in range(len(branch_names)):
+                if j == 0:
+                    X_data = IO.data_df[0][[branch_names[j].replace('noexpand:','')]]
+                else:
+                    X_data = np.concatenate([X_data,IO.data_df[0][[branch_names[j].replace('noexpand:','')]]],axis=1)
+            
+            return np.round(X_data,5),y_data,w_data
+            
+            
 
         @staticmethod
         def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
@@ -621,7 +653,7 @@ class optimization:
 
 
     @staticmethod
-    def optimize_parameters_randomizedCV(classifier,X_total_train,y_total_train,param_grid,nIter=10,cvOpt=3,nJobs=10):
+    def optimize_parameters_randomizedCV(classifier,X_total_train,y_total_train,param_grid,nIter=10,cvOpt=3,nJobs=10,weights=None):
         print "=====Optimization with randomized search cv====="
         scores = model_selection.cross_val_score(classifier,
                                           X_total_train, y_total_train,
@@ -639,12 +671,21 @@ class optimization:
 #        X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train, test_size=testSize, random_state=randomState)
         X_train, X_test, y_train, y_test = train_test_split(X_total_train, y_total_train)
         
-        clf = model_selection.RandomizedSearchCV(classifier,
+        if weights == None:
+            clf = model_selection.RandomizedSearchCV(classifier,
                                        param_grid,
                                        n_iter=nIter,
                                        cv=cvOpt,
                                        scoring='roc_auc',
                                        n_jobs=nJobs, verbose=1)
+        else:
+            clf = model_selection.RandomizedSearchCV(classifier,
+                                       param_grid,
+                                       n_iter=nIter,
+                                       cv=cvOpt,
+                                       scoring='roc_auc',
+                                       n_jobs=nJobs, verbose=1,
+                                       fit_params={'sample_weight': weights})
         clf.fit(X_train, y_train)
         
         print "Best parameter set found on development set:"
