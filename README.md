@@ -15,6 +15,12 @@ data format, train/test splitting, plotting...
 - Training/notebooks
 This folder contains all the notebooks needed <br />
 -- CountEvents <br />
-It counts signal/background/data events after applying a selection (MVA, mgg/mjj window...)
+It counts signal/background/data events after applying a selection (MVA, mgg/mjj window...) <br />
+-- trainMVAHHbbgg_allMC_resWeighting_optimized.ipynb  <br />
+Trains a Gradient Boost Classifier to separate signal/backgrounds. All weighting implemented, output saved. <br />
+-- optimizeClassifier.ipynb <br />
+Optimize parameters of the classifier. In Training/scropts/optimizeClassifier.py there is a version
+of this optimization code wich runs without using notebooks.
 
---
+
+
