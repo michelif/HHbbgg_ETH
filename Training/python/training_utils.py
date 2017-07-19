@@ -153,8 +153,9 @@ class preprocessing:
         def define_process_weight(df,proc,name,cleanSignal=True):
             df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
 #            df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
-            input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['genTotalWeight', 'lumiFactor','isSignal'])
+            input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['genTotalWeight', 'lumiFactor','isSignal','puweight'])
             w = np.multiply(input_df[['lumiFactor']],input_df[['genTotalWeight']])
+            w = np.multiply(w,input_df[['puweight']])
             df['lumiFactor'] = input_df[['lumiFactor']]
             df['genTotalWeight'] = input_df[['genTotalWeight']]
             df['isSignal'] = input_df[['isSignal']]
