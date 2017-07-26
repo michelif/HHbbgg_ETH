@@ -699,3 +699,36 @@ class optimization:
             print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
         
         return clf.grid_scores_
+
+# ---------------------------------------------------------------------------------------------------
+class postprocessing:
+    @staticmethod 
+    def stackFeatures(df,additionalCut_names,rounding=6):
+        vec = []
+        dictVar = {}
+        i = 0
+        for featCounter in additionalCut_names:
+            feat= featCounter.replace("noexpand:","")
+            vec.append(np.round(np.asarray(df[feat]),rounding))
+            dictVar [feat] = i
+            i+=1
+#            print feat
+#            print i
+        vec.append(np.asarray(df['weight']))  
+        dictVar['weight'] = i
+
+        totalVec = []
+        for i in range(len(vec)):
+            if i == 0:
+ #               print "in i = 0"
+                totalVec = vec[i]
+            else:
+                totalVec = np.column_stack((totalVec,vec[i]))
+
+
+        return totalVec,dictVar
+
+
+
+
+
