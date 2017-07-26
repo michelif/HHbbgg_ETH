@@ -703,7 +703,7 @@ class optimization:
 # ---------------------------------------------------------------------------------------------------
 class postprocessing:
     @staticmethod 
-    def stackFeatures(df,additionalCut_names,rounding=6):
+    def stackFeatures(df,additionalCut_names,rounding=6,SF=1,isData=0):
         vec = []
         dictVar = {}
         i = 0
@@ -712,8 +712,15 @@ class postprocessing:
             vec.append(np.round(np.asarray(df[feat]),rounding))
             dictVar [feat] = i
             i+=1
-        vec.append(np.asarray(df['weight']))  
+
+        if not isData:
+            vec.append(np.multiply(np.asarray(df['weight']),SF))  
+        else:
+            w = (np.ones_like(IO.data_df[0].index)).astype(np.int8)
+            vec.append(np.multiply(w,df['isSignal']))
         dictVar['weight'] = i
+            
+
 
         totalVec = []
         for i in range(len(vec)):
@@ -734,3 +741,41 @@ class postprocessing:
             return vec[np.where(vec[:,varNum]<cut)]
         elif option == 'different':
             return vec[np.where(vec[:,varNum]!=cut)]
+
+
+    @staticmethod
+    def cutInvariantMass(vec,varNum,xLow,xUp):
+        nCleaned_massWindowDown = postprocessing.applyCut(vec,varNum,xLow)
+        nCleaned_massWindow = postprocessing.applyCut(nCleaned_massWindowDown,varNum,xUp,'smaller')
+        return nCleaned_massWindow
+
+    @staticmethod
+    def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1):
+        from root_numpy import array2root
+        i=0
+        for key in dictVar.keys():
+             if i == 0:
+                 writeMode='recreate'
+                 i=1
+             else:
+                 writeMode='update'
+
+             v=(np.asarray(vector[:,dictVar[key]]))
+             name = key
+             if key == 'diphotonCandidate.M()':
+                 name = 'Mgg'
+             elif key == 'dijetCandidate.M()':
+                 name = 'Mjj'
+
+             if SF != 1:
+                 if key == 'weight':
+                     v = (np.multiply(np.asarray(v),SF))
+
+             v.dtype = [(name, np.float64)]
+             array2root(v, processPath, "reducedTree", mode = writeMode)
+    
+        if MVAVector != None:
+            v=(np.asarray(MVAVector.ravel()))
+            v.dtype = [('MVAOutput', np.float32)]
+            array2root(v, processPath, "reducedTree", mode ='update')
+

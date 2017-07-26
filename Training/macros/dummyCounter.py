@@ -8,7 +8,8 @@ processes = [
 "VBFHToGG_M-125_13TeV_powheg_pythia8_preselection.root",
 "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_preselection.root",
 "bbHToGG_M-125_4FS_yb2_13TeV_amcatnlo_preselection.root",
-"ttHToGG_M125_13TeV_powheg_pythia8_v2_preselection.root"
+"ttHToGG_M125_13TeV_powheg_pythia8_v2_preselection.root",
+"DoubleEG_preselection.root"
 ]
 
 for proc in processes:
