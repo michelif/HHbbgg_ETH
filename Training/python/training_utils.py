@@ -164,6 +164,24 @@ class preprocessing:
             else:
                 df['weight']=w
 
+
+        @staticmethod
+        def define_process_weight_CR(df,proc,name):
+            df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
+#            df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
+            input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['isPhotonCR'])
+            w = input_df[['isPhotonCR']]
+            df['weight']=w
+
+        #apply a cut on mass of 4 bodies system, be careful if you shuffle events!
+        @staticmethod
+        def cut_on_mass_single_dataset(df,proc,name,x_b, y_b, w_b,cutValue=350):
+#            df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
+            input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['MX'])
+            MX = input_df[['MX']]
+            df['MX']=MX
+            return np.asarray(x_b)[np.where(np.asarray(MX)>cutValue),:][0],np.asarray(y_b)[np.where(np.asarray(MX)>cutValue)],np.asarray(w_b)[np.where(np.asarray(MX)>cutValue)]
+
         @staticmethod 
         def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s):#some trees include also the control region,select only good events
             return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], np.asarray(y_s)[np.where(w_s!=0)],np.asarray(w_s)[np.where(w_s!=0)]
@@ -171,6 +189,7 @@ class preprocessing:
         @staticmethod 
         def clean_signal_events_single_dataset(x_b, y_b, w_b):#some trees include also the control region,select only good events
             return x_b[np.where(w_b!=0),:][0],np.asarray(y_b)[np.where(w_b!=0)],np.asarray(w_b)[np.where(w_b!=0)]
+
             
         @staticmethod                       
         def normalize_process_weights(w_b,y_b,w_s,y_s):
@@ -180,7 +199,7 @@ class preprocessing:
             for i in range(IO.nBkg):
                 if IO.bkgProc[i] != proc:
                     w_proc = np.asarray(w_b[np.asarray(y_b) == IO.bkgProc[i]])
-                    sum_weights = np.sum(w_proc)
+                    sum_weights = float(np.sum(w_proc))
                     proc = IO.bkgProc[i]
                 if i==0:
                     w_bkg = np.divide(w_proc,sum_weights)
@@ -750,7 +769,7 @@ class postprocessing:
         return nCleaned_massWindow
 
     @staticmethod
-    def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1):
+    def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTree"):
         from root_numpy import array2root
         i=0
         for key in dictVar.keys():
@@ -772,10 +791,13 @@ class postprocessing:
                      v = (np.multiply(np.asarray(v),SF))
 
              v.dtype = [(name, np.float64)]
-             array2root(v, processPath, "reducedTree", mode = writeMode)
+
+
+             array2root(v, processPath, nameTree, mode = writeMode)
     
         if MVAVector != None:
+
             v=(np.asarray(MVAVector.ravel()))
-            v.dtype = [('MVAOutput', np.float32)]
-            array2root(v, processPath, "reducedTree", mode ='update')
+            v.dtype = [('MVAOutput', np.float64)]
+            array2root(v, processPath, nameTree, mode ='update')
 
