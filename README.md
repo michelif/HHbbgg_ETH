@@ -1,7 +1,5 @@
----- test branch micheli_devel_20170913
-
 # HHbbgg_ETH
--------Instructions to run the code: <br/>
+## Training, optimization of MVAs and ntuple production
 In order to run the notebooks on the browser you need an ssh tunnel on a machine where jupyter is running.
 Opening it in a screen session allows you to detach it and not redoing it every time
 (you will only need to ssh). <br/>
@@ -18,7 +16,7 @@ In your browser open: http://localhost:8002 <br />
 The code is organized in notebooks, the programs you execute directly in the browser. They
 are in the "notebooks" folder. <br />
 
-- Training/notebooks
+- Training/notebooks <br />
 This folder contains all the notebooks needed <br />
 -- trainMVAHHbbgg.ipynb  <br />
 Trains a Gradient Boost Classifier to separate signal/backgrounds. All re-weighting implemented, output saved. <br />
@@ -35,5 +33,6 @@ data format, train/test splitting, plotting...
 These classes have to be loaded at the beginning of your notebook.
 
 
-
+## Workspaces and datacards production
+The instructions for this part of the analysis are in the README in folder Limits/macros
 
