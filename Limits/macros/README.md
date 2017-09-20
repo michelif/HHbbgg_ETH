@@ -1,0 +1,3 @@
+python makeWorkspaceHHbbgg.py -d jsons/HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj.json -n 3 --nbins 320 -s jsons/HHbbgg_20170727_settings_optimizedCuts_withDR_dijetMass.json -m 0 -o HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root 
+
+python plotDatasets.py -i HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root -o plots/20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2/9cat HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root -s jsons/HHbbgg_20170727_settings_optimizedCuts_withDR_dijetMass.json -n 3 --nbins 3

@@ -1,0 +1,29 @@
+{
+    "file" : "/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/files/20170828_optimizedCuts/Total_preselection_diffNaming.root",
+    "observable": [
+        "Mgg", 
+        100.000, 
+        180.000
+    ], 
+    "subcategories": [
+	 [
+            "subcat0",
+            "MX >250. && MX<=340."
+        ],
+	 [
+            "subcat1",
+            "MX >340. && MX<=480."
+        ],
+	 [
+            "subcat2",
+            "MX >480."
+        ]
+
+], 
+	"addBSMNodes":1,
+	"variables": [
+	"MVAOutput"
+	],
+     	"selections": []
+}
+
