@@ -15,3 +15,10 @@ It plots the Mgg distribution for different categories using the root file creat
 Example: <br />
 
 python plotDatasets.py -i HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root -o plots/20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2/9cat HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root -s jsons/HHbbgg_20170727_settings_optimizedCuts_withDR_dijetMass.json -n 3 --nbins 3
+
+##Utilities
+- copyTree.py <br />
+It copies the trees from the old format of the analysis, renaming them (useful to check improvements). <br />
+
+- eventCounterFromTree.py <br />
+Counts number of signal and background events for a given selection directly from trees.
