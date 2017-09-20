@@ -13,4 +13,5 @@ python makeWorkspaceHHbbgg.py -d jsons/HHbbgg_20170727_optimizedCuts_dijetMass_r
 
 It plots the Mgg distribution for different categories using the root file created in the previous step. <br />
 Example: <br />
+
 python plotDatasets.py -i HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root -o plots/20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2/9cat HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root -s jsons/HHbbgg_20170727_settings_optimizedCuts_withDR_dijetMass.json -n 3 --nbins 3
