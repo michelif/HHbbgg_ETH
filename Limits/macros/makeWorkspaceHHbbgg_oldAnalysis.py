@@ -1,7 +1,6 @@
 #!/bin/env python
 
 import sys, types, os
-import numpy
 from math import sqrt, log
 import json
 json.encoder.FLOAT_REPR = lambda o: format(o, '.3f')
