@@ -1,6 +1,6 @@
 # Workspaces and datacards production
 
-Here all that it's needed to create workspace and datacards for combine:<br />
+All that it's needed to create workspace and datacards for combine:<br />
 - makeWorkspaceHHbbgg.py<br /> 
 It creates the workspace and the datacard. It needs a json file with
 the definition of categories (or sub_categories) and creates both the .root and .txt file.
