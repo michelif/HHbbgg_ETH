@@ -2,8 +2,9 @@
 
 All that it's needed to create workspace and datacards for combine:<br />
 - makeWorkspaceHHbbgg.py<br /> 
+
 It creates the workspace and the datacard. It needs a json file with
-the definition of categories (or sub_categories) and creates both the .root and .txt file.
+the definition of categories (or sub_categories) and creates both the .root and .txt file. <br />
 Example:<br />
 
 python makeWorkspaceHHbbgg.py -d jsons/HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj.json -n 3 --nbins 320 -s jsons/HHbbgg_20170727_settings_optimizedCuts_withDR_dijetMass.json -m 0 -o HHbbgg_20170727_optimizedCuts_dijetMass_reOptMVACut_Mjj_2.root <br />
