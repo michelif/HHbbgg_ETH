@@ -1,4 +1,10 @@
 # HHbbgg_ETH
+## Getting the code
+Fork to your directory the code here: https://github.com/michelif/HHbbgg_ETH <br />
+Clone it locally:<br />
+git clone git@github.com:[YOURNAME]/HHbbgg_ETH.git HHbbgg_ETH_devel <br />
+You should create your own branch, then do pull requests when you are done < br />
+
 ## Training, optimization of MVAs and ntuple production
 In order to run the notebooks on the browser you need an ssh tunnel on a machine where jupyter is running.
 Opening it in a screen session allows you to detach it and not redoing it every time
@@ -8,7 +14,7 @@ One-time initialization of Jupyter: <br />
 - Start jupyter on t3: <br />
 ssh -L 8002:localhost:8002 t3ui02.psi.ch;  //this first line has to be done every time<br />
 screen; <br />
-cd HHbbgg_ETH; <br />
+cd HHbbgg_ETH_devel; <br />
 jupyter notebook --port 8002 --no-browser; <br />
 ctrl-a-d //detaches screen session <br/>
 In your browser open: http://localhost:8002 <br />
