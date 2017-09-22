@@ -3,7 +3,7 @@
 Fork to your directory the code here: https://github.com/michelif/HHbbgg_ETH <br />
 Clone it locally:<br />
 git clone git@github.com:[YOURNAME]/HHbbgg_ETH.git HHbbgg_ETH_devel <br />
-You should create your own branch, then do pull requests when you are done < br />
+You should create your own branch, then do pull requests when you are done. <br />
 
 ## Training, optimization of MVAs and ntuple production
 In order to run the notebooks on the browser you need an ssh tunnel on a machine where jupyter is running.
