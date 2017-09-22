@@ -1,0 +1,14 @@
+{
+    "file" : "/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/files/oldAnalysis/WS/LT_TotalWS.root",
+    "observable": [
+        "mgg", 
+        100.000, 
+        180.000
+    ], 
+    "subcategories": [], 
+"variables": [
+	"cut_based_ct"
+	],
+     	"selections": []
+}
+

@@ -1,0 +1,14 @@
+{
+    "file" : "/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/files/SigBkgWS_highMass.root",
+    "observable": [
+        "Mgg", 
+        100.000, 
+        180.000
+    ], 
+    "subcategories": [], 
+"variables": [
+	"MVAOutput"
+	],
+     	"selections": []
+}
+
