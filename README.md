@@ -42,3 +42,5 @@ These classes have to be loaded at the beginning of your notebook.
 ## Workspaces and datacards production
 The instructions for this part of the analysis are in the README in folder Limits/macros
 
+## Combine
+The instructions for this part of the analysis are in the README in folder Limits/combine_macros
