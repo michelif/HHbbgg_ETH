@@ -20,27 +20,36 @@ colors=[kRed, kBlue, kGreen, kOrange, kCyan, kMagenta, kYellow, kGray, kPink-7, 
 #quant_x = [0., 0.20, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.]
 quant_x = [0., 0.20, 0.40, 0.60,  0.80, 1.]
 
-#mva input variables
-variables['customLeadingPhotonIDMVA']     = dict(name='leadPhoMva',nbins=120,xmin=-1.,xmax=1., xaxis=" photon ID MVA, leading #gamma", yaxis='Events', line='', logy=0, logx=0, leg="m")
-variables['customSubLeadingPhotonIDMVA']  = dict(name='subleadPhoMva',nbins=120,xmin=-1.,xmax=1., xaxis=" photon ID MVA, subleading #gamma", yaxis='Events', line='', logy=0, logx=0, leg="m")
-variables['fabsCosThetaStarCS']    = dict(name='cosThetaStar',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta^{*})", yaxis='Events', line='', logy=0, logx=0, leg="m")
-variables['fabsCosThetabb']    = dict(name='cosThetabb',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{bb})", yaxis='Events', line='', logy=0, logx=0, leg="m")
-variables['fabsCosThetagg']    = dict(name='cosThetagg',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{gg})", yaxis='Events', line='', logy=0, logx=0, leg="m")
-variables['leadingJetbDis']    = dict(name='leadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , leading Jet", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['subleadingJetbDis']    = dict(name='subLeadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , leading Jet", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['diphotonCandidatePtOverdiHiggsCandidateM']    = dict(name='diphoPtOverM',nbins=50,xmin=0.,xmax=2.5, xaxis="p{T}^{#gamma#gamma}/m_{HH}", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['dijetCandidatePtOverdiHiggsCandidateM']    = dict(name='dijetPtOverM',nbins=50,xmin=0.,xmax=2.5, xaxis="p_{T}^{jj}/m_{HH}", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['leadingPhotonSigOverE']    = dict(name='leadSigOverE',nbins=50,xmin=0.,xmax=2.5, xaxis="#sigma_{E}/E, leading Photon", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['subleadingPhotonSigOverE']    = dict(name='subleadSigOverE',nbins=50,xmin=0.,xmax=2.5, xaxis="#sigma_{E}/E, subleading Photon", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['sigmaMOverMDecorr'] = dict(name='sigmaMOverM',nbins=50,xmin=0.,xmax=2.5, xaxis="#sigma_{E}/E, subleading Photon", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['DiJetDiPhoDR'] = dict(name='diJetDiPhoDR',nbins=50,xmin=0.,xmax=2.5, xaxis="#DeltaR(#gamma#gamma,bb)", yaxis='Events', line='', logy=0, logx=0, leg="r")
+categories={}
+categories['sig']=str('reducedTree_sig')
+categories['dipho']=str('reducedTree_bkg_0')
+#    categories['gJet']=str('reducedTree_bkg_2')
 
-variables['MVAOutput']         = dict(name='MVA',nbins=600,xmin=0.,xmax=1., xaxis="BDT output", yaxis='Events', line='', logy=1, logx=0, leg="m")
+
+#mva input variables
+variables['customLeadingPhotonIDMVA']     = dict(name='leadPhoMva',nbins=120,xmin=-1.,xmax=1., xaxis=" photon ID MVA, leading #gamma", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
+variables['customSubLeadingPhotonIDMVA']  = dict(name='subleadPhoMva',nbins=120,xmin=-1.,xmax=1., xaxis=" photon ID MVA, subleading #gamma", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
+variables['fabsCosThetaStarCS']    = dict(name='cosThetaStar',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{*})", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
+variables['fabsCosThetabb']    = dict(name='cosThetabb',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{bb})", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
+variables['fabsCosThetagg']    = dict(name='cosThetagg',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{gg})", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
+variables['leadingJetbDis']    = dict(name='leadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , leading Jet", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['subleadingJetbDis']    = dict(name='subLeadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , leading Jet", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['diphotonPtOverdiHiggsM']    = dict(name='diphoPtOverM',nbins=50,xmin=0.,xmax=2.5, xaxis="p_{T}^{#gamma#gamma}/m_{HH}", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['dijetPtOverdiHiggsM']    = dict(name='dijetPtOverM',nbins=50,xmin=0.,xmax=2.5, xaxis="p_{T}^{jj}/m_{HH}", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['subleadingPhotonSigOverE']    = dict(name='subleadSigOverE',nbins=50,xmin=0.,xmax=0.6, xaxis="#sigma_{E}/E, subLeading Photon", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
+variables['leadingPhotonSigOverE']    = dict(name='leadSigOverE',nbins=50,xmin=0.,xmax=0.6, xaxis="#sigma_{E}/E, leading Photon", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
+
+
+
+variables['sigmaMOverMDecorr'] = dict(name='sigmaMOverM',nbins=50,xmin=0.,xmax=1, xaxis="#sigma_{M}/M", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['DiJetDiPhoDR'] = dict(name='diJetDiPhoDR',nbins=50,xmin=0.,xmax=6, xaxis="#DeltaR(#gamma#gamma,bb)", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+
+variables['MVAOutput']         = dict(name='MVA',nbins=600,xmin=0.,xmax=1., xaxis="BDT output", yaxis='a.u.', line='', logy=1, logx=0, leg="m")
 #mass variables
 
-variables['Mgg']        = dict(name='mgg',nbins=80,xmin=100.,xmax=180., xaxis="m_{#gamma#gamma}", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['Mjj']        = dict(name='mjj',nbins=80,xmin=100.,xmax=180., xaxis="m_{bb}", yaxis='Events', line='', logy=0, logx=0, leg="r")
-variables['MX']        = dict(name='mx',nbins=80,xmin=100.,xmax=180., xaxis="M_{X}", yaxis='Events', line='', logy=0, logx=0, leg="r")
+variables['Mgg']        = dict(name='mgg',nbins=80,xmin=100.,xmax=180., xaxis="m_{#gamma#gamma}", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['Mjj']        = dict(name='mjj',nbins=80,xmin=70.,xmax=180., xaxis="m_{bb}", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['MX']        = dict(name='mx',nbins=80,xmin=200.,xmax=900., xaxis="M_{X}", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
 
 # Main routine
 def main(o,args):
@@ -56,24 +65,31 @@ def main(o,args):
 
     if not os.path.exists(outFullPath):
         os.makedirs(outFullPath)
-        
-    outfile = TFile(outFullPath+'/'+options.outfile, 'RECREATE')
-    histos={}
-    histos,categs= getPlots(infile)
-    #draw and save plots
-    outfile.cd()
-    for histo in histos:
-        histo.Write()
-        c = TCanvas('c','',1)
-        histo.Draw('ehist')
-        print "dddddddddddddddddddddddddddddddddddddddddddd"
-        c.SetLogy(variables[str(histo.GetName()).split('_')[1]]['logy'])
-        c.SetLogx(variables[str(histo.GetName()).split('_')[1]]['logx'])
-        for fmt in savefmts:
-            c.SaveAs(str(options.outdir)+'/'+options.outfile.replace(".root","")+"/"+str(histo.GetName())+str(fmt))
 
-    outfile.Write()
-    outfile.Close()
+
+
+
+    histos={}
+    categs=categories.keys()
+
+    
+    if options.doQuantilesPlots:
+        outfile = TFile(outFullPath+'/'+options.outfile, 'RECREATE')
+    #draw and save plots
+        histos= getPlots(infile)        
+        outfile.cd()
+        for histo in histos:
+            histo.Write()
+            c = TCanvas('c','',1)
+            histo.Draw('ehist')
+            print "dddddddddddddddddddddddddddddddddddddddddddd"
+            c.SetLogy(variables[str(histo.GetName()).split('_')[1]]['logy'])
+            c.SetLogx(variables[str(histo.GetName()).split('_')[1]]['logx'])
+            for fmt in savefmts:
+                c.SaveAs(str(options.outdir)+'/'+options.outfile.replace(".root","")+"/"+str(histo.GetName())+str(fmt))
+
+        outfile.Write()
+        outfile.Close()
 
     plotFile = TFile(outFullPath+'/'+options.outfile, 'READ')
     stacks={}
@@ -82,7 +98,9 @@ def main(o,args):
     ll = TLegend(0.1,0.65,0.35,0.9)   
     lm = TLegend(0.325,0.65,0.575,0.9)   
     lr = TLegend(0.65,0.65,0.9,0.9)   
-
+    ll.SetBorderSize(0)
+    lm.SetBorderSize(0)
+    lr.SetBorderSize(0)
 
     for variable in variables.keys():
         for cat in categs:
@@ -94,7 +112,7 @@ def main(o,args):
                 histo = plotFile.Get(str(name))
                 if histo.Integral() != 0:
                     histo.Print()
-                    histo.Rebin(4)
+#                    histo.Rebin(4)
                     if not variable == 'MVAOutput':
                         histo.Scale(1./histo.Integral())
                     print ''
@@ -117,10 +135,13 @@ def main(o,args):
         stack.Write()
         c = TCanvas('c','',1)
         
-        stack.Draw('ehist nostackb')
+#        stack.Draw('ehist nostackb')
+        stack.Draw('ehist')
+        print variables[str(stack.GetName()).split('_')[0]]['xaxis']
         stack.GetXaxis().SetTitle(str(variables[str(stack.GetName()).split('_')[0]]['xaxis']))
         stack.GetYaxis().SetTitle(str(variables[str(stack.GetName()).split('_')[0]]['yaxis']))
-        stack.Draw('ehist nostackb')
+#        stack.Draw('ehist nostackb')
+        stack.Draw('ehist')
         #l.DrawBox( variables[str(stack.GetName()).split('_')[0]]['leg'][0], variables[str(stack.GetName()).split('_')[0]]['leg'][1], variables[str(stack.GetName()).split('_')[0]]['leg'][2], variables[str(stack.GetName()).split('_')[0]]['leg'][3])
         if str(variables[str(stack.GetName()).split('_')[0]]['leg']) == 'l':
             ll.Draw()
@@ -134,10 +155,10 @@ def main(o,args):
         tex_m.SetNDC()
         tex_m.SetTextAlign(12)
         tex_m.SetTextFont(42)
-        tex_m.SetTextSize(0.055)
+        tex_m.SetTextSize(0.045)
         tex_m.SetLineWidth(2)
-        tex_m.DrawLatex(0.11,0.93,"#scale[1.1]{CMS} Preliminary")
-        tex_m.DrawLatex(0.11,0.88,"#font[12]{Simulation}")
+        tex_m.DrawLatex(0.12,0.93,"#scale[1.1]{CMS} Preliminary")
+        tex_m.DrawLatex(0.12,0.88,"#font[12]{Simulation}")
         
         tex_m=TLatex()
         tex_m.SetNDC()
@@ -172,10 +193,6 @@ def defineBDTBins(infile):
 
 def getPlots(infile):
     plots=[]
-    categories={}
-    categories['sig']=options.treename
-    categories['dipho']=str('reducedTree_bkg_0')
-#    categories['gJet']=str('reducedTree_bkg_2')
     #        t.Print()
     for variable in variables.keys():
         for bin in BDTbins:
@@ -191,7 +208,7 @@ def getPlots(infile):
                 print hist.GetEntries()
             #TLatex
                 plots.append(hist)
-    return plots,categories.keys()
+    return plots
 
 
 
@@ -221,6 +238,11 @@ if __name__ == "__main__":
                         action="store", type="string", dest="quantileVar",
                         default="MVAOutput",
                         help="Variable to define quantile",
+                        ),
+            make_option("-k", "--skipQuantilePlots",
+                        action="store_false", dest="doQuantilesPlots",
+                        default=True,
+                        help="do quantile plots"
                         ),
             ]
                           )
