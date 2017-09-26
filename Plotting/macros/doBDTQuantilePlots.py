@@ -32,16 +32,16 @@ variables['customSubLeadingPhotonIDMVA']  = dict(name='subleadPhoMva',nbins=120,
 variables['fabsCosThetaStarCS']    = dict(name='cosThetaStar',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{*})", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
 variables['fabsCosThetabb']    = dict(name='cosThetabb',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{bb})", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
 variables['fabsCosThetagg']    = dict(name='cosThetagg',nbins=100,xmin=0.,xmax=1, xaxis="cos(#Theta_{gg})", yaxis='a.u.', line='', logy=0, logx=0, leg="m")
-variables['leadingJetbDis']    = dict(name='leadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , leading Jet", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
-variables['subleadingJetbDis']    = dict(name='subLeadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , leading Jet", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['leadingJetbDis']    = dict(name='leadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , leading Jet", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
+variables['subleadingJetbDis']    = dict(name='subLeadJetbTag',nbins=100,xmin=0.,xmax=1, xaxis="btag , subleading Jet", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
 variables['diphotonPtOverdiHiggsM']    = dict(name='diphoPtOverM',nbins=50,xmin=0.,xmax=2.5, xaxis="p_{T}^{#gamma#gamma}/m_{HH}", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
 variables['dijetPtOverdiHiggsM']    = dict(name='dijetPtOverM',nbins=50,xmin=0.,xmax=2.5, xaxis="p_{T}^{jj}/m_{HH}", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
-variables['subleadingPhotonSigOverE']    = dict(name='subleadSigOverE',nbins=50,xmin=0.,xmax=0.6, xaxis="#sigma_{E}/E, subLeading Photon", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
-variables['leadingPhotonSigOverE']    = dict(name='leadSigOverE',nbins=50,xmin=0.,xmax=0.6, xaxis="#sigma_{E}/E, leading Photon", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
+variables['subleadingPhotonSigOverE']    = dict(name='subleadSigOverE',nbins=50,xmin=0.,xmax=0.1, xaxis="#sigma_{E}/E, subleading Photon", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
+variables['leadingPhotonSigOverE']    = dict(name='leadSigOverE',nbins=50,xmin=0.,xmax=0.1, xaxis="#sigma_{E}/E, leading Photon", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
 
 
 
-variables['sigmaMOverMDecorr'] = dict(name='sigmaMOverM',nbins=50,xmin=0.,xmax=1, xaxis="#sigma_{M}/M", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
+variables['sigmaMOverMDecorr'] = dict(name='sigmaMOverM',nbins=50,xmin=0.,xmax=0.1, xaxis="#sigma_{M}/M", yaxis='a.u.', line='', logy=1, logx=0, leg="r")
 variables['DiJetDiPhoDR'] = dict(name='diJetDiPhoDR',nbins=50,xmin=0.,xmax=6, xaxis="#DeltaR(#gamma#gamma,bb)", yaxis='a.u.', line='', logy=0, logx=0, leg="r")
 
 variables['MVAOutput']         = dict(name='MVA',nbins=600,xmin=0.,xmax=1., xaxis="BDT output", yaxis='a.u.', line='', logy=1, logx=0, leg="m")
@@ -85,7 +85,7 @@ def main(o,args):
             print "dddddddddddddddddddddddddddddddddddddddddddd"
             c.SetLogy(variables[str(histo.GetName()).split('_')[1]]['logy'])
             c.SetLogx(variables[str(histo.GetName()).split('_')[1]]['logx'])
-            for fmt in savefmts:
+            for fmt in ['.png','.root']:
                 c.SaveAs(str(options.outdir)+'/'+options.outfile.replace(".root","")+"/"+str(histo.GetName())+str(fmt))
 
         outfile.Write()
@@ -113,16 +113,15 @@ def main(o,args):
                 if histo.Integral() != 0:
                     histo.Print()
 #                    histo.Rebin(4)
-                    if not variable == 'MVAOutput':
+                    if not variable == options.quantileVar:
                         histo.Scale(1./histo.Integral())
                     print ''
                     histo.SetLineColor(colors[i])
                     histo.SetFillColor(colors[i])
+                    if variable == 'Mgg' or variable == 'Mjj':
+                        histo.SetFillStyle(3004)
                     stacks[str(variable)+'_'+str(cat)].Add(histo)
                     if cat == categs[0] and variable == variables.keys()[0]:
-#                        ll.AddEntry(histo, str('%.3f' % bin[0])+'< MVA <'+str( '%.3f' % bin[1]),'f')
-#                        lm.AddEntry(histo, str('%.3f' % bin[0])+'< MVA <'+str('%.3f' % bin[1]),'f')
-#                        lr.AddEntry(histo, str('%.3f' % bin[0])+'< MVA <'+str('%.3f' % bin[1]),'f')
                         ll.AddEntry(histo, str(quant_x[i+1])+'< #epsilon_{sig} <'+str(quant_x[i]),'f')
                         lm.AddEntry(histo, str(quant_x[i+1])+'< #epsilon_{sig} <'+str(quant_x[i]),'f')
                         lr.AddEntry(histo, str(quant_x[i+1])+'< #epsilon_{sig} <'+str(quant_x[i]),'f')
@@ -136,12 +135,16 @@ def main(o,args):
         c = TCanvas('c','',1)
         
 #        stack.Draw('ehist nostackb')
-        stack.Draw('ehist')
-        print variables[str(stack.GetName()).split('_')[0]]['xaxis']
+        print str(stack.GetName()).split('_')[0]
+        if str(stack.GetName()).split('_')[0] != 'Mgg' and str(stack.GetName()).split('_')[0] != 'Mjj':
+            stack.Draw('ehist')
+        else:
+            stack.Draw('hist nostack')
+
         stack.GetXaxis().SetTitle(str(variables[str(stack.GetName()).split('_')[0]]['xaxis']))
         stack.GetYaxis().SetTitle(str(variables[str(stack.GetName()).split('_')[0]]['yaxis']))
 #        stack.Draw('ehist nostackb')
-        stack.Draw('ehist')
+#        stack.Draw('ehist')
         #l.DrawBox( variables[str(stack.GetName()).split('_')[0]]['leg'][0], variables[str(stack.GetName()).split('_')[0]]['leg'][1], variables[str(stack.GetName()).split('_')[0]]['leg'][2], variables[str(stack.GetName()).split('_')[0]]['leg'][3])
         if str(variables[str(stack.GetName()).split('_')[0]]['leg']) == 'l':
             ll.Draw()
@@ -155,10 +158,10 @@ def main(o,args):
         tex_m.SetNDC()
         tex_m.SetTextAlign(12)
         tex_m.SetTextFont(42)
-        tex_m.SetTextSize(0.045)
+        tex_m.SetTextSize(0.035)
         tex_m.SetLineWidth(2)
-        tex_m.DrawLatex(0.12,0.93,"#scale[1.1]{CMS} Preliminary")
-        tex_m.DrawLatex(0.12,0.88,"#font[12]{Simulation}")
+        tex_m.DrawLatex(0.125,0.969,"#scale[1.1]{CMS} Preliminary")
+        tex_m.DrawLatex(0.400,0.969,"#font[12]{Simulation}")
         
         tex_m=TLatex()
         tex_m.SetNDC()
@@ -166,7 +169,7 @@ def main(o,args):
         tex_m.SetTextFont(42)
         tex_m.SetTextSize(0.04)
         #        tex_m.SetLineWidth(2)
-        tex_m.DrawLatex(0.83,0.93,"13TeV")
+        tex_m.DrawLatex(0.83,0.969,"13TeV")
         for fmt in savefmts:
 #            c.SaveAs('stack_'+str(stack.GetName())+str(fmt))
 #            c.SaveAs('stack_'+str(stack.GetName())+'_rm1stWorstQuant'+str(fmt))
@@ -180,7 +183,7 @@ def main(o,args):
 
 def defineBDTBins(infile):
     t=infile.Get(str(options.treename))
-    hist = TH1D('h_bdt','h_bdt', 600, 0., 1.)
+    hist = TH1D('h_bdt','h_bdt', 600, options.min_quantileVar, options.max_quantileVar)
     hist.Sumw2()
     t.Project(hist.GetName(), options.quantileVar,str(weight))
     quant_x_array = array.array('d', quant_x)
@@ -239,6 +242,17 @@ if __name__ == "__main__":
                         default="MVAOutput",
                         help="Variable to define quantile",
                         ),
+            make_option("-m", "--MinQuantileVar",
+                        action="store", type="float", dest="min_quantileVar",
+                        default=0,
+                        help="Min value of quantile variable",
+                        ),
+            make_option("-M", "--MaxQuantileVar",
+                        action="store", type="float", dest="max_quantileVar",
+                        default=1,
+                        help="Max value of quantile variable",
+                        ),
+
             make_option("-k", "--skipQuantilePlots",
                         action="store_false", dest="doQuantilesPlots",
                         default=True,
