@@ -147,10 +147,13 @@ def main(options,args):
         for ivar,var in enumerate(varnames):
             cut  = ROOT.TCut( cut.GetTitle() + " && ( %s > %g )" % (var,bounds[icat+1][ivar]) )
             prev = prev.GetTitle() + " || ( %s <= %g )" % (var,bounds[icat+1][ivar])
+            print "-----------cut------------------"
+            print cut
 
         cuts.append( ("cut%d"%icat,cut) )
         cats.append( ("cat%d"%icat,cat) )
             
+
         catvar += "+%d * (cat%d) " % ( icat, icat )
 
     catvar = ROOT.TCut(catvar)
@@ -226,6 +229,7 @@ def main(options,args):
             tree.Draw("cat:%s>>model_%s" % (obsname,mname), sel, "goff")
             print "sellll------"
             print sel
+            print model.GetEntries()
             models[mname] = (model,renorm)
             objs.append( (model,renorm) )
             ## model.Draw()
@@ -247,6 +251,7 @@ def main(options,args):
     for name,models in models.iteritems():
         model, renorm = models
         for icat in range(ncat):
+            print name
             slice = model.ProjectionX("%s_cat%d" % (name, icat), icat+1, icat+1 )
             missing = renorm.ProjectionX("%s_cat%d_missing" % (name, icat), icat+1, icat+1 )
             print slice.Integral(), missing.Integral()

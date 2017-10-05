@@ -1,7 +1,8 @@
 from ROOT import *
 from array import array
-
+import os 
 import argparse
+
 parser =  argparse.ArgumentParser(description='Add Classification BDT weights')
 parser.add_argument('-f', '--file', dest='file', required=True, type=str)
 parser.add_argument('-v', '--var', dest='var', required=True, type=str)
@@ -13,6 +14,8 @@ parser.add_argument('--BSR', dest='bsr', action='store_true', default=False)
 
 
 opt = parser.parse_args()
+
+os.system("hadd "+opt.file+" "+opt.file.replace("Total_preselection_diffNaming.root","*diffNaming.root"))
 
 f = TFile(opt.file)
 
