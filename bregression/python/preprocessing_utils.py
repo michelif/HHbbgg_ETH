@@ -131,12 +131,25 @@ def set_backgrounds(treeName,branch_names,shuffle):
 
 #         adjust_and_compress(utils.IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')
 
+def set_data_simple(treeName,branch_names):
+    for i in range(utils.IO.nData):
+        utils.IO.data_df.append(rpd.read_root(utils.IO.dataName[i],treeName, columns = branch_names))       
+        utils.IO.data_df[0]['proc'] =  ( np.ones_like(utils.IO.data_df[0].index)*utils.IO.dataProc[0] ).astype(np.int8)
+    y_data = utils.IO.data_df[0][['proc']]
 
+    for j in range(len(branch_names)):
+        if j == 0:
+            X_data = utils.IO.data_df[0][[branch_names[j].replace('noexpand:','')]]
+        else:
+            X_data = np.concatenate([X_data,utils.IO.data_df[0][[branch_names[j].replace('noexpand:','')]]],axis=1)
+    
+    return np.round(X_data,5),y_data
+    
 
 def set_data(treeName,branch_names):
     utils.IO.data_df.append(rpd.read_root(utils.IO.dataName[0],"tree", columns = branch_names))
     utils.IO.data_df[0]['proc'] =  ( np.ones_like(utils.IO.data_df[0].index)*utils.IO.dataProc[0] ).astype(np.int8)
-    input_df=rpd.read_root(utils.IO.dataName[0],"tree", columns = ['isSignal'])
+    input_df=rpd.read_root(utils.IO.dataName[0],"tree", columns = z)
     w = (np.ones_like(utils.IO.data_df[0].index)).astype(np.int8)
     utils.IO.data_df[0]['weight'] = np.multiply(w,input_df['isSignal'])
 
@@ -168,6 +181,14 @@ def randomize(X,y,w):
 
     return X,y,w
 
+
+def randomize_simple(X,y):
+    randomize=np.arange(len(X))
+    np.random.shuffle(randomize)
+    X = X[randomize]
+    y = np.asarray(y)[randomize]
+    
+    return X,y
 
 
 def set_variables_data(branch_names):
