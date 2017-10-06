@@ -93,6 +93,12 @@ def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_
 
     
     
+    
+    
+    
+    
+    
+    
 def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outString=None):
 
     ncolumns = X_data.size/len(X_data)

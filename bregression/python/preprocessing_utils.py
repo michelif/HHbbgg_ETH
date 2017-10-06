@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import root_pandas as rpd
+from sklearn.utils import shuffle
 
 
 def define_process_weight(df,proc,name,cleanSignal=True):
@@ -92,6 +93,7 @@ def get_test_sample(x,splitting=0.5):
     halfSample = int((x.size/len(x.columns))*splitting)
     return np.split(x,[halfSample])[1]
 
+
     
 def get_total_training_sample(x_sig,x_bkg,splitting=0.5):
     x_s=pd.DataFrame(x_sig)
@@ -133,9 +135,7 @@ def set_backgrounds(treeName,branch_names,shuffle):
 
 def set_data_simple(treeName,branch_names):
     for i in range(utils.IO.nData):
-        utils.IO.data_df.append(rpd.read_root(utils.IO.dataName[i],treeName, columns = branch_names))       
-        utils.IO.data_df[0]['proc'] =  ( np.ones_like(utils.IO.data_df[0].index)*utils.IO.dataProc[0] ).astype(np.int8)
-    y_data = utils.IO.data_df[0][['proc']]
+        utils.IO.data_df.append(rpd.read_root(utils.IO.dataName[i],treeName, columns = branch_names))      
 
     for j in range(len(branch_names)):
         if j == 0:
@@ -143,7 +143,33 @@ def set_data_simple(treeName,branch_names):
         else:
             X_data = np.concatenate([X_data,utils.IO.data_df[0][[branch_names[j].replace('noexpand:','')]]],axis=1)
     
-    return np.round(X_data,5),y_data
+    return np.round(X_data,5)
+
+
+def set_features(treeName,branch_names,features,cuts):
+    for i in range(utils.IO.nFeatures):
+        utils.IO.features_df.append((rpd.read_root(utils.IO.featuresName[i],treeName, columns = branch_names)).query(cuts))      
+
+    for j in range(len(features)):
+        if j == 0:
+            X_features = utils.IO.features_df[0][[features[j].replace('noexpand:','')]]
+        else:
+            X_features = np.concatenate([X_features,utils.IO.features_df[0][[features[j].replace('noexpand:','')]]],axis=1)
+    
+    return np.round(X_features,5)
+
+
+def set_target(treeName,branch_names,target,cuts):
+    for i in range(utils.IO.nTarget):
+        utils.IO.target_df.append((rpd.read_root(utils.IO.targetName[i],treeName, columns = branch_names)).query(cuts))      
+
+    for j in range(len(target)):
+        if j == 0:
+            X_target = utils.IO.target_df[0][[target[j].replace('noexpand:','')]]
+        else:
+            X_target = np.concatenate([X_target,utils.IO.target_df[0][[target[j].replace('noexpand:','')]]],axis=1)
+    
+    return np.round(X_target,5)
     
 
 def set_data(treeName,branch_names):
@@ -189,6 +215,13 @@ def randomize_simple(X,y):
     y = np.asarray(y)[randomize]
     
     return X,y
+
+
+def randomize_ft(X,Y):
+    X, Y = shuffle(X, Y, random_state=0)
+    return X,Y
+
+
 
 
 def set_variables_data(branch_names):
