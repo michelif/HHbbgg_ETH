@@ -23,7 +23,8 @@ quant_x = [0., 0.20, 0.40, 0.60,  0.80, 1.]
 categories={}
 categories['sig']=str('reducedTree_sig')
 categories['dipho']=str('reducedTree_bkg_0')
-#    categories['gJet']=str('reducedTree_bkg_2')
+categories['ggH']=str('reducedTree_bkg_3')
+categories['ttH']=str('reducedTree_bkg_7')
 
 
 #mva input variables
