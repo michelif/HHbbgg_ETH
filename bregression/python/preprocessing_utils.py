@@ -148,7 +148,8 @@ def set_data_simple(treeName,branch_names):
 
 def set_features(treeName,branch_names,features,cuts):
     for i in range(utils.IO.nFeatures):
-        utils.IO.features_df.append((rpd.read_root(utils.IO.featuresName[i],treeName, columns = branch_names)).query(cuts))      
+        tmp_data_frame = (rpd.read_root(utils.IO.featuresName[i],treeName, columns = branch_names)).query(cuts)
+        utils.IO.features_df.append(tmp_data_frame)  
 
     for j in range(len(features)):
         if j == 0:
@@ -161,7 +162,8 @@ def set_features(treeName,branch_names,features,cuts):
 
 def set_target(treeName,branch_names,target,cuts):
     for i in range(utils.IO.nTarget):
-        utils.IO.target_df.append((rpd.read_root(utils.IO.targetName[i],treeName, columns = branch_names)).query(cuts))      
+        tmp_data_frame = (rpd.read_root(utils.IO.targetName[i],treeName, columns = branch_names)).query(cuts)
+        utils.IO.target_df.append(tmp_data_frame)      
 
     for j in range(len(target)):
         if j == 0:

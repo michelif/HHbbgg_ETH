@@ -134,8 +134,8 @@ def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outStrin
         plt.ylabel("Normalized Yields")
 
 
-        plt.savefig(utils.IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".png")
-        plt.savefig(utils.IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".pdf")
+        plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".png")
+        plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".pdf")
 
 
         plt.show()
