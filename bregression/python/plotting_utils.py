@@ -4,8 +4,14 @@ import numpy as np
 from sklearn.metrics import roc_curve, auc
 from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
-
-
+import ROOT
+from ROOT import gROOT
+from ROOT import gStyle
+from ROOT import TH1F
+from ROOT import RooRealVar, RooDataHist, RooFormulaVar, RooVoigtian, RooChebychev, RooArgList, \
+                 RooArgSet, RooAddPdf, RooDataSet, RooCategory, RooSimultaneous, \
+                 RooBreitWigner, RooCBShape, RooFFTConvPdf
+        
 # ---------------------------------------------------------------------------------------------------
 def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_test,outString=None):
     
@@ -90,13 +96,102 @@ def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_
     plt.savefig(utils.IO.plotFolder+"classifierOutputPlot_"+str(outString)+".png")
     plt.savefig(utils.IO.plotFolder+"classifierOutputPlot_"+str(outString)+".pdf")
 
+    
+    
+def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=None):  
+    if style==True:
+        gROOT.SetBatch(True)
+        gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
+        gROOT.ForceStyle()
+        gStyle.SetPadTopMargin(0.06)
+        gStyle.SetPadRightMargin(0.04)
+        gStyle.SetPadLeftMargin(0.15)
+    
+    
+    rel_diff_regressed = (predictions - true)/true
+    rel_diff = (recoPt - true)/true
+    
+    c_min = min(min(rel_diff_regressed),min(rel_diff))
+    c_max = max(max(rel_diff_regressed),max(rel_diff))
+    c_max=1.
+    
+    Histo_rel_diff = np.histogram(rel_diff,bins=n_bins,range=(c_min,c_max))
+    Histo_rel_diff_reg = np.histogram(rel_diff_regressed,bins=n_bins,range=(c_min,c_max))
+    
+    h_rel_diff = TH1F("hrel_diff", "hrel_diff", n_bins, c_min, c_max)
+    for i in xrange(len(rel_diff)): 
+        h_rel_diff.Fill(rel_diff[i])
+    h_rel_diff_reg = TH1F("hrel_diff_reg", "hrel_diff_reg", n_bins, c_min, c_max)
+    for i in xrange(len(rel_diff_regressed)): 
+        h_rel_diff_reg.Fill(rel_diff_regressed[i])
+    h_rel_diff.SetLineColor(ROOT.kBlue)
+    h_rel_diff.SetMarkerColor(ROOT.kBlue)
+    h_rel_diff.SetLineWidth(2)
+    h_rel_diff_reg.SetLineColor(ROOT.kRed)
+    h_rel_diff_reg.SetMarkerColor(ROOT.kRed)
+    h_rel_diff_reg.SetLineWidth(2)
+   
+
+    
+    AllHistos= [Histo_rel_diff, Histo_rel_diff_reg]
+    h_max = max([histo[0].max() for histo in AllHistos])*1.2
+    h_min = min([histo[0].min() for histo in AllHistos])
+    
+    c = ROOT.TCanvas("c","c",900,900)
+    c.cd()
+    
+    frame = TH1F("hframe", "hframe", n_bins, c_min, c_max)
+    frame.SetStats(0)
+    frame.GetXaxis().SetTitleOffset(0.91);
+    frame.GetYaxis().SetTitle("Events")
+    frame.GetXaxis().SetTitle("(p_{T}^{Reco}-p_{T}^{gen})/p_{T}^{gen}")
+    frame.GetYaxis().SetLabelSize(0.04)
+    frame.GetYaxis().SetRangeUser(h_min,h_max)
+    
+    frame.Draw()
+    h_rel_diff.Draw("samePE")
+    h_rel_diff_reg.Draw("samePE")
+    print h_rel_diff.GetMean(), h_rel_diff.GetRMS()
+    print h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS()
+    h_rel_diff.Fit("crystalball")
+    h_rel_diff_reg.Fit("crystalball")
+  
+
 
     
     
     
+    leg = ROOT.TLegend(0.7,0.75,0.9,0.9)
+    leg.AddEntry(h_rel_diff,"Nominal" ,"P")
+    leg.AddEntry(h_rel_diff_reg,"Regressed" ,"P")
+    leg.SetFillStyle(-1)
+    leg.SetBorderSize(0)
+    leg.SetTextFont(42)
+    leg.SetTextSize(0.03)
+    leg.Draw()
+
+ #   x   = RooRealVar("x_hrel_diff","x_hrel_diff",c_min,c_max)
+ #   datahist = RooDataHist("roohist","roohist",RooArgList(x),h_rel_diff)
+ #   m = RooRealVar("mean","mean",0.,-0.5,0.5)
+ #   s = RooRealVar("sigma","sigma",.5,0.01,2.)
+ #   a = RooRealVar("alpha","alpha",1,-10,10)
+ #   n = RooRealVar("exp","exp",1,0,100)
+ #   fsig = RooRealVar("fsig","fsig",0.7,0.,1.)
+ #   sig = RooCBShape("signal_gauss","signal_gauss",x,m,s,a,n)
+ #   model = RooAddPdf("signal_model","signal_model",RooArgList(sig),RooArgList(fsig))
+ #   res = model.fitTo(datahist,ROOT.RooFit.Save(ROOT.kTRUE))
+ #   res.Print()
+ #   
+ #   frame2 = x.frame()
+ #   datahist.plotOn(frame2)
+ #   model.plotOn(frame2)
+ #   frame2.Draw()
     
     
-    
+    c.SaveAs(utils.IO.plotFolder+"pt_rel_diff_"+str(outString)+'.png')
+    c.Draw()
+    c.Delete()
+ 
     
     
 def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outString=None):
