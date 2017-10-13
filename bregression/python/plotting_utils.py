@@ -10,7 +10,7 @@ from ROOT import gStyle
 from ROOT import TH1F
 from ROOT import RooRealVar, RooDataHist, RooFormulaVar, RooVoigtian, RooChebychev, RooArgList, \
                  RooArgSet, RooAddPdf, RooDataSet, RooCategory, RooSimultaneous, \
-                 RooBreitWigner, RooCBShape, RooFFTConvPdf
+                 RooBreitWigner, RooCBShape, RooFFTConvPdf, RooBukinPdf
         
 # ---------------------------------------------------------------------------------------------------
 def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_test,outString=None):
@@ -186,6 +186,10 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
     a_initial=[-7.7802e-01,-1.1260e+00]
     n=[]
     n_initial=[ 6.0149e+00,5.5622e+00]
+    
+    Ap,Xp,sigp,xi,rho1,rho2 = [],[],[],[],[],[]
+    Xp_initial,sigp_initial,xi_initial,rho1_initial,rho2_initial =  9.8545e-01, 1.3118e-01,2.2695e-01, 6.4189e-02,  9.0282e-02 
+    
     fsig=[]
     sig=[]
     model=[]
@@ -200,20 +204,31 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
     for num,h in enumerate(h_names):
         x.append(RooRealVar("x_hrel_diff_%s"%h,"x_hrel_diff_%s"%h,c_min,c_max))
         datahist.append(RooDataHist("roohist_%s"%h,"roohist_%s"%h,RooArgList(x[num]),datahists[num]))
+        
         m.append(RooRealVar("mean_%s"%h,"mean_%s"%h,m_initial[num],0.5,1.5))
         s.append(RooRealVar("sigma_%s"%h,"sigma_%s"%h,s_initial[num],0.01,0.3))
         a.append(RooRealVar("alpha_%s"%h,"alpha_%s"%h,a_initial[num],-10,0.))
         n.append(RooRealVar("exp_%s"%h,"exp_%s"%h,n_initial[num],1.,100.))
-        sig.append(RooCBShape("signal_gauss_%s"%h,"signal_gauss_%s"%h,x[num],m[num],s[num],a[num],n[num]))
+      #  sig.append(RooCBShape("signal_gauss_%s"%h,"signal_gauss_%s"%h,x[num],m[num],s[num],a[num],n[num]))
+   
+   #    Ap.append(RooRealVar("Ap_%s"%h,"Ap_%s"%h,m_initial[num],0.,20))     
+    
+        Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
+        sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,sigp_initial,0.01,0.3))
+        xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
+        rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
+        rho2.append(RooRealVar("rho2_%s"%h,"rho2_%s"%h,rho2_initial,-1,1)) #right
+        sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
+
         res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE)))
         res[num].Print()
         x[num].setRange("integralRange%s"%h, c_min,c_max)  
         integral.append(sig[num].createIntegral(RooArgSet(x[num]), ROOT.RooFit.Range("integralRange%s"%h)))
-        #print integral[0].getVal(), integral[1].getVal()    
 
         scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
         scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
-        formula.append("%f *signal_gauss_%s"%(scale_factors[num],h))
+      #  formula.append("%f *signal_gauss_%s"%(scale_factors[num],h))
+        formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
        # create a scaled  function = scale * function
         scaled_cb.append(RooFormulaVar("scaled_cb_%s"%h,formula[num],RooArgList(sig[num])))
         func.append(scaled_cb[num].asTF(RooArgList(x[num])))
@@ -229,8 +244,13 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
     h_rel_diff.Draw("PEHISTsame")
     h_rel_diff_reg.Draw("PEHISTsame")    
     leg.Draw()
-    
-    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fit_"+str(outString)+'.png')
+
+ #   frame2 = x[0].frame()
+  #  datahist[0].plotOn(frame2)
+ #   sig[0].plotOn(frame2)  
+ #   frame2.Draw()
+  
+    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fitBukin_small_"+str(outString)+'.png')
     c2.Draw()
  
     
