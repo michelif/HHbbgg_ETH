@@ -81,6 +81,30 @@ def weight_signal_with_resolution(w_s,y_s):
 
     return utils.IO.signal_df[i][['weight']]
 
+def weight_background_with_resolution(w_b,y_b,proc):
+    w_bkg = []
+    process=999
+    print utils.IO.nBkg
+    for i in range(utils.IO.nBkg):
+        if process == utils.IO.bkgProc[i]: #don't do twice multiple samples of same process, like GJet
+            continue
+        process =  utils.IO.bkgProc[i]
+        if utils.IO.bkgProc[i] == proc:
+            utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],utils.IO.background_df[i][['sigmaMOverMDecorr']])
+            w_proc = np.asarray(utils.IO.background_df[i][['weight']])
+            np.reshape(w_proc,(len(utils.IO.background_df[i][['weight']]),))
+        else:
+            w_proc = np.asarray(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]])
+
+        if i == 0:
+            w_bkg = w_proc
+        else:
+            w_bkg =  np.concatenate((w_bkg,np.asarray(w_proc.ravel())))
+        
+            
+    return w_bkg.reshape(len(w_bkg),1)
+
+
 
 
 def get_training_sample(x,splitting=0.5):
