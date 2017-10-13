@@ -2,6 +2,38 @@ from sklearn import model_selection
 from sklearn.model_selection import train_test_split
 
 
+def optimize_parameters_gridCV_ref(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,cvOpt=3,nJobs=10):
+    print "=====Optimization with grid search cv====="
+    scores = model_selection.cross_val_score(classifier,
+                                      X_features,X_target,
+                                      scoring="mean_squared_error", 
+                                      n_jobs=nJobs,
+                                      cv=cvOpt)
+    print "-Initial Accuracy-"
+    print "Accuracy: %0.5f (+/- %0.5f)"%(scores.mean(), scores.std())
+
+    
+        
+    clf = model_selection.GridSearchCV(classifier,
+                                   param_grid,
+                                   cv=cvOpt,
+                                   scoring='mean_squared_error',
+                                   n_jobs=nJobs, verbose=1)
+    clf.fit(X_features, X_target)
+    
+    print "Best parameter set found on development set:"
+    print
+    print clf.best_estimator_
+    print
+    print "Grid scores on a subset of the development set:"
+    print
+    for params, mean_score, scores in clf.grid_scores_:
+        print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
+    
+    return clf.grid_scores_
+
+
+
     
 def optimize_parameters_gridCV(classifier,X_total_train,y_total_train,param_grid,cvOpt=3,nJobs=10):
     print "=====Optimization with grid search cv====="

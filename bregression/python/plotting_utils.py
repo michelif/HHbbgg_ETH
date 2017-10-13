@@ -98,6 +98,7 @@ def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_
 
     
     
+
 def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=None):  
     if style==True:
         gROOT.SetBatch(True)
@@ -108,12 +109,15 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
         gStyle.SetPadLeftMargin(0.15)
     
     
-    rel_diff_regressed = (predictions - true)/true
-    rel_diff = (recoPt - true)/true
+   # rel_diff_regressed = (predictions - true)/true
+   # rel_diff = (recoPt - true)/true
+    rel_diff_regressed = true/predictions
+    rel_diff = true/recoPt
     
     c_min = min(min(rel_diff_regressed),min(rel_diff))
     c_max = max(max(rel_diff_regressed),max(rel_diff))
-    c_max=1.
+    c_min=0
+    c_max=2.
     
     Histo_rel_diff = np.histogram(rel_diff,bins=n_bins,range=(c_min,c_max))
     Histo_rel_diff_reg = np.histogram(rel_diff_regressed,bins=n_bins,range=(c_min,c_max))
@@ -144,19 +148,18 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
     frame.SetStats(0)
     frame.GetXaxis().SetTitleOffset(0.91);
     frame.GetYaxis().SetTitle("Events")
-    frame.GetXaxis().SetTitle("(p_{T}^{Reco}-p_{T}^{gen})/p_{T}^{gen}")
+  #  frame.GetXaxis().SetTitle("(p_{T}^{Reco}-p_{T}^{gen})/p_{T}^{gen}")
+    frame.GetXaxis().SetTitle("p_{T}^{gen}/p_{T}^{reco}")
     frame.GetYaxis().SetLabelSize(0.04)
     frame.GetYaxis().SetRangeUser(h_min,h_max)
     
     frame.Draw()
     h_rel_diff.Draw("samePE")
     h_rel_diff_reg.Draw("samePE")
-    print h_rel_diff.GetMean(), h_rel_diff.GetRMS()
-    print h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS()
-    h_rel_diff.Fit("crystalball")
-    h_rel_diff_reg.Fit("crystalball")
-  
+    print 'Nominal : mean, RMS :',h_rel_diff.GetMean(), h_rel_diff.GetRMS()
+    print 'Regresesd : mean, RMS : ',h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS()
 
+  
 
     
     
@@ -169,28 +172,66 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
     leg.SetTextFont(42)
     leg.SetTextSize(0.03)
     leg.Draw()
+    
 
- #   x   = RooRealVar("x_hrel_diff","x_hrel_diff",c_min,c_max)
- #   datahist = RooDataHist("roohist","roohist",RooArgList(x),h_rel_diff)
- #   m = RooRealVar("mean","mean",0.,-0.5,0.5)
- #   s = RooRealVar("sigma","sigma",.5,0.01,2.)
- #   a = RooRealVar("alpha","alpha",1,-10,10)
- #   n = RooRealVar("exp","exp",1,0,100)
- #   fsig = RooRealVar("fsig","fsig",0.7,0.,1.)
- #   sig = RooCBShape("signal_gauss","signal_gauss",x,m,s,a,n)
- #   model = RooAddPdf("signal_model","signal_model",RooArgList(sig),RooArgList(fsig))
- #   res = model.fitTo(datahist,ROOT.RooFit.Save(ROOT.kTRUE))
- #   res.Print()
- #   
- #   frame2 = x.frame()
- #   datahist.plotOn(frame2)
- #   model.plotOn(frame2)
- #   frame2.Draw()
+    h_names = ['nom','reg']
+    datahists = [h_rel_diff,h_rel_diff_reg]
+    x=[]
+    datahist=[]
+    m=[]
+    m_initial=[1.0103e+00,9.5381e-01]
+    s=[]
+    s_initial=[ 1.3210e-01,1.3967e-01]
+    a=[]
+    a_initial=[-7.7802e-01,-1.1260e+00]
+    n=[]
+    n_initial=[ 6.0149e+00,5.5622e+00]
+    fsig=[]
+    sig=[]
+    model=[]
+    res=[]
+    integral=[]
+    formula=[]
+    scale_factors=[]
+    scaled_cb=[]
+    func=[]
+    colors=[ROOT.kBlue,ROOT.kRed]
+
+    for num,h in enumerate(h_names):
+        x.append(RooRealVar("x_hrel_diff_%s"%h,"x_hrel_diff_%s"%h,c_min,c_max))
+        datahist.append(RooDataHist("roohist_%s"%h,"roohist_%s"%h,RooArgList(x[num]),datahists[num]))
+        m.append(RooRealVar("mean_%s"%h,"mean_%s"%h,m_initial[num],0.5,1.5))
+        s.append(RooRealVar("sigma_%s"%h,"sigma_%s"%h,s_initial[num],0.01,0.3))
+        a.append(RooRealVar("alpha_%s"%h,"alpha_%s"%h,a_initial[num],-10,0.))
+        n.append(RooRealVar("exp_%s"%h,"exp_%s"%h,n_initial[num],1.,100.))
+        sig.append(RooCBShape("signal_gauss_%s"%h,"signal_gauss_%s"%h,x[num],m[num],s[num],a[num],n[num]))
+        res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE)))
+        res[num].Print()
+        x[num].setRange("integralRange%s"%h, c_min,c_max)  
+        integral.append(sig[num].createIntegral(RooArgSet(x[num]), ROOT.RooFit.Range("integralRange%s"%h)))
+        #print integral[0].getVal(), integral[1].getVal()    
+
+        scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
+        scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
+        formula.append("%f *signal_gauss_%s"%(scale_factors[num],h))
+       # create a scaled  function = scale * function
+        scaled_cb.append(RooFormulaVar("scaled_cb_%s"%h,formula[num],RooArgList(sig[num])))
+        func.append(scaled_cb[num].asTF(RooArgList(x[num])))
+        func[num].SetLineColor(colors[num])
+        datahists[num].SetMarkerColor(colors[num])
+     
     
+    c2 = ROOT.TCanvas("c2","c2",900,900)
+    c2.cd()
+    frame.Draw()
+    func[0].Draw("same")
+    func[1].Draw("same")
+    h_rel_diff.Draw("PEHISTsame")
+    h_rel_diff_reg.Draw("PEHISTsame")    
+    leg.Draw()
     
-    c.SaveAs(utils.IO.plotFolder+"pt_rel_diff_"+str(outString)+'.png')
-    c.Draw()
-    c.Delete()
+    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fit_"+str(outString)+'.png')
+    c2.Draw()
  
     
     
@@ -229,6 +270,9 @@ def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outStrin
         plt.ylabel("Normalized Yields")
 
 
+        if '/' in branch_names[i]: 
+            branch_names[i] = branch_names[i].replace('/','_')
+        
         plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".png")
         plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".pdf")
 
