@@ -113,14 +113,16 @@ def main(o,args):
                 histo = plotFile.Get(str(name))
                 if histo.Integral() != 0:
                     histo.Print()
-#                    histo.Rebin(4)
+                    if cat == 'ggH': 
+                        histo.Rebin(4)
                     if not variable == options.quantileVar:
                         histo.Scale(1./histo.Integral())
                     print ''
                     histo.SetLineColor(colors[i])
                     histo.SetFillColor(colors[i])
-                    if variable == 'Mgg' or variable == 'Mjj':
-                        histo.SetFillStyle(3004)
+#                    if variable == 'Mgg' or variable == 'Mjj':
+#                        histo.SetFillStyle(3004)
+                    histo.SetFillStyle(3004)
                     stacks[str(variable)+'_'+str(cat)].Add(histo)
                     if cat == categs[0] and variable == variables.keys()[0]:
                         ll.AddEntry(histo, str(quant_x[i+1])+'< #epsilon_{sig} <'+str(quant_x[i]),'f')
@@ -137,10 +139,11 @@ def main(o,args):
         
 #        stack.Draw('ehist nostackb')
         print str(stack.GetName()).split('_')[0]
-        if str(stack.GetName()).split('_')[0] != 'Mgg' and str(stack.GetName()).split('_')[0] != 'Mjj':
-            stack.Draw('ehist')
-        else:
-            stack.Draw('hist nostack')
+#        if str(stack.GetName()).split('_')[0] != 'Mgg' and str(stack.GetName()).split('_')[0] != 'Mjj':
+#            stack.Draw('ehist')
+#        else:
+#            stack.Draw('hist nostack')
+        stack.Draw('hist nostack')
 
         stack.GetXaxis().SetTitle(str(variables[str(stack.GetName()).split('_')[0]]['xaxis']))
         stack.GetYaxis().SetTitle(str(variables[str(stack.GetName()).split('_')[0]]['yaxis']))
