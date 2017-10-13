@@ -51,8 +51,13 @@ for iMVA in range(0,len(MVACat)-1):
             print "#################################################"
             print Tree.GetName()+str(" ")+str(h_highMass.Integral())
             integ = (h_highMass.Integral())
+            if h_highMass.GetEntries() !=0:
+                integ_err = ROOT.TMath.Sqrt(integ/h_highMass.GetEntries())
+            else:
+                integ_err = 0.
             h_highMass.Delete()
-            table.write(processes[str(tree)]+": "+str(integ)+"\n")
+            table.write(processes[str(tree)]+": "+str(integ)+"+-"+str(integ_err)+"\n")
+            
         table.write("-------------------\n")
 
 
