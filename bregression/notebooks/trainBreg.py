@@ -25,8 +25,8 @@ ntuples = 'heppy_05_10_2017'
 get_ipython().magic(u'env data=$utils.IO.ldata$ntuples')
 files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
-#ttbar= [s for s in files if "20trees_safe" in s] #large statistics
-ttbar= [s for s in files if "ttbar_RegressionPerJet.root" in s] # only limited statistics
+ttbar= [s for s in files if "20trees_safe" in s] #large statistics
+#ttbar= [s for s in files if "ttbar_RegressionPerJet.root" in s] # only limited statistics
 
 
 utils.IO.add_target(ntuples,ttbar,1)
