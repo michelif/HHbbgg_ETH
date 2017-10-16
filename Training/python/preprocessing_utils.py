@@ -13,7 +13,7 @@ def define_process_weight(df,proc,name,cleanSignal=True):
     w = np.multiply(w,input_df[['puweight']])
     df['lumiFactor'] = input_df[['lumiFactor']]
     df['genTotalWeight'] = input_df[['genTotalWeight']]
-    df['isSignal'] = input_df[['isSignal']]
+    df['isS`ignal'] = input_df[['isSignal']]
     if cleanSignal:#some trees include also the control region,select only good events
         df['weight']= np.multiply(w,input_df[['isSignal']])
     else:
@@ -44,7 +44,7 @@ def normalize_process_weights(w_b,y_b,w_s,y_s):
     w_bkg = []
     for i in range(utils.IO.nBkg):
         if utils.IO.bkgProc[i] != proc:
-            w_proc = np.asarray(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]])
+            w_proc = np.asarray(np.absolute(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]]))#absolute is important to normalize in case of negative weights
             sum_weights = float(np.sum(w_proc))
             proc = utils.IO.bkgProc[i]
         if i==0:
@@ -84,16 +84,16 @@ def weight_signal_with_resolution(w_s,y_s):
 def weight_background_with_resolution(w_b,y_b,proc):
     w_bkg = []
     process=999
-    print utils.IO.nBkg
     for i in range(utils.IO.nBkg):
-        if process == utils.IO.bkgProc[i]: #don't do twice multiple samples of same process, like GJet
-            continue
-        process =  utils.IO.bkgProc[i]
         if utils.IO.bkgProc[i] == proc:
             utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],utils.IO.background_df[i][['sigmaMOverMDecorr']])
             w_proc = np.asarray(utils.IO.background_df[i][['weight']])
             np.reshape(w_proc,(len(utils.IO.background_df[i][['weight']]),))
         else:
+            if process == utils.IO.bkgProc[i]: #don't do twice multiple samples of same process, like GJet
+                continue
+            process =  utils.IO.bkgProc[i]
+        
             w_proc = np.asarray(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]])
 
         if i == 0:
