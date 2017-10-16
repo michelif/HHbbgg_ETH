@@ -203,21 +203,32 @@ def main(options,args):
             allcats.append(cname)
     print allcats
     
+    subCatCuts = {} 
+    if "subCategoryCuts" in summary[options.ncat]:
+        subCategoryCuts = summary[options.ncat]["subCategoryCuts"]
+ 
+        print "subcategory cuts", subCategoryCuts
+        for icat,cat in enumerate(subCategoryCuts):
+#            subCategoryCuts[cat] = ROOT.TCut("%s > %g && %s < %g " % (subCategoryCuts[cat][0],subCategoryCuts[cat][1],subCategoryCuts[cat][0],subCategoryCuts[cat][2]))   
+            subCategoryCuts[cat] =  ROOT.TCut("%s >( %s * %s + %s * %s + %s * %s) && %s <( %s * %s + %s * %s + %s * %s)" % (subCategoryCuts[cat][0],subCategoryCuts[cat][1],subCategoryCuts[cat][2],subCategoryCuts[cat][3],subCategoryCuts[cat][4],subCategoryCuts[cat][5],subCategoryCuts[cat][6],subCategoryCuts[cat][0],subCategoryCuts[cat][7],subCategoryCuts[cat][8],subCategoryCuts[cat][9],subCategoryCuts[cat][10],subCategoryCuts[cat][11],subCategoryCuts[cat][12]))
+
+
     procs = []
     first = True
+
     for name,tree in trees.iteritems():
         for an,ad in cuts+cats:
             tree.SetAlias(an,ad.GetTitle())
         tree.SetAlias("cat",catvar.GetTitle())
-        
         if not "bkg" in name:
             procs.append(name)
-
+        iCat = 0
         for tname, tsel in todos:
             mname = name
             if tname != "": mname += "_%s" % tname
 #            sel = ROOT.TCut("_weight") * selection
             sel = ROOT.TCut("weight") * selection
+
             if tsel != "":
                 sel *= ROOT.TCut(tsel)            
             model = ROOT.TH2F("model_%s" % mname, "model_%s" % mname, nbins, obsmin, obsmax, ncat, 0, ncat )
@@ -226,10 +237,12 @@ def main(options,args):
 #                tree.Draw("cat:%s>>model_renorm_%s" % (obsname,mname), sel * ROOT.TCut("_weight >= %g" % options.maxw), "goff")
                 tree.Draw("cat:%s>>model_renorm_%s" % (obsname,mname), sel * ROOT.TCut("weight >= %g" % options.maxw), "goff")
                 sel *= ROOT.TCut("_weight < %g" % options.maxw)
+            if "subCategoryCuts" in summary[options.ncat]:
+
+                sel *= subCategoryCuts[allcats[iCat]]
+                iCat += 1
+
             tree.Draw("cat:%s>>model_%s" % (obsname,mname), sel, "goff")
-            print "sellll------"
-            print sel
-            print model.GetEntries()
             models[mname] = (model,renorm)
             objs.append( (model,renorm) )
             ## model.Draw()
@@ -251,7 +264,6 @@ def main(options,args):
     for name,models in models.iteritems():
         model, renorm = models
         for icat in range(ncat):
-            print name
             slice = model.ProjectionX("%s_cat%d" % (name, icat), icat+1, icat+1 )
             missing = renorm.ProjectionX("%s_cat%d_missing" % (name, icat), icat+1, icat+1 )
             print slice.Integral(), missing.Integral()
