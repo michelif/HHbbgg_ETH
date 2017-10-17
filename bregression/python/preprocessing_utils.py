@@ -160,6 +160,18 @@ def set_features(treeName,branch_names,features,cuts):
     return np.round(X_features,5)
 
 
+def cut_region(treeName,branch_names,features,cuts):
+    tmp_data_frame = (rpd.read_root(utils.IO.featuresName[0],treeName, columns = branch_names)).query(cuts)
+        
+    for j in range(len(features)):
+        if j == 0:
+            X_features = tmp_data_frame[[features[j].replace('noexpand:','')]]
+        else:
+            X_features = np.concatenate([X_features,tmp_data_frame[[features[j].replace('noexpand:','')]]],axis=1)
+    
+    return np.round(X_features,5)
+
+
 def set_target(treeName,branch_names,target,cuts):
     for i in range(utils.IO.nTarget):
         tmp_data_frame = (rpd.read_root(utils.IO.targetName[i],treeName, columns = branch_names)).query(cuts)
