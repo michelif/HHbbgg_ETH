@@ -34,6 +34,29 @@ def stackFeatures(df,additionalCut_names,rounding=6,SF=1,isData=0):
 
 
 
+def stackFeaturesReg(df,additionalCut_names,rounding=5):
+    vec = []
+    dictVar = {}
+    i = 0
+    for featCounter in additionalCut_names:
+        feat= featCounter.replace("noexpand:","")
+        vec.append(np.round(np.asarray(df[feat]),rounding))
+        dictVar [feat] = i
+        i+=1
+        
+    totalVec = []
+    for i in range(len(vec)):
+        if i == 0:
+            totalVec = vec[i]
+        else:
+            totalVec = np.column_stack((totalVec,vec[i]))
+
+    return totalVec,dictVar
+
+
+
+
+
 def applyCut(vec,varNum,cut,option='greater'):
     if option == 'greater':
         return vec[np.where(vec[:,varNum]>cut)]
@@ -48,6 +71,33 @@ def cutInvariantMass(vec,varNum,xLow,xUp):
     nCleaned_massWindowDown = applyCut(vec,varNum,xLow)
     nCleaned_massWindow = applyCut(nCleaned_massWindowDown,varNum,xUp,'smaller')
     return nCleaned_massWindow
+
+
+def saveTreeReg(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTree"):
+    from root_numpy import array2root
+    i=0
+    for key in dictVar.keys():
+         if i == 0:
+             writeMode='recreate'
+             i=1
+         else:
+             writeMode='update'
+
+         v=(np.asarray(vector[:,dictVar[key]]))
+         name = key
+
+         v.dtype = [(name.replace(".","").replace("(","").replace(")","").replace("/","_Over_").replace("Candidate",""), np.float64)]
+
+
+         array2root(v, processPath, nameTree, mode = writeMode)
+
+    if MVAVector != None:
+
+            v=(np.asarray(MVAVector.ravel()))
+            v.dtype = [('RegressedFactor', np.float64)]
+            array2root(v, processPath, nameTree, mode ='update')
+
+
 
 
 def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTree"):

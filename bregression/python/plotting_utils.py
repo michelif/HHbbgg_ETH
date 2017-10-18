@@ -11,7 +11,7 @@ from ROOT import TH1F
 from ROOT import TCanvas
 from ROOT import RooRealVar, RooDataHist, RooFormulaVar, RooVoigtian, RooChebychev, RooArgList, \
                  RooArgSet, RooAddPdf, RooDataSet, RooCategory, RooSimultaneous, \
-                 RooBreitWigner, RooCBShape, RooFFTConvPdf, RooBukinPdf, RooBifurGauss, RooGenericPdf
+                 RooBreitWigner, RooCBShape, RooFFTConvPdf, RooBukinPdf, RooBifurGauss, RooGenericPdf, RooChi2Var
         
 # ---------------------------------------------------------------------------------------------------
 def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_test,outString=None):
@@ -100,7 +100,9 @@ def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_
     
     
 
-def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=None):  
+#def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=None):  
+def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString=None,option='caterina'):  
+
     if style==True:
         gROOT.SetBatch(True)
         gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
@@ -110,10 +112,10 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
         gStyle.SetPadLeftMargin(0.15)
     
     
-   # rel_diff_regressed = (predictions - true)/true
-   # rel_diff = (recoPt - true)/true
-    rel_diff_regressed = true/predictions
-    rel_diff = true/recoPt
+   #### rel_diff_regressed = (predictions - true)/true
+   #### rel_diff = (recoPt - true)/true
+#    rel_diff_regressed = true/predictions
+ #   rel_diff = true/recoPt
     
     c_min = min(min(rel_diff_regressed),min(rel_diff))
     c_max = max(max(rel_diff_regressed),max(rel_diff))
@@ -165,13 +167,11 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
     
     
     leg = ROOT.TLegend(0.65,0.75,0.9,0.9)
-    leg.AddEntry(h_rel_diff,"Nominal" ,"P")
-    leg.AddEntry(h_rel_diff_reg,"Regressed" ,"P")
     leg.SetFillStyle(-1)
     leg.SetBorderSize(0)
     leg.SetTextFont(42)
     leg.SetTextSize(0.03)
-    leg.Draw()
+  #  leg.Draw()
     
 
     h_names = ['nom','reg']
@@ -201,6 +201,7 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
     scaled_cb=[]
     func=[]
     colors=[ROOT.kBlue,ROOT.kRed]
+    chi_squares=[]
 
     for num,h in enumerate(h_names):
         x.append(RooRealVar("x_%s"%h,"x_%s"%h,c_min,c_max))
@@ -219,7 +220,7 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
         xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
         rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
         rho2.append(RooRealVar("rho2_%s"%h,"rho2_%s"%h,rho2_initial,-1,1)) #right
-    #    sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
+        sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
 
 ###########################RooCruijff##################
 
@@ -230,27 +231,42 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
         alphaR.append(RooRealVar("alphaR_%s"%h,"alphaR_%s"%h,0.1,0.,2.))
 #  RooGenericPdf genpdf("genpdf","genpdf","(1+0.1*abs(x)+sin(sqrt(abs(x*alpha+0.1))))",RooArgSet(x,alpha)) ;
         formula_rooCruijff = "( ( (x_%s-meanr_%s)<0) ? (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaL_%s,2)+alphaL_%s*pow((x_%s-meanr_%s),2) ))) : (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaR_%s,2)+alphaR_%s*pow((x_%s-meanr_%s),2) )))  )"%(h,h,h,h,h,h,h,h,h,h,h,h,h,h) 
-        sig.append(RooGenericPdf("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,formula_rooCruijff,RooArgList(x[num],meanr[num],sigmaL[num],sigmaR[num],alphaL[num],alphaR[num])))
+    #    sig.append(RooGenericPdf("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,formula_rooCruijff,RooArgList(x[num],meanr[num],sigmaL[num],sigmaR[num],alphaL[num],alphaR[num])))
       #  sig.append(RooBifurGauss("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,x[num],meanr[num],widthL[num],widthR[num]))
 
 
         res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE)))
         res[num].Print()
+
+       # chi_squares.append((x[num].frame()).chiSquare())
         x[num].setRange("integralRange%s"%h, c_min,c_max)  
         integral.append(sig[num].createIntegral(RooArgSet(x[num]), ROOT.RooFit.Range("integralRange%s"%h)))
 
         scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
         scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
       #  formula.append("%f *signal_gauss_%s"%(scale_factors[num],h))
-       # formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
-        formula.append("%f *signal_cruijff_%s"%(scale_factors[num],h))
+        formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
+       # formula.append("%f *signal_cruijff_%s"%(scale_factors[num],h))
        # create a scaled  function = scale * function
         scaled_cb.append(RooFormulaVar("scaled_cb_%s"%h,formula[num],RooArgList(sig[num])))
         func.append(scaled_cb[num].asTF(RooArgList(x[num])))
         func[num].SetLineColor(colors[num])
         datahists[num].SetMarkerColor(colors[num])
-     
+      
+      #  chi_squares.append(RooChi2Var("chi2_%s"%h,"chi2_%s"%h,sig[num],datahist[num]))
+    h_rel_diff.Fit(func[0],"O")
+    h_rel_diff_reg.Fit(func[1],"O")
+    chi_squares.append(func[0].GetChisquare())
+    chi_squares.append(func[1].GetChisquare())
     
+    if option=='caterina' :
+        leg.AddEntry(h_rel_diff,"Caterina, #Chi^{2} = %.2f"%chi_squares[0] ,"P")
+        leg.AddEntry(h_rel_diff_reg,"XGboost, #Chi^{2} = %.2f"%chi_squares[1]  ,"P")
+    else : 
+        leg.AddEntry(h_rel_diff,"Nominal" ,"P")
+        leg.AddEntry(h_rel_diff_reg,"Regressed" ,"P")
+
+	
     c2 = ROOT.TCanvas("c2","c2",900,900)
     c2.cd()
     frame.Draw()
@@ -265,12 +281,13 @@ def plot_rel_pt_diff(predictions,true,recoPt,style=False,n_bins=50,outString=Non
  #   sig[0].plotOn(frame2)  
  #   frame2.Draw()
   
-    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fitCruijff_"+str(outString)+'.png')
+   # c2.SaveAs(utils.IO.plotFolder+"pt_rel_fitCruijff_"+str(outString)+'.png')
+    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fitBukin_"+str(outString)+'.png')
     c2.Draw()
  
     
     
-def plot_regions(X_region,h_names,style=True,n_bins=50,outString=None):  
+def plot_regions(X_region,names,style=True,n_bins=50,outString=None):  
     if style==True:
         gROOT.SetBatch(True)
         gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
@@ -279,6 +296,9 @@ def plot_regions(X_region,h_names,style=True,n_bins=50,outString=None):
         gStyle.SetPadRightMargin(0.04)
         gStyle.SetPadLeftMargin(0.15)
     
+
+    h_names = [ 'region'+str(t) for t in range(0,len(X_region))]
+
     c_min=0
     c_max=2.
     c = TCanvas("canv","canv",900,900)
@@ -289,11 +309,11 @@ def plot_regions(X_region,h_names,style=True,n_bins=50,outString=None):
     frame.GetYaxis().SetTitle("Events")
     frame.GetXaxis().SetTitle("p_{T}^{gen}/p_{T}^{reco}")
     frame.GetYaxis().SetLabelSize(0.04)
-    leg = ROOT.TLegend(0.7,0.75,0.9,0.9)
+    leg = ROOT.TLegend(0.12,0.75,0.6,0.9)
     leg.SetFillStyle(-1)
     leg.SetBorderSize(0)
     leg.SetTextFont(42)
-    leg.SetTextSize(0.03)
+    leg.SetTextSize(0.025)
 
     hist_list=[]
     func_list=[]
@@ -312,7 +332,7 @@ def plot_regions(X_region,h_names,style=True,n_bins=50,outString=None):
     scale_factors=[]
     scaled_cb=[]
     func=[]
-    colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring]
+    colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring+8, ROOT.kOrange]
  
  
     for j in range(len(X_region)):
@@ -364,12 +384,12 @@ def plot_regions(X_region,h_names,style=True,n_bins=50,outString=None):
     for j in range(len(X_region)):
         func_list[j].Draw("same")
         hist_list[j].Draw("PEsame")
-        leg.AddEntry(hist_list[j],h_names[j] ,"P")
+        leg.AddEntry(hist_list[j],names[j] ,"PE")
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
-    c.SaveAs("pt_region.png")
+  #  c.SaveAs("pt_region.png")
   #  c.Draw()
-  #  c.SaveAs(utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png')
+    c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+'.png')
   #  c.Draw()
     
     

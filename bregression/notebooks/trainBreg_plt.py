@@ -49,7 +49,7 @@ for i in range(len(utils.IO.featuresName)):
 
 #use noexpand for root expressions, it needs this file https://github.com/ibab/root_pandas/blob/master/root_pandas/readwrite.py
 #noexpand:fabs(CosThetaStar_CS)
-branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,Jet_corr,Jet_mcPt,Jet_mcFlavour,dR,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
+branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,noexpand:fabs(Jet_eta),Jet_corr,Jet_mcPt,Jet_mcFlavour,dR,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
 
 features = 'Jet_pt,Jet_eta,Jet_corr,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
 #target = 'Jet_mcPt'.split(",")
@@ -92,18 +92,24 @@ from sklearn.externals import joblib
 import xgboost as xgb
 import matplotlib.pyplot as plt
 
-X_all = preprocessing.cut_region("tree",branch_names,branch_names,cuts)
+#X_all = preprocessing.cut_region("tree",branch_names,branch_names,cuts)
 
 pt_regions = '(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
-pt_regions_names = '100Jet_mcPt,100Jet_mcPt300,300Jet_mcPt700,700Jet_mcPt'.split(',')
+eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
+eta_regions = '(Jet_eta<0.5 & Jet_eta>-0.5),((Jet_eta>=0.5 & Jet_eta<1.0) |(Jet_eta<=-0.5 & Jet_eta>-1.0)),(( Jet_eta>=1.0 & Jet_eta<1.5)|(Jet_eta<=-1.0 & Jet_eta>-1.5)),( (Jet_eta>=1.5 & Jet_eta<2.0)|(Jet_eta<=-1.5 & Jet_eta>=-2.0 )),(Jet_eta>=2.0 | Jet_eta<=-2.0)'.split(",")
 X_pt_region=[] # list of pandas DataFrame
+X_eta_region=[] # list of pandas DataFrame
 target_dist = []
 target_dist.append('noexpand:Jet_mcPt/Jet_pt')
 for region in pt_regions:
     cuts_regions = cuts+'&'+region
     X_pt_region.append(preprocessing.cut_region("tree",branch_names,target_dist,cuts_regions))
+for region in eta_regions:
+    cuts_regions = cuts+'&'+region
+    X_eta_region.append(preprocessing.cut_region("tree",branch_names,target_dist,cuts_regions))
 
-plotting.plot_regions(X_pt_region,pt_regions_names)
+plotting.plot_regions(X_pt_region,pt_regions,True,50,"pt")
+#plotting.plot_regions(X_eta_region,eta_regions_names,True,50,"eta")
 #plt.show()
 #log_names='Jet_pt,Jet_mcPt,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR'.split(",")
 #plotting.plot_input_variables_reg(X_features,features,log_names)
@@ -139,7 +145,7 @@ clf = xgb.XGBRegressor(objective='reg:linear')
 clf.fit(X_train_features,X_train_target)
 #print clf.best_score_
 #print clf.best_params_
-joblib.dump(clf, os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_mcPt_cuts.pkl'), compress=9)
+#joblib.dump(clf, os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_mcPt_cuts.pkl'), compress=9)
 predictions = clf.predict(X_test_features)
 #print predictions, predictions.shape
 actuals = X_test_target
