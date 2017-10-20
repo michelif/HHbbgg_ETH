@@ -48,9 +48,7 @@ def main(options,args):
         xvalue = ROOT.TH1.GetRandom(histoMVA)
         evalCumulatives.Fill(cumulativeGraph.Eval(xvalue))
     evalCumulatives.Sumw2()
-    print evalCumulatives.Integral()
     evalCumulatives.Scale(1./evalCumulatives.Integral())
-    print evalCumulatives.Integral()
     evalCumulatives.GetYaxis().SetRangeUser(0,2./evalCumulatives.GetNbinsX())
 
     c = ROOT.TCanvas()
@@ -81,32 +79,46 @@ def main(options,args):
 
     fin.cd()
 
+    processes = [
+        "reducedTree_sig",
+        "reducedTree_bkg"
+        ]
+
+    for i in range(2,14):
+        processes.append("reducedTree_sig_node_"+str(i))
+
+    for i in range(0,8):
+        if i == 1: continue
+        processes.append("reducedTree_bkg_"+str(i))
+
 
 
     fin = ROOT.TFile.Open(options.file)
-    tree = fin.Get("reducedTree_sig")
-    chain = ROOT.TChain(tree.GetName())
 
-    fTransformed = ROOT.TFile.Open(options.file.replace(".root","")+"transf.root","recreate")
-    chain.Add(options.file)
-    copyTree = chain.CopyTree("")
+    fTransformed = ROOT.TFile.Open(options.file.replace(".root","")+"_transformedMVA.root","recreate")
 
-    transfMVA = array( 'f', [ 0. ] )
-    transfBranch = copyTree.Branch("MVAOutputTransformed",transfMVA,"MVAOutputTransformed/F");
-    dummyList = []
- 
-    copyTree.Print()
-    for i,event in enumerate(copyTree):
-        if i>tree.GetEntries():break
-        mva = event.MVAOutput
-        transfMVA[0] = cumulativeGraph.Eval(mva)
-#        print mva,transfMVA
-#        dummyList.append(transfMVA[0])
-#        if len(dummyList)>1000:
-#            break
-        transfBranch.Fill()
 
-    copyTree.Write()
+    for proc in processes:
+        print proc
+        tree = fin.Get(proc)
+        chain = ROOT.TChain(tree.GetName())
+    
+        chain.Add(options.file)
+        copyTree = chain.CopyTree("")
+        copyTree.SetName(proc)
+        copyTree.SetTitle(proc)
+
+        transfMVA = array( 'f', [ 0. ] )
+        transfBranch = copyTree.Branch("MVAOutputTransformed",transfMVA,"MVAOutputTransformed/F");
+        dummyList = []
+        
+        for i,event in enumerate(copyTree):
+            if i>tree.GetEntries():break
+            mva = event.MVAOutput
+            transfMVA[0] = cumulativeGraph.Eval(mva)
+            transfBranch.Fill()
+    
+    
     fTransformed.Write()
     fTransformed.Close()
 
