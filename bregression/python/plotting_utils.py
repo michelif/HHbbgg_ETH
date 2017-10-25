@@ -260,8 +260,10 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     chi_squares.append(func[1].GetChisquare())
     
     if option=='caterina' :
-        leg.AddEntry(h_rel_diff,"Caterina, #Chi^{2} = %.2f"%chi_squares[0] ,"P")
-        leg.AddEntry(h_rel_diff_reg,"XGboost, #Chi^{2} = %.2f"%chi_squares[1]  ,"P")
+      #  leg.AddEntry(h_rel_diff,"Caterina, #Chi^{2} = %.2f"%chi_squares[0] ,"P")
+       # leg.AddEntry(h_rel_diff_reg,"XGboost, #Chi^{2} = %.2f"%chi_squares[1]  ,"P")
+        leg.AddEntry(h_rel_diff,"Caterina" ,"P")
+        leg.AddEntry(h_rel_diff_reg,"XGboost" ,"P")
     else : 
         leg.AddEntry(h_rel_diff,"Nominal" ,"P")
         leg.AddEntry(h_rel_diff_reg,"Regressed" ,"P")
@@ -270,8 +272,8 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     c2 = ROOT.TCanvas("c2","c2",900,900)
     c2.cd()
     frame.Draw()
-    func[0].Draw("same")
-    func[1].Draw("same")
+   # func[0].Draw("same")
+   # func[1].Draw("same")
     h_rel_diff.Draw("PEHISTsame")
     h_rel_diff_reg.Draw("PEHISTsame")    
     leg.Draw()
@@ -287,7 +289,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
  
     
     
-def plot_regions(X_region,names,style=True,n_bins=50,outString=None):  
+def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):  
     if style==True:
         gROOT.SetBatch(True)
         gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
@@ -321,7 +323,9 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None):
     x=[]
     datahist=[]
     datahists=[]
+    meanr, sigmaL, sigmaR, alphaL, alphaR = [],[],[],[],[]   
     Ap,Xp,sigp,xi,rho1,rho2 = [],[],[],[],[],[]
+    meanv, widthv, sigmav = [] , [] , []
     Xp_initial,sigp_initial,xi_initial,rho1_initial,rho2_initial =  9.8545e-01, 1.3118e-01,2.2695e-01, 6.4189e-02,  9.0282e-02 
     fsig=[]
     sig=[]
@@ -330,7 +334,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None):
     integral=[]
     formula=[]
     scale_factors=[]
-    scaled_cb=[]
+    scaled=[]
     func=[]
     colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring+8, ROOT.kOrange]
  
@@ -362,24 +366,51 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None):
         xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
         rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
         rho2.append(RooRealVar("rho2_%s"%h,"rho2_%s"%h,rho2_initial,-1,1)) #right
-        sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
+     #   sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
+###########################RooCruijff##################
+        meanr.append(RooRealVar("meanr_%s"%h,"meanr_%s"%h,Xp_initial,0.5,1.5))
+        sigmaL.append(RooRealVar("sigmaL_%s"%h,"sigmaL_%s"%h,sigp_initial,0.01,0.3))
+        sigmaR.append(RooRealVar("sigmaR_%s"%h,"sigmaR_%s"%h,sigp_initial,0.01,0.3))
+        alphaL.append(RooRealVar("alphaL_%s"%h,"alphaL_%s"%h,0.01,0,2.))
+        alphaR.append(RooRealVar("alphaR_%s"%h,"alphaR_%s"%h,0.1,0.,2.))
+        formula_rooCruijff = "( ( (x_%s-meanr_%s)<0) ? (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaL_%s,2)+alphaL_%s*pow((x_%s-meanr_%s),2) ))) : (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaR_%s,2)+alphaR_%s*pow((x_%s-meanr_%s),2) )))  )"%(h,h,h,h,h,h,h,h,h,h,h,h,h,h) 
+     #   sig.append(RooGenericPdf("signal_cruijff_%s"%h,"signal_cruijff_%s"%h,formula_rooCruijff,RooArgList(x[num],meanr[num],sigmaL[num],sigmaR[num],alphaL[num],alphaR[num])))
+      #  sig.append(RooBifurGauss("signal_bifurgaus_%s"%h,"signal_bifurgaus_%s"%h,x[num],meanr[num],sigmaL[num],sigmaR[num]))
+############################VOigt##########################
+        meanv.append(RooRealVar("meanv_%s"%h,"meanv_%s"%h,Xp_initial,0.5,1.5))
+        widthv.append(RooRealVar("widthv_%s"%h,"widthv_%s"%h,sigp_initial,0.01,0.7))
+        sigmav.append(RooRealVar("sigmav_%s"%h,"sigmav_%s"%h,sigp_initial,0.01,0.7))
+        sig.append(RooVoigtian("signal_voigt_%s"%h,"signal_voigt_%s"%h,x[num],meanv[num],widthv[num],sigmav[num]))
+
+###########################################################
 
 
         res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE)))
+        fit_range_min = h_rel_diff.GetMean()-h_rel_diff.GetRMS()/2
+        fit_range_max = h_rel_diff.GetMean()+h_rel_diff.GetRMS()/2
+        print 'range of the fit : ', fit_range_min, fit_range_max
+   #     res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE),ROOT.RooFit.Range(fit_range_min,fit_range_max))) # take Mean of each histogram and add 1/2 of the RMS  ? -> try that
         res[num].Print()
         x[num].setRange("integralRange%s"%h, c_min,c_max)  
         integral.append(sig[num].createIntegral(RooArgSet(x[num]), ROOT.RooFit.Range("integralRange%s"%h)))
 
         scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
-        formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
+      #  formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
+       # formula.append("%f *signal_bifurgaus_%s"%(scale_factors[num],h))
+        formula.append("%f *signal_voigt_%s"%(scale_factors[num],h))
+      #  formula.append("%f *signal_cruijff_%s"%(scale_factors[num],h))
        # create a scaled  function = scale * function
-        scaled_cb.append(RooFormulaVar("scaled_cb_%s"%h,formula[num],RooArgList(sig[num])))
-        func_list.append(scaled_cb[num].asTF(RooArgList(x[num])))
+        scaled.append(RooFormulaVar("scaled_%s"%h,formula[num],RooArgList(sig[num])))
+        func_list.append(scaled[num].asTF(RooArgList(x[num])))
         func_list[num].SetLineColor(colors[num])
         hist_list.append(h_rel_diff)
    
     c.cd()
-    frame.GetYaxis().SetRangeUser(0,max(max_list))
+    frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
+    log_name=''
+    if log==True : 
+        c.SetLogy()
+        log_name='log'
     frame.Draw()
     for j in range(len(X_region)):
         func_list[j].Draw("same")
@@ -388,8 +419,9 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None):
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
   #  c.SaveAs("pt_region.png")
-  #  c.Draw()
-    c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+'.png')
+   # c.SaveAs(utils.IO.plotFolder+"fitCruijff_regions_"+str(outString)+log_name+'.png')
+  #  c.SaveAs(utils.IO.plotFolder+"fitBifurgaus_regions_"+str(outString)+log_name+'.png')
+    c.SaveAs(utils.IO.plotFolder+"fitVoigt_regions_"+str(outString)+log_name+'.png')
   #  c.Draw()
     
     
