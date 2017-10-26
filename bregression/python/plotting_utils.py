@@ -5,6 +5,8 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 import ROOT
+import math
+from ROOT import std
 from ROOT import gROOT
 from ROOT import gStyle
 from ROOT import TH1F
@@ -166,7 +168,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     
     
     
-    leg = ROOT.TLegend(0.65,0.75,0.9,0.9)
+    leg = ROOT.TLegend(0.55,0.75,0.9,0.9)
     leg.SetFillStyle(-1)
     leg.SetBorderSize(0)
     leg.SetTextFont(42)
@@ -202,6 +204,10 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     func=[]
     colors=[ROOT.kBlue,ROOT.kRed]
     chi_squares=[]
+    fwhm_bukin=[]
+    fwhm=[]
+    fwhm.append( -1 *(h_rel_diff.GetBinCenter( h_rel_diff.FindFirstBinAbove(h_rel_diff.GetMaximum()/2.)  )  - h_rel_diff.GetBinCenter( h_rel_diff.FindLastBinAbove(h_rel_diff.GetMaximum()/2.) ) )  )
+    fwhm.append( -1 *(h_rel_diff_reg.GetBinCenter( h_rel_diff_reg.FindFirstBinAbove(h_rel_diff_reg.GetMaximum()/2.)  )  - h_rel_diff_reg.GetBinCenter( h_rel_diff_reg.FindLastBinAbove(h_rel_diff_reg.GetMaximum()/2.) ) )  )
 
     for num,h in enumerate(h_names):
         x.append(RooRealVar("x_%s"%h,"x_%s"%h,c_min,c_max))
@@ -232,8 +238,12 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
 #  RooGenericPdf genpdf("genpdf","genpdf","(1+0.1*abs(x)+sin(sqrt(abs(x*alpha+0.1))))",RooArgSet(x,alpha)) ;
         formula_rooCruijff = "( ( (x_%s-meanr_%s)<0) ? (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaL_%s,2)+alphaL_%s*pow((x_%s-meanr_%s),2) ))) : (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaR_%s,2)+alphaR_%s*pow((x_%s-meanr_%s),2) )))  )"%(h,h,h,h,h,h,h,h,h,h,h,h,h,h) 
     #    sig.append(RooGenericPdf("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,formula_rooCruijff,RooArgList(x[num],meanr[num],sigmaL[num],sigmaR[num],alphaL[num],alphaR[num])))
-      #  sig.append(RooBifurGauss("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,x[num],meanr[num],widthL[num],widthR[num]))
+    #    sig.append(RooBifurGauss("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,x[num],meanr[num],sigmaL[num],sigmaR[num]))
 
+     #   fit_range_min = h_rel_diff.GetMean()-fwhm[num]
+     #   fit_range_max = h_rel_diff.GetMean()+fwhm[num]
+     #   print 'range of the fit : ', fit_range_min, fit_range_max
+     #   res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE),ROOT.RooFit.Range(fit_range_min,fit_range_max))) # take Mean of each histogram and add 1/2 of the RMS  ? -> try that
 
         res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE)))
         res[num].Print()
@@ -246,24 +256,30 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
         scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
       #  formula.append("%f *signal_gauss_%s"%(scale_factors[num],h))
         formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
-       # formula.append("%f *signal_cruijff_%s"%(scale_factors[num],h))
+     #   formula.append("%f *signal_cruijff_%s"%(scale_factors[num],h))
        # create a scaled  function = scale * function
         scaled_cb.append(RooFormulaVar("scaled_cb_%s"%h,formula[num],RooArgList(sig[num])))
         func.append(scaled_cb[num].asTF(RooArgList(x[num])))
         func[num].SetLineColor(colors[num])
         datahists[num].SetMarkerColor(colors[num])
+        fwhm_bukin.append(sigp[num].getVal()*2*math.sqrt(2*math.log(2)))
       
       #  chi_squares.append(RooChi2Var("chi2_%s"%h,"chi2_%s"%h,sig[num],datahist[num]))
-    h_rel_diff.Fit(func[0],"O")
-    h_rel_diff_reg.Fit(func[1],"O")
-    chi_squares.append(func[0].GetChisquare())
-    chi_squares.append(func[1].GetChisquare())
+
+    
+    fitfunc='Bukin'
+  #  fitfunc='Bifurgaus'
+    fit_result_file = std.ofstream(utils.IO.plotFolder+"../fitResults/fitResult_%s"%(fitfunc)+str(outString)+'.txt')
+    res[0].floatParsFinal().printMultiline(fit_result_file, 1111, True)
+    res[1].floatParsFinal().printMultiline(fit_result_file, 1111, True)
+    fit_result_file.close()
+
     
     if option=='caterina' :
-      #  leg.AddEntry(h_rel_diff,"Caterina, #Chi^{2} = %.2f"%chi_squares[0] ,"P")
-       # leg.AddEntry(h_rel_diff_reg,"XGboost, #Chi^{2} = %.2f"%chi_squares[1]  ,"P")
-        leg.AddEntry(h_rel_diff,"Caterina" ,"P")
-        leg.AddEntry(h_rel_diff_reg,"XGboost" ,"P")
+        leg.AddEntry(h_rel_diff,"Caterina, FWHM=%.3f"%fwhm[0] ,"P")
+        leg.AddEntry(h_rel_diff,"FWHM Bukin =%.3f"%fwhm_bukin[0] ,"P")
+        leg.AddEntry(h_rel_diff_reg,"XGboost, FWHM=%.3f"%fwhm[1],"P")
+        leg.AddEntry(h_rel_diff_reg,"FWHM Bukin =%.3f"%fwhm_bukin[1],"P")
     else : 
         leg.AddEntry(h_rel_diff,"Nominal" ,"P")
         leg.AddEntry(h_rel_diff_reg,"Regressed" ,"P")
@@ -272,19 +288,15 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     c2 = ROOT.TCanvas("c2","c2",900,900)
     c2.cd()
     frame.Draw()
-   # func[0].Draw("same")
-   # func[1].Draw("same")
+    func[0].Draw("same")
+    func[1].Draw("same")
     h_rel_diff.Draw("PEHISTsame")
     h_rel_diff_reg.Draw("PEHISTsame")    
     leg.Draw()
-
- #   frame2 = x[0].frame()
-  #  datahist[0].plotOn(frame2)
- #   sig[0].plotOn(frame2)  
- #   frame2.Draw()
   
    # c2.SaveAs(utils.IO.plotFolder+"pt_rel_fitCruijff_"+str(outString)+'.png')
-    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fitBukin_"+str(outString)+'.png')
+  #  c2.SaveAs(utils.IO.plotFolder+"pt_rel_noFit_"+str(outString)+'.png')
+    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fit%s_"%(fitfunc)+str(outString)+'.png')
     c2.Draw()
  
     
@@ -352,7 +364,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         h_rel_diff.SetLineWidth(2)
         h_rel_diff.SetLineStyle(1+j)
     
-        max_list.append(h_rel_diff.GetMaximum()*1.2)
+        max_list.append(h_rel_diff.GetMaximum()*1.3)
         datahists.append(h_rel_diff)
 
 
@@ -405,6 +417,8 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         func_list[num].SetLineColor(colors[num])
         hist_list.append(h_rel_diff)
    
+
+
     c.cd()
     frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
     log_name=''

@@ -162,8 +162,8 @@ def set_features(treeName,branch_names,features,cuts):
     return np.round(X_features,5)
 
 
-def cut_region(treeName,branch_names,features,cuts):
-    tmp_data_frame = (rpd.read_root(utils.IO.featuresName[0],treeName, columns = branch_names)).query(cuts)
+def cut_region(fileName,treeName,branch_names,features,cuts):
+    tmp_data_frame = (rpd.read_root(fileName,treeName, columns = branch_names)).query(cuts)
         
     for j in range(len(features)):
         if j == 0:

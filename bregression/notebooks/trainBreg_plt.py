@@ -53,15 +53,20 @@ for i in range(len(utils.IO.featuresName)):
 branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,noexpand:fabs(Jet_eta),Jet_corr,Jet_mcPtq,Jet_mcPt,Jet_mcFlavour,dR,rho,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
 
 #features = 'Jet_pt,Jet_eta,Jet_corr,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
-#target = 'Jet_mcPt/Jet_pt'.split(",")
-#cuts='(Jet_mcPt > 20) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_pt > 15) & (Jet_eta<2.4 & Jet_eta>-2.4) & (dR < 0.4)'
-###########as Caterina###################
 features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
-#features = 'Jet_pt,Jet_eta,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
+#target = 'Jet_mcPt/Jet_pt'.split(",")
 target = 'Jet_mcPt'.split(",")
-cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5)'
+#cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & dR<0.4'
+#cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5)'
+cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) '
+#cuts='(Jet_mcPt > 20) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_pt > 15) & (Jet_eta<2.4 & Jet_eta>-2.4) & (dR < 0.4)'
 #cuts='Jet_mcPt > 20 & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & Jet_pt > 15' #same as Caterina
 #######cuts='(Jet_mcPtq > 20) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_pt > 15)  & (dR < 0.35)'
+
+###########as Caterina, exactly the same result###################
+#features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
+#target = 'Jet_mcPt'.split(",")
+#cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5)'
 #########################################
 
 
@@ -109,10 +114,10 @@ target_dist = []
 target_dist.append('noexpand:Jet_mcPt/Jet_pt')
 for region in pt_regions:
     cuts_regions = cuts+'&'+region
-    X_pt_region.append(preprocessing.cut_region("tree",branch_names,target_dist,cuts_regions))
+    X_pt_region.append(preprocessing.cut_region(utils.IO.featuresName[0],"tree",branch_names,target_dist,cuts_regions))
 for region in eta_regions:
     cuts_regions = cuts+'&'+region
-    X_eta_region.append(preprocessing.cut_region("tree",branch_names,target_dist,cuts_regions))
+    X_eta_region.append(preprocessing.cut_region(utils.IO.featuresName[0],"tree",branch_names,target_dist,cuts_regions))
 
 #plotting.plot_regions(X_pt_region,pt_regions,True,50,"ptCrujiff",True)
 #plotting.plot_regions(X_eta_region,eta_regions_names,True,50,"eta")
@@ -151,7 +156,7 @@ clf = xgb.XGBRegressor(base_score=1.0,objective='reg:linear', learning_rate=0.1,
 clf.fit(X_train_features,X_train_target)
 #print clf.best_score_
 #print clf.best_params_
-joblib.dump(clf, os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_mcPt_Cat_pt_eta_nPVs.pkl'), compress=9)
+joblib.dump(clf, os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'), compress=9)
 #predictions = clf.predict(X_test_features)
 #print predictions, predictions.shape
 #actuals = X_test_target
