@@ -131,3 +131,17 @@ def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTre
             v=(np.asarray(MVAVector.ravel()))
             v.dtype = [('MVAOutput', np.float64)]
             array2root(v, processPath, nameTree, mode ='update')
+
+            
+            
+            
+def get_mean_width(file_pt):
+    open_pt = open(file_pt, 'r') 
+    data = open_pt.readlines()
+    data_pt=[]
+    for item,line in enumerate(data):
+        words = line.split()
+        if '+/-' in words:
+            data_pt.append(words[0])
+    open_pt.close() 
+    return data_pt[:len(data_pt)/2], data_pt[len(data_pt)/2:]

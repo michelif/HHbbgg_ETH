@@ -304,7 +304,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
 def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):  
     if style==True:
         gROOT.SetBatch(True)
-        gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
+     #   gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
         gROOT.ForceStyle()
         gStyle.SetPadTopMargin(0.06)
         gStyle.SetPadRightMargin(0.04)
@@ -378,7 +378,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
         rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
         rho2.append(RooRealVar("rho2_%s"%h,"rho2_%s"%h,rho2_initial,-1,1)) #right
-     #   sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
+        sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
 ###########################RooCruijff##################
         meanr.append(RooRealVar("meanr_%s"%h,"meanr_%s"%h,Xp_initial,0.5,1.5))
         sigmaL.append(RooRealVar("sigmaL_%s"%h,"sigmaL_%s"%h,sigp_initial,0.01,0.3))
@@ -392,7 +392,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         meanv.append(RooRealVar("meanv_%s"%h,"meanv_%s"%h,Xp_initial,0.5,1.5))
         widthv.append(RooRealVar("widthv_%s"%h,"widthv_%s"%h,sigp_initial,0.01,0.7))
         sigmav.append(RooRealVar("sigmav_%s"%h,"sigmav_%s"%h,sigp_initial,0.01,0.7))
-        sig.append(RooVoigtian("signal_voigt_%s"%h,"signal_voigt_%s"%h,x[num],meanv[num],widthv[num],sigmav[num]))
+   #     sig.append(RooVoigtian("signal_voigt_%s"%h,"signal_voigt_%s"%h,x[num],meanv[num],widthv[num],sigmav[num]))
 
 ###########################################################
 
@@ -407,9 +407,9 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         integral.append(sig[num].createIntegral(RooArgSet(x[num]), ROOT.RooFit.Range("integralRange%s"%h)))
 
         scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
-      #  formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
+        formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
        # formula.append("%f *signal_bifurgaus_%s"%(scale_factors[num],h))
-        formula.append("%f *signal_voigt_%s"%(scale_factors[num],h))
+      #  formula.append("%f *signal_voigt_%s"%(scale_factors[num],h))
       #  formula.append("%f *signal_cruijff_%s"%(scale_factors[num],h))
        # create a scaled  function = scale * function
         scaled.append(RooFormulaVar("scaled_%s"%h,formula[num],RooArgList(sig[num])))
@@ -418,9 +418,21 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         hist_list.append(h_rel_diff)
    
 
+    fitfunc='Bukin'
+    fit_result_file = std.ofstream(utils.IO.plotFolder+"../fitResults/fitResultRegions_%s"%(fitfunc)+str(outString)+'.txt')
+    fit_result_file.write('mean Xp\n',8)
+    for fitnum in range(len(X_region)):
+       Xp[fitnum].writeToStream(fit_result_file,False)
+       fit_result_file.write('\n',1)
+    fit_result_file.write('sigp\n',5)
+    for fitnum in range(len(X_region)):
+       sigp[fitnum].writeToStream(fit_result_file,False)
+       fit_result_file.write('\n',1)
+    fit_result_file.close()
 
     c.cd()
-    frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
+ #   frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
+    frame.GetYaxis().SetRangeUser(1e-06,0.28)
     log_name=''
     if log==True : 
         c.SetLogy()
@@ -433,9 +445,10 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
   #  c.SaveAs("pt_region.png")
+    c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.png')
    # c.SaveAs(utils.IO.plotFolder+"fitCruijff_regions_"+str(outString)+log_name+'.png')
   #  c.SaveAs(utils.IO.plotFolder+"fitBifurgaus_regions_"+str(outString)+log_name+'.png')
-    c.SaveAs(utils.IO.plotFolder+"fitVoigt_regions_"+str(outString)+log_name+'.png')
+ #   c.SaveAs(utils.IO.plotFolder+"fitVoigt_regions_"+str(outString)+log_name+'.png')
   #  c.Draw()
     
     
@@ -664,4 +677,27 @@ def bisection(array,value):#be careful, works with sorted arrays
         return n-1
     else:
         return jl
+    
+    
+    
+    
+def plot_mean_fwhm(x,y,regions,what,outString=None):
+    plt.plot(regions,x,'r^', label='XGboost')
+    plt.plot(regions,y,'bs', label='Caterina')
+
+    plt.xlabel(what[1])
+    plt.ylabel(what[0])
+    plt.legend(loc="lower right")
+    x_text,y_text = float(regions[len(regions)-1])-100,float(x[len(x)-1])+0.05
+    if 'p_T' in what[1] : plt.annotate('low stat', xy=(regions[len(regions)-1],x[len(x)-1]), xytext=(x_text,y_text)
+            )
+    axes = plt.gca()
+    if 'mean' in what[0] :axes.set_ylim([0.8,1.2])
+    if 'FWHM' in what[0] :axes.set_ylim([0.0,0.6])
+    plt.grid()
+   # plt.show()
+    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png")
+    plt.clf()
+    return None
+
     

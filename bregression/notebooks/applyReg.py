@@ -136,18 +136,29 @@ plotting.plot_rel_pt_diff(rel_diff_regressed,rel_diff_caterina,True,400,'Caterin
     
 pt_regions = '(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
 eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
+eta_regions = '(Jet_eta<0.5 & Jet_eta>-0.5),((Jet_eta>=0.5 & Jet_eta<1.0) |(Jet_eta<=-0.5 & Jet_eta>-1.0)),(( Jet_eta>=1.0 & Jet_eta<1.5)|(Jet_eta<=-1.0 & Jet_eta>-1.5)),( (Jet_eta>=1.5 & Jet_eta<2.0)|(Jet_eta<=-1.5 & Jet_eta>=-2.0 )),(Jet_eta>=2.0 | Jet_eta<=-2.0)'.split(",")
 X_pt_region=[] # list of pandas DataFrame
 X_eta_region=[] # list of pandas DataFrame
+X_pt_region_Caterina=[] # list of pandas DataFrame
+X_eta_region_Caterina=[] # list of pandas DataFrame
 target_dist = []
+target_dist_Caterina = []
 target_dist.append('noexpand:Jet_mcPt/RegressedFactor')
+target_dist_Caterina.append('noexpand:Jet_mcPt/Jet_pt_regNew')
+addName = 'RegressedFactor,noexpand:Jet_mcPt/RegressedFactor,noexpand:Jet_mcPt/Jet_pt_regNew'.split(",")
 for region in pt_regions:
     cuts_regions = cuts+'&'+region
-    X_pt_region.append(preprocessing.cut_region(processPath,"tree",branch_names+addName,target_dist,cuts_regions))
+    X_pt_region.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist,cuts_regions))
+    X_pt_region_Caterina.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist_Caterina,cuts_regions))
 for region in eta_regions:
     cuts_regions = cuts+'&'+region
-    X_eta_region.append(preprocessing.cut_region(processPath,"tree",branch_names+addName,target_dist,cuts_regions))
+    X_eta_region.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist,cuts_regions))
+    X_eta_region_Caterina.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist_Caterina,cuts_regions))
 
-plotting.plot_regions(X_pt_region,pt_regions,True,50,"ptBukin",True)
+#plotting.plot_regions(X_pt_region,pt_regions,True,50,"AfterReg_ptregion",False)
+#plotting.plot_regions(X_eta_region,eta_regions_names,True,50,"AfterReg_etaregion",False)
+plotting.plot_regions(X_pt_region_Caterina,pt_regions,True,50,"AfterReg_ptregionCaterina",False)
+#plotting.plot_regions(X_eta_region_Caterina,eta_regions_names,True,50,"AfterReg_etaregionCaterina",False)
 
 
 
