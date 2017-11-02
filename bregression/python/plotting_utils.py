@@ -698,6 +698,53 @@ def plot_mean_fwhm(x,y,regions,what,outString=None):
    # plt.show()
     plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png")
     plt.clf()
-    return None
+
+
+def plot_response(histos,profiles,profiles_noReg,profiles_Cat,style=False,outString=None):
+    if style==True:
+        gROOT.SetBatch(True)
+        gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
+        gROOT.ForceStyle()
+        gStyle.SetPadTopMargin(0.06)
+        gStyle.SetPadRightMargin(0.04)
+        gStyle.SetPadLeftMargin(0.15)
+        
+    c = ROOT.TCanvas("c","c",900,900)
+    c.cd()
+    histos.Draw("HISTBOX")
+    colors=[ROOT.kRed,ROOT.kOrange-3,ROOT.kAzure+10]
+    profiles.SetLineColor(colors[0])
+    profiles.SetLineWidth(3)
+    profiles.SetMarkerColor(colors[0])
+    profiles.SetStats(0)
+    profiles.Draw("PLsame")
+    profiles_noReg.SetLineColor(colors[1])
+    profiles_noReg.SetLineWidth(3)
+    profiles_noReg.SetMarkerColor(colors[1])
+    profiles_noReg.SetStats(0)
+    profiles_noReg.Draw("PLsame")
+    profiles_Cat.SetLineColor(colors[2])
+    profiles_Cat.SetLineWidth(3)
+    profiles_Cat.SetMarkerColor(colors[2])
+    profiles_Cat.SetStats(0)
+    profiles_Cat.Draw("PLsame")
+    line = ROOT.TLine(histos.GetXaxis().GetBinCenter(0),1,histos.GetXaxis().GetBinCenter(histos.GetXaxis().GetNbins()),1)
+    line.SetLineStyle(9)
+    line.SetLineWidth(3)
+    line.SetLineColor(ROOT.kGreen+1)
+    line.Draw("Lsame")
+    leg = ROOT.TLegend(0.72,0.75,0.95,0.9)
+    leg.SetFillStyle(-1)
+    leg.SetBorderSize(0)
+    leg.SetTextFont(42)
+    leg.SetTextSize(0.03)
+    leg.AddEntry(profiles,"XGboost","PL")
+    leg.AddEntry(profiles_noReg,"no regression","PL")
+    leg.AddEntry(profiles_Cat,"Caterina","PL")
+    leg.Draw("same")
+    
+    c.SaveAs(utils.IO.plotFolder+"Response_"+histos.GetTitle()+'_'+str(outString)+'.png')
+
+
 
     

@@ -47,8 +47,9 @@ import root_pandas as rpd
 branch_names = 'Jet_pt,Jet_pt_regNew,Jet_pt_reg,noexpand:Jet_mcPt/Jet_pt,Jet_eta,noexpand:fabs(Jet_eta),Jet_corr,Jet_mcPt,Jet_mcFlavour,dR,rho,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
 
 ##features = 'Jet_pt,Jet_eta,Jet_corr,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
-#features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
-#target = 'Jet_mcPt/Jet_pt'.split(",")
+features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
+target = 'Jet_mcPt/Jet_pt'.split(",")
+cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5)'
 #cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & dR<0.4'
 #cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5)'
 ##cuts='(Jet_mcPt > 20) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_pt > 15) & (Jet_eta<2.4 & Jet_eta>-2.4) & (dR < 0.4)'
@@ -56,10 +57,10 @@ branch_names = 'Jet_pt,Jet_pt_regNew,Jet_pt_reg,noexpand:Jet_mcPt/Jet_pt,Jet_eta
 
 
 ###########as Caterina###################
-features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
-target = 'Jet_mcPt'.split(",")
-cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5)'
-#cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) '
+#features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
+#target = 'Jet_mcPt'.split(",")
+#cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5)'
+##cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) '
 ###cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & Jet_pt_regNew>0'
 #########################################
 
@@ -83,7 +84,8 @@ import root_pandas as rpd
 
 #loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_mcPt_Cat_pt_eta_nPVs.pkl'))
 #loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_ratio_bjetsdR04.pkl'))
-loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'))
+loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'))   ###final one used to compare with caterina
+loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_ratio_largestat.pkl'))   ###final one used to compare with caterina
 X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.)
 X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
 
@@ -97,7 +99,7 @@ print 'len of data frame = ', len(data_frame)
 #to a position in the vector
 nTot,dictVar = postprocessing.stackFeaturesReg(data_frame,branch_names,5)
 
-outTag = 'output_CaterinaUpd_trainedall_testb'
+outTag = 'output_ratio_largestat_'
 processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/')+outTag+utils.IO.featuresName[0].split("/")[len(utils.IO.featuresName[0].split("/"))-1]
 postprocessing.saveTreeReg(processPath,dictVar,nTot,X_pred_data)
 
@@ -115,20 +117,21 @@ reload(utils)
 reload(plotting)
 
 #plot mc_gen/regressed_reco (from me and from Caterina)
-#predictions_pt = X_pred_data*nTot[:,dictVar['Jet_pt']]
-#true_pt = nTot[:,dictVar['Jet_mcPt']]
-#predictions_pt_caterina = nTot[:,dictVar['Jet_pt_regNew']]
-
-###########as Caterina###################
-predictions_pt = X_pred_data
+predictions_pt = X_pred_data*nTot[:,dictVar['Jet_pt']]
 true_pt = nTot[:,dictVar['Jet_mcPt']]
 predictions_pt_caterina = nTot[:,dictVar['Jet_pt_regNew']]
+
+############as Caterina###################
+#predictions_pt = X_pred_data
+#true_pt = nTot[:,dictVar['Jet_mcPt']]
+#predictions_pt_caterina = nTot[:,dictVar['Jet_pt_regNew']]
 #########################################
 
 
 rel_diff_regressed = true_pt/predictions_pt
+#rel_diff_regressed = X_pred_data 
 rel_diff_caterina = true_pt/predictions_pt_caterina
-plotting.plot_rel_pt_diff(rel_diff_regressed,rel_diff_caterina,True,400,'CaterinaUpd_trainedall_testb')
+plotting.plot_rel_pt_diff(rel_diff_regressed,rel_diff_caterina,True,400,'ratio_largestat')
 
 
 ########################################
@@ -143,9 +146,10 @@ X_pt_region_Caterina=[] # list of pandas DataFrame
 X_eta_region_Caterina=[] # list of pandas DataFrame
 target_dist = []
 target_dist_Caterina = []
-target_dist.append('noexpand:Jet_mcPt/RegressedFactor')
+#target_dist.append('RegressedFactor')
+target_dist.append('noexpand:Jet_mcPt/RegressedFactor/Jet_pt')
 target_dist_Caterina.append('noexpand:Jet_mcPt/Jet_pt_regNew')
-addName = 'RegressedFactor,noexpand:Jet_mcPt/RegressedFactor,noexpand:Jet_mcPt/Jet_pt_regNew'.split(",")
+addName = 'RegressedFactor,noexpand:Jet_mcPt/RegressedFactor,noexpand:Jet_mcPt/Jet_pt_regNew,noexpand:Jet_mcPt/RegressedFactor/Jet_pt'.split(",")
 for region in pt_regions:
     cuts_regions = cuts+'&'+region
     X_pt_region.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist,cuts_regions))
@@ -157,7 +161,7 @@ for region in eta_regions:
 
 #plotting.plot_regions(X_pt_region,pt_regions,True,50,"AfterReg_ptregion",False)
 #plotting.plot_regions(X_eta_region,eta_regions_names,True,50,"AfterReg_etaregion",False)
-plotting.plot_regions(X_pt_region_Caterina,pt_regions,True,50,"AfterReg_ptregionCaterina",False)
+plotting.plot_regions(X_pt_region_Caterina,pt_regions,True,50,"ratio_largest",False)
 #plotting.plot_regions(X_eta_region_Caterina,eta_regions_names,True,50,"AfterReg_etaregionCaterina",False)
 
 

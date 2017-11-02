@@ -27,7 +27,8 @@ files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
 #ttbar= [s for s in files if "20trees_safe" in s] #large statistics
 #ttbar= [s for s in files if "ttbar_RegressionPerJet.root" in s] # only limited statistics
-ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_forTraining.root" in s] #large statistics and nPVs is filled properly
+#ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_forTraining.root" in s] #large statistics and nPVs is filled properly
+ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_forTraining_Large.root" in s] #very large statistic
 
 
 utils.IO.add_target(ntuples,ttbar,1)
@@ -52,13 +53,13 @@ for i in range(len(utils.IO.featuresName)):
 #noexpand:fabs(CosThetaStar_CS)
 branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,noexpand:fabs(Jet_eta),Jet_corr,Jet_mcPtq,Jet_mcPt,Jet_mcFlavour,dR,rho,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
 
-#features = 'Jet_pt,Jet_eta,Jet_corr,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
+###features = 'Jet_pt,Jet_eta,Jet_corr,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",")
 features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
-#target = 'Jet_mcPt/Jet_pt'.split(",")
-target = 'Jet_mcPt'.split(",")
+target = 'Jet_mcPt/Jet_pt'.split(",")
+#target = 'Jet_mcPt'.split(",")
 #cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & dR<0.4'
-#cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5)'
-cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) '
+cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5)'
+#cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) '
 #cuts='(Jet_mcPt > 20) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_pt > 15) & (Jet_eta<2.4 & Jet_eta>-2.4) & (dR < 0.4)'
 #cuts='Jet_mcPt > 20 & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & Jet_pt > 15' #same as Caterina
 #######cuts='(Jet_mcPtq > 20) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_pt > 15)  & (dR < 0.35)'
@@ -66,7 +67,8 @@ cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) '
 ###########as Caterina, exactly the same result###################
 #features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
 #target = 'Jet_mcPt'.split(",")
-#cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5)'
+####cuts='(Jet_mcPt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5)'
+#cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) '
 #########################################
 
 
@@ -85,19 +87,17 @@ X_features = preprocessing.set_features("tree",branch_names,features,cuts)
 X_target = preprocessing.set_target("tree",branch_names,target,cuts)
 X_features,X_target=preprocessing.randomize_ft(X_features,X_target)
 
-#print max(X_features[:,1])
-#print pd.DataFrame(utils.IO.features_df[0],columns=['Jet_eta'])
-
 #now type if np.array
-X_train_target = preprocessing.get_training_sample(pd.DataFrame(X_target))
-X_train_features = preprocessing.get_training_sample(pd.DataFrame(X_features))
+#X_train_target = preprocessing.get_training_sample(pd.DataFrame(X_target))
+#X_train_features = preprocessing.get_training_sample(pd.DataFrame(X_features))
 
-X_test_target = preprocessing.get_test_sample(pd.DataFrame(X_target))
-X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features))
+#X_test_target = preprocessing.get_test_sample(pd.DataFrame(X_target))
+#X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features))
+#now no need to split in test and training because i am not using testing here
+X_train_target = preprocessing.get_test_sample(pd.DataFrame(X_target),0.)
+X_train_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.)
 
-#X_target_data =  pd.DataFrame(utils.IO.data_df[0],columns=['Jet_mcPt'])
-#X_data_target = utils.IO.data_df[0][['Jet_mcPt']]
-#new_jet_mcPt = jet_mcPt.query('Jet_mcPt > 30')
+
 
 from sklearn.externals import joblib
 import xgboost as xgb
@@ -148,7 +148,8 @@ from sklearn.grid_search import GridSearchCV
     #   objective='reg:linear', reg_alpha=0, reg_lambda=0.1,
     #   scale_pos_weight=1, seed=0, silent=True, subsample=1)
 
-clf = xgb.XGBRegressor(base_score=1.0,objective='reg:linear', learning_rate=0.1,max_depth=13,min_child_weight=0.002,n_estimators=300,reg_alpha=0,reg_lambda=0)
+#clf = xgb.XGBRegressor(base_score=1.0,objective='reg:linear', learning_rate=0.1,max_depth=13,min_child_weight=0.002,n_estimators=300,reg_alpha=0,reg_lambda=0)  #caterina
+clf = xgb.XGBRegressor(base_score=1.0,objective='reg:linear', learning_rate=0.1,max_depth=13,min_child_weight=0.002,n_estimators=300,reg_alpha=0,reg_lambda=0, nthread=10) 
 #param_grid = {'n_estimators': [100,500]}
 #grid_scores = optimization.optimize_parameters_gridCV_ref(xgb_model,X_train_features,X_train_target,X_test_features,X_test_target,param_grid)
 
@@ -156,7 +157,15 @@ clf = xgb.XGBRegressor(base_score=1.0,objective='reg:linear', learning_rate=0.1,
 clf.fit(X_train_features,X_train_target)
 #print clf.best_score_
 #print clf.best_params_
-joblib.dump(clf, os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'), compress=9)
+end= 'ratio_largestat'
+joblib.dump(clf, os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+end+'.pkl'), compress=9)
+foutput = open(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/params_regression_heppy_'+end+'.txt'),'w')
+foutput.write('features = ')
+for x in features:foutput.write(x)
+foutput.write(' ; cuts = ')
+for x in cuts:foutput.write(x)
+foutput.write(' ; Parameters : base_score=1.0,objective=reg:linear, learning_rate=0.1,max_depth=13,min_child_weight=0.002,n_estimators=300,reg_alpha=0,reg_lambda=0')
+foutput.close()
 #predictions = clf.predict(X_test_features)
 #print predictions, predictions.shape
 #actuals = X_test_target
