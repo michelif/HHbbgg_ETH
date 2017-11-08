@@ -1,23 +1,40 @@
 from sklearn import model_selection
 from sklearn.model_selection import train_test_split
+import numpy as np
 
 
-def optimize_parameters_gridCV_ref(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,cvOpt=3,nJobs=10):
+
+# -------------------------------------------------------------------------------------
+def setupJoblib(ipp_profile='default'):
+    from sklearn.externals.joblib import Parallel, parallel_backend, register_parallel_backend
+
+    import ipyparallel as ipp
+    from ipyparallel.joblib import IPythonParallelBackend
+    global joblib_rc,joblib_view,joblib_be
+    joblib_rc = ipp.Client(profile=ipp_profile)
+    joblib_view = joblib_rc.load_balanced_view()
+    joblib_be = IPythonParallelBackend(view=joblib_view)
+
+    register_parallel_backend('ipyparallel',lambda : joblib_be,make_default=True)
+
+
+
+def optimize_parameters_gridCV_reg(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,cvOpt=5,nJobs=2):
     print "=====Optimization with grid search cv====="
-    scores = model_selection.cross_val_score(classifier,
-                                      X_features,X_target,
-                                      scoring="mean_squared_error", 
-                                      n_jobs=nJobs,
-                                      cv=cvOpt)
-    print "-Initial Accuracy-"
-    print "Accuracy: %0.5f (+/- %0.5f)"%(scores.mean(), scores.std())
+  #  scores = model_selection.cross_val_score(classifier,
+   #                                   X_features,X_target,
+   #                                   scoring="neg_mean_squared_error", 
+   #                                   n_jobs=nJobs,
+   #                                   cv=cvOpt)
+  #  print "-Initial Accuracy-"
+  #  print "Accuracy: %0.5f (+/- %0.5f)"%(scores.mean(), scores.std())
 
     
         
     clf = model_selection.GridSearchCV(classifier,
                                    param_grid,
                                    cv=cvOpt,
-                                   scoring='mean_squared_error',
+                                   scoring='neg_mean_squared_error',
                                    n_jobs=nJobs, verbose=1)
     clf.fit(X_features, X_target)
     
@@ -109,4 +126,14 @@ def optimize_parameters_randomizedCV(classifier,X_total_train,y_total_train,para
         print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
     
     return clf.grid_scores_
+
+
+
+def feature_importances_(self):
+  ###  feature_importances_ : array of shape = [n_features]
+    b = self.booster()
+    fs = b.get_fscore()
+    all_features = [fs.get(f, 0.) for f in b.feature_names]
+    all_features = np.array(all_features, dtype=np.float32)
+    return all_features / all_features.sum()
 

@@ -480,7 +480,7 @@ def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outStrin
         h_min = min([histo[0].min() for histo in AllHistos])
 
     
-        if branch_names[i] in log_names : plt.yscale('log')
+        if branch_names[i] in log_names or 'energyRing' in branch_names[i] : plt.yscale('log')
         ax1 = plt.subplot(111)
 
         ax1.bar(bin_centers-bin_widths/2.,Histo_data[0],facecolor='blue',linewidth=0,width=bin_widths,label='ttbar ',alpha=0.5)
@@ -495,10 +495,11 @@ def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outStrin
             branch_names[i] = branch_names[i].replace('/','_')
         
         plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".png")
-        plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".pdf")
+    #    plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".pdf")
 
 
-        plt.show()
+  #      plt.show()
+        plt.clf()
     
     
     
