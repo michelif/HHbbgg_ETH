@@ -9,6 +9,7 @@ def setupJoblib(ipp_profile='default'):
     from sklearn.externals.joblib import Parallel, parallel_backend, register_parallel_backend
 
     import ipyparallel as ipp
+    from ipyparallel import Client
     from ipyparallel.joblib import IPythonParallelBackend
     global joblib_rc,joblib_view,joblib_be
     joblib_rc = ipp.Client(profile=ipp_profile)
@@ -16,6 +17,41 @@ def setupJoblib(ipp_profile='default'):
     joblib_be = IPythonParallelBackend(view=joblib_view)
 
     register_parallel_backend('ipyparallel',lambda : joblib_be,make_default=True)
+
+def setupJoblib_my(ipp_profile='default'):
+    from sklearn.externals.joblib import Parallel, parallel_backend, register_parallel_backend
+
+    import ipyparallel as ipp
+    from ipyparallel import Client
+    from ipyparallel.joblib import IPythonParallelBackend
+    global joblib_rc,joblib_view,joblib_be
+    joblib_rc = ipp.Client(profile=ipp_profile)
+    joblib_view = joblib_rc.load_balanced_view()
+    joblib_be = IPythonParallelBackend(view=joblib_view)
+
+    register_parallel_backend('ipyparallel',lambda : joblib_be)
+
+
+def optimize_parameters_randomizedCV_reg(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,nIter=20,cvOpt=5,nJobs=20):
+    print "=====Optimization with randomized search cv====="
+    
+    clf = model_selection.RandomizedSearchCV(classifier,
+                                   param_grid,
+                                   n_iter=nIter,
+                                   cv=cvOpt,
+                                   scoring='neg_mean_squared_error',
+                                   n_jobs=nJobs, verbose=100)
+    clf.fit(X_features, X_target)
+    print "Best parameter set found on development set:"
+    print
+    print clf.best_estimator_
+    print
+    print "Grid scores on a subset of the development set:"
+    print
+    for params, mean_score, scores in clf.grid_scores_:
+        print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
+    
+    return clf
 
 
 

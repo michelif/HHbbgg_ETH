@@ -6,10 +6,11 @@ from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 import ROOT
 import math
+from array import array
 from ROOT import std
 from ROOT import gROOT
 from ROOT import gStyle
-from ROOT import TH1F
+from ROOT import TH1F, TGraph, TF1
 from ROOT import TCanvas
 from ROOT import RooRealVar, RooDataHist, RooFormulaVar, RooVoigtian, RooChebychev, RooArgList, \
                  RooArgSet, RooAddPdf, RooDataSet, RooCategory, RooSimultaneous, \
@@ -451,6 +452,153 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
  #   c.SaveAs(utils.IO.plotFolder+"fitVoigt_regions_"+str(outString)+log_name+'.png')
   #  c.Draw()
     
+def myCDF(x,p):
+    x0 = p[0]
+    q1 = p[1]
+    q3 = p[2]
+    const = p[3]
+    xmax = x0+const*(q3-x0)
+    xmin = x0-const*(x0-q1)
+    if (x[0]>xmax) :return (const*(xmax-q1) + (q1-x0)/3. -  ( pow((xmax-x0),3)/3./pow((q3-x0),2) )  )
+    elif (x[0] > x0) : return (const*(x[0]-q1) + (q1-x0)/3. -  ( pow((x[0]-x0),3)/3./pow((q3-x0),2) )  )
+    elif (x[0] <= x0) : return ( const*(x[0]-q1) + (-1.)*pow((x[0]-x0),3)/3./pow((x0-q1),2) + (q1-x0)/3. )  
+    elif (x[0]<xmin) :return -0.25
+
+  
+def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):  
+    if style==True:
+        gROOT.SetBatch(True)
+        gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
+        gROOT.ForceStyle()
+        gStyle.SetPadTopMargin(0.06)
+        gStyle.SetPadRightMargin(0.04)
+        gStyle.SetPadLeftMargin(0.15)
+    
+
+    h_names = [ 'region'+str(t) for t in range(0,len(X_region))]
+
+    c_min=0
+    c_max=2.
+
+    hist_list=[]
+    func_list=[]
+    max_list=[]
+    datahists=[]
+    graphs=[]
+    func=[]
+    colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring+8, ROOT.kOrange]
+    taus = array('d',[0.25, 0.5, 0.75])
+    taus_fit = array('d',[x-taus[0] for x in taus ])
+    nqx=3
+    quantiles_pos=[]
+    x0_hist=[]
+    x0_CDFfit=[]
+ 
+ 
+    for j in range(len(X_region)):
+        h=h_names[j]
+        data =((X_region[j]).as_matrix()).ravel()
+        print len(data)
+        h_rel_diff = TH1F("hrel_diff_%s"%h_names[j], "hrel_diff_%s"%h_names[j], n_bins, c_min, c_max)
+        h_rel_diff.Sumw2(True)
+        for i in xrange(len(data)): 
+            h_rel_diff.Fill(data[i])
+        h_rel_diff.Scale(1./h_rel_diff.Integral())
+        h_rel_diff.SetLineColor(colors[j])
+        h_rel_diff.SetMarkerColor(colors[j])
+        h_rel_diff.SetLineWidth(2)
+        h_rel_diff.SetLineStyle(1+j)
+        h_rel_diff.SetMarkerStyle(20+j)
+        datahists.append(h_rel_diff)
+        quantiles_x = array('d', [0 for x in range(0, nqx)])
+        h_rel_diff.GetQuantiles( nqx,quantiles_x, taus )
+        quantiles_pos.append(quantiles_x)
+        max_list.append(h_rel_diff.GetMaximum()*1.3)
+        x0_hist.append(h_rel_diff.GetBinCenter(h_rel_diff.GetMaximumBin()))
+
+        gr = TGraph(nqx,quantiles_x,taus_fit);
+        gr.SetLineColor(colors[j])
+        gr.SetMarkerColor(colors[j])
+        gr.SetMarkerStyle(20+j)
+        graphs.append(gr)
+
+   #     fit_cdf = TF1("fit_%s"%h, myCDF, 0., 2., 4)   
+        fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[2]*1.02,4) 
+      #  fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
+       # fit_cdf.FixParameter(2,quantiles_x[2] )  #q3   
+        fit_cdf.SetParameter(1,quantiles_x[0] )  #q1   
+        fit_cdf.SetParameter(2,quantiles_x[2] )  #q3   
+        fit_cdf.SetParLimits(1,quantiles_x[0]*0.9,quantiles_x[0]*1.1 )  #q1   
+        fit_cdf.SetParLimits(2,quantiles_x[2]*0.9,quantiles_x[2]*1.1 )  #q3   
+        fit_cdf.SetParameter(0,1. )  #x0   
+        fit_cdf.SetParameter(4,3. )  #const 
+       # fit_cdf.SetParLimits(0, 0., 2.)    
+        fit_cdf.SetLineColor(colors[j])
+        gr.Fit("fit_%s"%h,"R+")
+        func.append(fit_cdf)
+        x0_CDFfit.append(fit_cdf.GetParameter(0))
+
+    c = TCanvas("canv","canv",1600,800)
+    c.Divide(2,1)
+    c.cd(1)
+    frame = TH1F("hframe", "", n_bins, c_min, c_max)
+    frame.SetStats(0)
+    frame.GetXaxis().SetTitleOffset(0.91);
+    frame.GetYaxis().SetTitle("Events")
+    frame.GetXaxis().SetTitle("p_{T}^{gen}/p_{T}^{reco}")
+    frame.GetYaxis().SetLabelSize(0.04)
+    leg = ROOT.TLegend(0.12,0.75,0.6,0.9)
+    leg.SetFillStyle(-1)
+    leg.SetBorderSize(0)
+    leg.SetTextFont(42)
+    leg.SetTextSize(0.025)
+    frame.GetYaxis().SetRangeUser(0.,max(max_list))
+    frame.Draw()
+    for j in range(len(X_region)):
+        datahists[j].Draw("PEsame")
+        leg.AddEntry(datahists[j],names[j] ,"PE")
+    leg.Draw('same')
+
+    c.cd(2)
+    right,top   = gStyle.GetPadRightMargin(),gStyle.GetPadTopMargin()
+    left,bottom = gStyle.GetPadLeftMargin(),gStyle.GetPadBottomMargin()
+    ci = ROOT.TColor.GetColor("#ffffff")
+    frame2 = TH1F("hframe2", "", n_bins, 0.9, 1.25)
+    frame2.SetStats(0)
+    frame2.GetXaxis().SetTitleOffset(0.91);
+    frame2.GetYaxis().SetTitle("#tau - #tau_{1}")
+    frame2.GetXaxis().SetTitle("Quantiles positions")
+    frame2.GetYaxis().SetLabelSize(0.04)
+    frame2.GetYaxis().SetRangeUser(-0.05,0.7)
+    frame2.Draw()
+    paveText2 = ROOT.TPaveText(0.6,0.25,0.9,.4,"NDC")
+    paveText2.SetTextFont(42)
+    paveText2.SetTextSize(top*0.43)
+    paveText2.SetFillStyle(-1)
+    paveText2.SetBorderSize(0)
+    for j in range(len(X_region)):
+        graphs[j].Draw("PEsame")
+        func[j].Draw("same")
+        t = paveText2.AddText("x0 hist/fit : %.2f/%.2f"%(x0_hist[j],x0_CDFfit[j]))
+        t.SetTextColor(colors[j]);
+    leg.Draw('same')
+
+    paveText = ROOT.TPaveText(0.7,0.85,0.9,.9,"NDC")
+    paveText.SetTextFont(42)
+    paveText.SetTextColor(ROOT.kBlue)
+    paveText.SetTextSize(top*0.43)
+    paveText.SetFillStyle(-1)
+    paveText.SetBorderSize(0)
+    paveText.AddText("Quadratic Fit")
+    paveText.Draw("same")
+   
+    paveText2.Draw("same")
+    print x0_hist, x0_CDFfit
+
+    c.SaveAs(utils.IO.plotFolder+"quantiles_"+str(outString)+'.png')
+
+ 
+
     
     
     
