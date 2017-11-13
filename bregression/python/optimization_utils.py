@@ -32,25 +32,28 @@ def setupJoblib_my(ipp_profile='default'):
     register_parallel_backend('ipyparallel',lambda : joblib_be)
 
 
-def optimize_parameters_randomizedCV_reg(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,nIter=20,cvOpt=5,nJobs=20):
+def optimize_parameters_randomizedCV_reg(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,nIter=20,cvOpt=5,nJobs=20,refit=False):
     print "=====Optimization with randomized search cv====="
     
     clf = model_selection.RandomizedSearchCV(classifier,
                                    param_grid,
                                    n_iter=nIter,
                                    cv=cvOpt,
-                                   scoring='neg_mean_squared_error',
-                                   n_jobs=nJobs, verbose=100)
+                                 #  scoring='neg_mean_squared_error',
+                                   scoring='r2',
+                                   n_jobs=nJobs, verbose=50,refit=refit)
     clf.fit(X_features, X_target)
-    print "Best parameter set found on development set:"
-    print
-    print clf.best_estimator_
+    if refit==True:
+        print "Best parameter set found on development set:"
+        print
+        print clf.best_estimator_
     print
     print "Grid scores on a subset of the development set:"
     print
     for params, mean_score, scores in clf.grid_scores_:
         print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
-    
+  #  print clf.cv_results_
+
     return clf
 
 
@@ -80,10 +83,11 @@ def optimize_parameters_gridCV_reg(classifier,X_features,X_target,X_features_tes
     print
     print "Grid scores on a subset of the development set:"
     print
-    for params, mean_score, scores in clf.grid_scores_:
+    for params, mean_score, scores in clf.cv_results_:
         print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
     
-    return clf.grid_scores_
+#    return clf.grid_scores_
+    return clf.cv_results_
 
 
 
@@ -115,10 +119,10 @@ def optimize_parameters_gridCV(classifier,X_total_train,y_total_train,param_grid
     print
     print "Grid scores on a subset of the development set:"
     print
-    for params, mean_score, scores in clf.grid_scores_:
+    for params, mean_score, scores in clf.cv_results_:
         print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
     
-    return clf.grid_scores_
+    return clf.cv_results_
 
 
 
@@ -158,10 +162,10 @@ def optimize_parameters_randomizedCV(classifier,X_total_train,y_total_train,para
     print
     print "Grid scores on a subset of the development set:"
     print
-    for params, mean_score, scores in clf.grid_scores_:
+    for params, mean_score, scores in clf.cv_results_:
         print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
     
-    return clf.grid_scores_
+    return clf.cv_results_
 
 
 

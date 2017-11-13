@@ -487,9 +487,11 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
     graphs=[]
     func=[]
     colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring+8, ROOT.kOrange]
-    taus = array('d',[0.25, 0.5, 0.75])
+   # nqx=3
+  #  taus = array('d',[0.25, 0.5, 0.75])
+    nqx=5
+    taus = array('d',[0.5-0.68/2,0.3, 0.5, 0.7, 0.5+0.68/2.])
     taus_fit = array('d',[x-taus[0] for x in taus ])
-    nqx=3
     quantiles_pos=[]
     x0_hist=[]
     x0_CDFfit=[]
@@ -523,16 +525,23 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
         graphs.append(gr)
 
    #     fit_cdf = TF1("fit_%s"%h, myCDF, 0., 2., 4)   
-        fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[2]*1.02,4) 
+        fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[4]*1.02,4) 
       #  fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
        # fit_cdf.FixParameter(2,quantiles_x[2] )  #q3   
-        fit_cdf.SetParameter(1,quantiles_x[0] )  #q1   
-        fit_cdf.SetParameter(2,quantiles_x[2] )  #q3   
-        fit_cdf.SetParLimits(1,quantiles_x[0]*0.9,quantiles_x[0]*1.1 )  #q1   
-        fit_cdf.SetParLimits(2,quantiles_x[2]*0.9,quantiles_x[2]*1.1 )  #q3   
+        fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
+        fit_cdf.FixParameter(2,quantiles_x[4] )  #q3   
+    #    fit_cdf.SetParameter(1,quantiles_x[0] )  #q1   
+    #    fit_cdf.SetParameter(2,quantiles_x[2] )  #q3   
+    #    fit_cdf.SetParLimits(1,quantiles_x[0]*0.9,quantiles_x[0]*1.1 )  #q1   
+    #    fit_cdf.SetParLimits(2,quantiles_x[2]*0.9,quantiles_x[2]*1.1 )  #q3   
+   #     fit_cdf.SetParameter(1,quantiles_x[0] )  #q1   
+    #    fit_cdf.SetParameter(2,quantiles_x[4] )  #q3   
+    #    fit_cdf.SetParLimits(1,quantiles_x[0]*0.9,quantiles_x[0]*1.1 )  #q1   
+    #    fit_cdf.SetParLimits(2,quantiles_x[4]*0.9,quantiles_x[4]*1.1 )  #q3   
         fit_cdf.SetParameter(0,1. )  #x0   
         fit_cdf.SetParameter(4,3. )  #const 
-       # fit_cdf.SetParLimits(0, 0., 2.)    
+        fit_cdf.SetParLimits(4,0.,10 )  #const 
+        fit_cdf.SetParLimits(0, 0.5, 1.5)    
         fit_cdf.SetLineColor(colors[j])
         gr.Fit("fit_%s"%h,"R+")
         func.append(fit_cdf)
@@ -563,7 +572,8 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
     right,top   = gStyle.GetPadRightMargin(),gStyle.GetPadTopMargin()
     left,bottom = gStyle.GetPadLeftMargin(),gStyle.GetPadBottomMargin()
     ci = ROOT.TColor.GetColor("#ffffff")
-    frame2 = TH1F("hframe2", "", n_bins, 0.9, 1.25)
+ #   frame2 = TH1F("hframe2", "", n_bins, 0.9, 1.25)
+    frame2 = TH1F("hframe2", "", n_bins, 0.7, 1.4)
     frame2.SetStats(0)
     frame2.GetXaxis().SetTitleOffset(0.91);
     frame2.GetYaxis().SetTitle("#tau - #tau_{1}")

@@ -77,6 +77,6 @@ for region in eta_regions:
     X_eta_region.append(preprocessing.cut_region(utils.IO.featuresName[0],"tree",branch_names,target_dist,cuts_regions))
 
 
-plotting.fit_quantiles(X_pt_region,pt_regions,True,100,"pt")
+plotting.fit_quantiles(X_pt_region,pt_regions,True,100,"pt_5qunt")
 #plotting.fit_quantiles(X_eta_region,eta_regions_names,True,100,"etaFree")
 
