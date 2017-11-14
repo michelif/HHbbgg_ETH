@@ -465,7 +465,7 @@ def myCDF(x,p):
     elif (x[0]<xmin) :return -0.25
 
   
-def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):  
+def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None):  
     if style==True:
         gROOT.SetBatch(True)
         gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
@@ -489,8 +489,22 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
     colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring+8, ROOT.kOrange]
    # nqx=3
   #  taus = array('d',[0.25, 0.5, 0.75])
-    nqx=5
-    taus = array('d',[0.5-0.68/2,0.3, 0.5, 0.7, 0.5+0.68/2.])
+  #  nqx=5
+  #  taus = array('d',[0.5-0.68/2,0.3, 0.5, 0.7, 0.5+0.68/2.])
+ #   nqx=4
+  #  taus = array('d',[0.5-0.68/2,0.3, 0.5, 0.8])
+  #  nqx=4
+  #  taus = array('d',[0.5-0.68/2,0.4, 0.5, 0.8])
+ #   nqx=4
+  #  taus = array('d',[0.10,0.16, 0.2, 0.7])
+ #   nqx=4
+  #  taus = array('d',[0.10,0.16, 0.4, 0.7])    # the best
+  #  nqx=5
+   # taus = array('d',[0.10,0.16, 0.4, 0.6, 0.8])   
+   # nqx=5
+   # taus = array('d',[0.10,0.20, 0.4, 0.6, 0.8])   
+    nqx=4
+    taus = array('d',[0.10,0.20, 0.4, 0.7])    # the best
     taus_fit = array('d',[x-taus[0] for x in taus ])
     quantiles_pos=[]
     x0_hist=[]
@@ -526,7 +540,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
 
    #     fit_cdf = TF1("fit_%s"%h, myCDF, 0., 2., 4)   
        # fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[4]*1.02,4) 
-        fit_cdf = TF1("fit_%s"%h,"pol4",0.,2.) 
+        fit_cdf = TF1("fit_%s"%h,"pol3",quantiles_x[0]*0.98,quantiles_x[nqx-1]*1.02) 
   #      fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
   #      fit_cdf.FixParameter(2,quantiles_x[2] )  #q3   
   #      fit_cdf.SetParameter(0,1. )  #x0   
@@ -534,14 +548,15 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
   #      fit_cdf.SetParLimits(4,0.,10 )  #const 
   #      fit_cdf.SetParLimits(0, 0.5, 1.5)    
         fit_cdf.SetLineColor(colors[j])
-        gr.Fit("fit_%s"%h,"R+")
+        gr.Fit("fit_%s"%h,"R")
         func.append(fit_cdf)
         
-        pol_coeff = [6*fit_cdf.GetParameter(4), 3*fit_cdf.GetParameter(3),fit_cdf.GetParameter(2)]
-        pol_roots = np.roots(pol_coeff)
-        pol_roots_diff = [x - x0_hist[j] for x in pol_roots]
-        x0_CDFfit.append(pol_roots[min(xrange(len(pol_roots_diff)), key=pol_roots_diff.__getitem__)])
-       # x0_CDFfit.append(-1*fit_cdf.GetParameter(2)/3/fit_cdf.GetParameter(3))  #for pol3 only
+   #     pol_coeff = [6*fit_cdf.GetParameter(4), 3*fit_cdf.GetParameter(3),fit_cdf.GetParameter(2)]  # for pol4 only
+   #     pol_roots = np.roots(pol_coeff)
+   #     pol_roots_diff = [x - x0_hist[j] for x in pol_roots]
+    #    x0_CDFfit.append(pol_roots[min(xrange(len(pol_roots_diff)), key=pol_roots_diff.__getitem__)])
+
+        x0_CDFfit.append(-1*fit_cdf.GetParameter(2)/3/fit_cdf.GetParameter(3))  #for pol3 only
 
     c = TCanvas("canv","canv",1600,800)
     c.Divide(2,1)
@@ -575,7 +590,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
     frame2.GetYaxis().SetTitle("#tau - #tau_{1}")
     frame2.GetXaxis().SetTitle("Quantiles positions")
     frame2.GetYaxis().SetLabelSize(0.04)
-    frame2.GetYaxis().SetRangeUser(-0.05,0.7)
+    frame2.GetYaxis().SetRangeUser(-0.05,max(taus_fit)*1.1)
     frame2.Draw()
     paveText2 = ROOT.TPaveText(0.6,0.25,0.9,.4,"NDC")
     paveText2.SetTextFont(42)
@@ -584,24 +599,35 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
     paveText2.SetBorderSize(0)
     for j in range(len(X_region)):
         graphs[j].Draw("PEsame")
-        func[j].Draw("same")
+        func[j].Draw("sameR")
         t = paveText2.AddText("x0 hist/fit : %.2f/%.2f"%(x0_hist[j],x0_CDFfit[j]))
+        print "%.2f"%x0_CDFfit[j]
         t.SetTextColor(colors[j]);
     leg.Draw('same')
 
-    paveText = ROOT.TPaveText(0.7,0.85,0.9,.9,"NDC")
+   # paveText = ROOT.TPaveText(0.7,0.85,0.9,.9,"NDC")
+    paveText = ROOT.TPaveText(0.75,0.65,0.95,.9,"NDC")
     paveText.SetTextFont(42)
     paveText.SetTextColor(ROOT.kBlue)
     paveText.SetTextSize(top*0.43)
     paveText.SetFillStyle(-1)
     paveText.SetBorderSize(0)
-    paveText.AddText("Pol4 Fit")
+    paveText.AddText("%s Fit"%pol)
+    paveText.AddText("Quantiles : ")
+    for x in taus :  paveText.AddText("%.2f"%x)
     paveText.Draw("same")
    
     paveText2.Draw("same")
     print x0_hist, x0_CDFfit
+   
+ 
+    line = ROOT.TLine(x0_hist[0],frame2.GetMinimum() ,x0_hist[0],frame2.GetMaximum())
+    line.SetLineStyle(9)
+    line.SetLineWidth(2)
+    line.SetLineColor(ROOT.kRed+1)
+    line.Draw("Lsame")
 
-    c.SaveAs(utils.IO.plotFolder+"quantiles_"+str(outString)+'.png')
+    c.SaveAs(utils.IO.plotFolder+"quantiles_"+str(outString)+str(pol)+'.png')
 
  
 
