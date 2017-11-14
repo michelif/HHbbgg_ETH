@@ -525,27 +525,23 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
         graphs.append(gr)
 
    #     fit_cdf = TF1("fit_%s"%h, myCDF, 0., 2., 4)   
-        fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[4]*1.02,4) 
-      #  fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
-       # fit_cdf.FixParameter(2,quantiles_x[2] )  #q3   
-        fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
-        fit_cdf.FixParameter(2,quantiles_x[4] )  #q3   
-    #    fit_cdf.SetParameter(1,quantiles_x[0] )  #q1   
-    #    fit_cdf.SetParameter(2,quantiles_x[2] )  #q3   
-    #    fit_cdf.SetParLimits(1,quantiles_x[0]*0.9,quantiles_x[0]*1.1 )  #q1   
-    #    fit_cdf.SetParLimits(2,quantiles_x[2]*0.9,quantiles_x[2]*1.1 )  #q3   
-   #     fit_cdf.SetParameter(1,quantiles_x[0] )  #q1   
-    #    fit_cdf.SetParameter(2,quantiles_x[4] )  #q3   
-    #    fit_cdf.SetParLimits(1,quantiles_x[0]*0.9,quantiles_x[0]*1.1 )  #q1   
-    #    fit_cdf.SetParLimits(2,quantiles_x[4]*0.9,quantiles_x[4]*1.1 )  #q3   
-        fit_cdf.SetParameter(0,1. )  #x0   
-        fit_cdf.SetParameter(4,3. )  #const 
-        fit_cdf.SetParLimits(4,0.,10 )  #const 
-        fit_cdf.SetParLimits(0, 0.5, 1.5)    
+       # fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[4]*1.02,4) 
+        fit_cdf = TF1("fit_%s"%h,"pol4",0.,2.) 
+  #      fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
+  #      fit_cdf.FixParameter(2,quantiles_x[2] )  #q3   
+  #      fit_cdf.SetParameter(0,1. )  #x0   
+  #      fit_cdf.SetParameter(4,3. )  #const 
+  #      fit_cdf.SetParLimits(4,0.,10 )  #const 
+  #      fit_cdf.SetParLimits(0, 0.5, 1.5)    
         fit_cdf.SetLineColor(colors[j])
         gr.Fit("fit_%s"%h,"R+")
         func.append(fit_cdf)
-        x0_CDFfit.append(fit_cdf.GetParameter(0))
+        
+        pol_coeff = [6*fit_cdf.GetParameter(4), 3*fit_cdf.GetParameter(3),fit_cdf.GetParameter(2)]
+        pol_roots = np.roots(pol_coeff)
+        pol_roots_diff = [x - x0_hist[j] for x in pol_roots]
+        x0_CDFfit.append(pol_roots[min(xrange(len(pol_roots_diff)), key=pol_roots_diff.__getitem__)])
+       # x0_CDFfit.append(-1*fit_cdf.GetParameter(2)/3/fit_cdf.GetParameter(3))  #for pol3 only
 
     c = TCanvas("canv","canv",1600,800)
     c.Divide(2,1)
@@ -599,7 +595,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,outString=None):
     paveText.SetTextSize(top*0.43)
     paveText.SetFillStyle(-1)
     paveText.SetBorderSize(0)
-    paveText.AddText("Quadratic Fit")
+    paveText.AddText("Pol4 Fit")
     paveText.Draw("same")
    
     paveText2.Draw("same")
