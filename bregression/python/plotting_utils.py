@@ -303,7 +303,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
  
     
     
-def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):  
+def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,title=''):  
     if style==True:
         gROOT.SetBatch(True)
         gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
@@ -330,6 +330,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
     leg.SetBorderSize(0)
     leg.SetTextFont(42)
     leg.SetTextSize(0.025)
+    if title!='' :  leg.AddEntry(frame,title,"")
 
     hist_list=[]
     func_list=[]
@@ -368,7 +369,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         h_rel_diff.SetLineStyle(1+j)
     
     #    if (log==True) : max_list.append(h_rel_diff.GetMaximum()*1.3)
-        max_list.append(h_rel_diff.GetMaximum()*1.3)
+        max_list.append(h_rel_diff.GetMaximum()*1.4)
         datahists.append(h_rel_diff)
 
 
@@ -445,10 +446,11 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
     for j in range(len(X_region)):
         func_list[j].Draw("same")
         hist_list[j].Draw("PEsame")
-        leg.AddEntry(hist_list[j],names[j] ,"PE")
+        leg.AddEntry(hist_list[j],names[j]+',Xp=%.2f,sigp=%.2f'%(Xp[j].getVal(),sigp[j].getVal()) ,"PE")
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
   #  c.SaveAs("pt_region.png")
+    outString = outString.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_')
     c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.png')
    # c.SaveAs(utils.IO.plotFolder+"fitCruijff_regions_"+str(outString)+log_name+'.png')
   #  c.SaveAs(utils.IO.plotFolder+"fitBifurgaus_regions_"+str(outString)+log_name+'.png')
@@ -878,16 +880,21 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
     
-def plot_mean_fwhm(x,y,regions,what,outString=None):
-    plt.plot(regions,x,'r^', label='XGboost')
-    plt.plot(regions,y,'bs', label='Caterina')
+def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
+    styles=['r^','bs','go']
+    for i,s in enumerate(styles):
+       y_prime = [y[k][i] for k in range(len(y))]
+       plt.plot(regions,y_prime,s, label=labels[i])
 
     plt.xlabel(what[1])
     plt.ylabel(what[0])
-    plt.legend(loc="lower right")
-    x_text,y_text = float(regions[len(regions)-1])-100,float(x[len(x)-1])+0.05
-    if 'p_T' in what[1] : plt.annotate('low stat', xy=(regions[len(regions)-1],x[len(x)-1]), xytext=(x_text,y_text)
-            )
+    plt.legend(loc="lower right",numpoints=1)
+    x_text,y_text = float(regions[len(regions)-1])-100,float(y_prime[len(y_prime)-1])+0.05
+    x_text0,y_text0 = float(regions[0])-200,float(y_prime[0])+0.05
+    if 'p_T' in what[1] : 
+        plt.annotate('low stat', xy=(regions[len(regions)-1],y_prime[len(y_prime)-1]), xytext=(x_text,y_text))
+        plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
+            
     axes = plt.gca()
     if 'mean' in what[0] :axes.set_ylim([0.8,1.2])
     if 'FWHM' in what[0] :axes.set_ylim([0.0,0.6])
