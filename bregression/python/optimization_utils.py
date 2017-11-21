@@ -32,7 +32,7 @@ def setupJoblib_my(ipp_profile='default'):
     register_parallel_backend('ipyparallel',lambda : joblib_be)
 
 
-def optimize_parameters_randomizedCV_reg(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,nIter=20,cvOpt=5,nJobs=20,refit=False):
+def optimize_parameters_randomizedCV_reg(classifier,X_features,X_target,X_features_test,X_target_test,param_grid,scoring_func, nIter=20,cvOpt=5,nJobs=20,refit=True,weights=None):
     print "=====Optimization with randomized search cv====="
     
     clf = model_selection.RandomizedSearchCV(classifier,
@@ -40,8 +40,9 @@ def optimize_parameters_randomizedCV_reg(classifier,X_features,X_target,X_featur
                                    n_iter=nIter,
                                    cv=cvOpt,
                                  #  scoring='neg_mean_squared_error',
-                                   scoring='r2',
-                                   n_jobs=nJobs, verbose=50,refit=refit)
+                                 #  scoring='r2',
+                                   scoring=scoring_func,
+                                   n_jobs=nJobs, verbose=50,refit=refit,fit_params={'sample_weight': weights})
     clf.fit(X_features, X_target)
     if refit==True:
         print "Best parameter set found on development set:"
@@ -171,7 +172,8 @@ def optimize_parameters_randomizedCV(classifier,X_total_train,y_total_train,para
 
 def feature_importances_(self):
   ###  feature_importances_ : array of shape = [n_features]
-    b = self.booster()
+#    b = self.booster()
+    b = self._Booster
     fs = b.get_fscore()
     all_features = [fs.get(f, 0.) for f in b.feature_names]
     all_features = np.array(all_features, dtype=np.float32)

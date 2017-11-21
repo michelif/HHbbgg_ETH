@@ -29,6 +29,14 @@ def define_process_weight_CR(df,proc,name):
     w = input_df[['isPhotonCR']]
     df['weight']=w
 
+def add_pt_weight_reg(name,branch_names,cuts,hist,func_w):
+    if cuts!='':
+         data_frame = (rpd.read_root(name,"tree", columns = branch_names)).query(cuts)
+    else : data_frame = (rpd.read_root(name,"tree", columns = branch_names))
+    data_frame['weight'] = ( np.ones_like(data_frame.index)).astype(np.float32)
+    data_frame['weight'] = [func_w.Eval(row['Jet_pt'])/hist.GetBinContent(hist.FindBin(row['Jet_pt'])) for i, row in data_frame.iterrows()]
+    return data_frame   
+    
  
 def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s):#some trees include also the control region,select only good events
     return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], np.asarray(y_s)[np.where(w_s!=0)],np.asarray(w_s)[np.where(w_s!=0)]
@@ -77,8 +85,8 @@ def weight_signal_with_resolution(w_s,y_s):
     proc=999
     for i in range(utils.IO.nSig):
          w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
-	 proc = utils.IO.sigProc[i]
-	 utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['sigmaMOverMDecorr']])
+         proc = utils.IO.sigProc[i]
+         utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['sigmaMOverMDecorr']])
 
     return utils.IO.signal_df[i][['weight']]
 
@@ -144,6 +152,19 @@ def set_data_simple(treeName,branch_names):
             X_data = np.concatenate([X_data,utils.IO.data_df[0][[branch_names[j].replace('noexpand:','')]]],axis=1)
     
     return np.round(X_data,5)
+
+
+
+
+def set_features_target_weights(data_frame,features):
+    X_weights = data_frame[['weight']]
+    for j in range(len(features)):
+        if j == 0:
+            X_features = data_frame[[features[j].replace('noexpand:','')]]
+        else:
+            X_features = np.concatenate([X_features,data_frame[[features[j].replace('noexpand:','')]]],axis=1)
+    
+    return np.round(X_features,5),X_weights
 
 
 def set_features(treeName,branch_names,features,cuts):
@@ -237,6 +258,9 @@ def randomize_ft(X,Y):
     X, Y = shuffle(X, Y, random_state=0)
     return X,Y
 
+def randomize_w(X,Y,w):
+    X, Y, w= shuffle(X, Y,w, random_state=0)
+    return X,Y,w
 
 
 

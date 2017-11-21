@@ -1,4 +1,5 @@
 import training_utils as utils
+import optimization_utils as optimization
 
 import numpy as np
 from sklearn.metrics import roc_curve, auc
@@ -305,7 +306,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
 def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):  
     if style==True:
         gROOT.SetBatch(True)
-     #   gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
+        gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
         gROOT.ForceStyle()
         gStyle.SetPadTopMargin(0.06)
         gStyle.SetPadRightMargin(0.04)
@@ -353,7 +354,8 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
  
  
     for j in range(len(X_region)):
-        data =((X_region[j]).as_matrix()).ravel()
+        if isinstance(X_region[j], np.ndarray) : data = X_region[j]
+        else : data =((X_region[j]).as_matrix()).ravel()
         print len(data)
         h_rel_diff = TH1F("hrel_diff_%s"%h_names[j], "hrel_diff_%s"%h_names[j], n_bins, c_min, c_max)
         h_rel_diff.Sumw2(True)
@@ -365,6 +367,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
         h_rel_diff.SetLineWidth(2)
         h_rel_diff.SetLineStyle(1+j)
     
+    #    if (log==True) : max_list.append(h_rel_diff.GetMaximum()*1.3)
         max_list.append(h_rel_diff.GetMaximum()*1.3)
         datahists.append(h_rel_diff)
 
@@ -432,8 +435,8 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False):
     fit_result_file.close()
 
     c.cd()
- #   frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
-    frame.GetYaxis().SetRangeUser(1e-06,0.28)
+    frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
+ #   frame.GetYaxis().SetRangeUser(1e-06,0.28)
     log_name=''
     if log==True : 
         c.SetLogy()
@@ -464,7 +467,18 @@ def myCDF(x,p):
     elif (x[0] <= x0) : return ( const*(x[0]-q1) + (-1.)*pow((x[0]-x0),3)/3./pow((x0-q1),2) + (q1-x0)/3. )  
     elif (x[0]<xmin) :return -0.25
 
-  
+ 
+
+def myErFuncCdf(x,p):
+    x0 = p[0]
+    la= p[1]
+    a1 = p[2]
+    a2 = p[3]
+    erF = 1./(1.+np.exp(-1*(x[0]-x0)*la))
+    if (x[0] >= x0)  : return erF*a1*x[0] 
+    if (x[0] < x0)  : return erF*a2*x[0] 
+
+ 
 def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None):  
     if style==True:
         gROOT.SetBatch(True)
@@ -498,7 +512,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
  #   nqx=4
   #  taus = array('d',[0.10,0.16, 0.2, 0.7])
  #   nqx=4
-  #  taus = array('d',[0.10,0.16, 0.4, 0.7])    # the best
+  #  taus = array('d',[0.10,0.16, 0.4, 0.7])   
   #  nqx=5
    # taus = array('d',[0.10,0.16, 0.4, 0.6, 0.8])   
    # nqx=5
@@ -540,7 +554,8 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
 
    #     fit_cdf = TF1("fit_%s"%h, myCDF, 0., 2., 4)   
        # fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[4]*1.02,4) 
-        fit_cdf = TF1("fit_%s"%h,"pol3",quantiles_x[0]*0.98,quantiles_x[nqx-1]*1.02) 
+        fit_cdf = TF1("fit_%s"%h, myErFuncCdf,quantiles_x[0]*0.98,quantiles_x[3]*1.02,4) 
+    #    fit_cdf = TF1("fit_%s"%h,"pol3",quantiles_x[0]*0.98,quantiles_x[nqx-1]*1.02)   #final with pol3
   #      fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
   #      fit_cdf.FixParameter(2,quantiles_x[2] )  #q3   
   #      fit_cdf.SetParameter(0,1. )  #x0   
@@ -556,7 +571,8 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
    #     pol_roots_diff = [x - x0_hist[j] for x in pol_roots]
     #    x0_CDFfit.append(pol_roots[min(xrange(len(pol_roots_diff)), key=pol_roots_diff.__getitem__)])
 
-        x0_CDFfit.append(-1*fit_cdf.GetParameter(2)/3/fit_cdf.GetParameter(3))  #for pol3 only
+    #    x0_CDFfit.append(-1*fit_cdf.GetParameter(2)/3/fit_cdf.GetParameter(3))  #for pol3 only
+        x0_CDFfit.append(fit_cdf.GetParameter(0))  #for pol3 only
 
     c = TCanvas("canv","canv",1600,800)
     c.Divide(2,1)
@@ -636,7 +652,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
     
     
     
-def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outString=None):
+def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outString=None,weights=None):
 
     ncolumns = X_data.size/len(X_data)
 
@@ -648,7 +664,7 @@ def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outStrin
         c_max=max(np.max(d) for d in np.concatenate([X_data[:,i]]))
 
     
-        Histo_data = np.histogram(data,bins=30,range=(c_min,c_max))
+        Histo_data = np.histogram(data,bins=30,range=(c_min,c_max),weights=weights)
         
         bin_edges = Histo_data[1]
         bin_centers = ( bin_edges[:-1] + bin_edges[1:]  ) /2.
@@ -672,7 +688,7 @@ def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outStrin
 
 
         if '/' in branch_names[i]: 
-            branch_names[i] = branch_names[i].replace('/','_')
+            branch_names[i] = branch_names[i].replace('/','_').replace(':','_').replace('(','').replace(')','').replace('+','_')
         
         plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".png")
     #    plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".pdf")
@@ -929,3 +945,47 @@ def plot_response(histos,profiles,profiles_noReg,profiles_Cat,style=False,outStr
 
 
     
+def draw_overflow(h,factor=1):
+    ## This function return a hist with overflow bin
+    name  = h.GetName()
+    title = h.GetTitle()
+    nx    = h.GetNbinsX()+1
+    x1 = h.GetBinLowEdge(1)
+    bw = h.GetBinWidth(nx)*factor
+    x2 = h.GetBinLowEdge(nx)+bw
+    ## Book a temporary histogram having ab extra bin for overflows
+    htmp = TH1F('new','new', 1, x2-bw, x2)
+    ## Fill the new hitogram including the extra bin for overflows
+    htmp.Fill(htmp.GetBinCenter(1), h.GetBinContent(nx)/factor)
+    return htmp
+
+   
+
+
+
+def plot_feature_importance(clf,features,end='',path='/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/bregression/output_files/'): 
+	features_importance =  optimization.feature_importances_(clf)
+	features_dict = {features[i]:features_importance[i] for i in range(0,len(features)) }
+	sorted_features_values = sorted( features_dict.values(),reverse=True)
+	sorted_features = [key for key,value in sorted(features_dict.items() ,key=lambda x : x[1], reverse=True)]
+
+	np.save(path+'out_features_values'+end,sorted_features_values)
+	np.save(path+'out_features_names'+end,sorted_features)
+
+	y_pos = np.arange(0,len(features)*2,2)  # the x locations for the groups
+	width = 1.2       # the width of the bars
+	fig,ax = plt.subplots()
+	ax.barh(y_pos,sorted_features_values,width,color='green',align='center')
+	for x, y in zip(sorted_features_values, y_pos):
+ 	  ax.text(x + 0.01, y+0.1, np.round(x,3), va='center', fontsize=6,fontweight='bold',color='blue')
+	fig.subplots_adjust(left=0.2) 
+	ax.set_yticks(y_pos)
+	ax.set_yticklabels(sorted_features,rotation=0,fontsize=7)
+	ax.invert_yaxis() 
+	ax.set_xlabel('F-scores')
+	ax.set_xlim(0,sorted_features_values[0]*1.1)
+	ax.set_title("Features importance")
+	plt.grid()
+	plt.savefig(utils.IO.plotFolder+"importanceBar_"+end+".pdf")
+	plt.clf()
+
