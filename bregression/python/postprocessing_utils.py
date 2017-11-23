@@ -55,6 +55,32 @@ def stackFeaturesReg(df,additionalCut_names,rounding=5):
 
 
 
+def stackAddFeaturesReg(df,additionalCut_names,addDictionary,rounding=5):
+    vec = []
+    dictVar = {}
+    i = 0
+    for featCounter in additionalCut_names:
+        feat= featCounter.replace("noexpand:","")
+        vec.append(np.round(np.asarray(df[feat]),rounding))
+        dictVar [feat] = i
+        i+=1
+
+    for featCounter,value in addDictionary.iteritems():
+        feat= featCounter.replace("noexpand:","")
+        vec.append(np.round(value,rounding))
+        dictVar [feat] = i
+        i+=1
+        
+    totalVec = []
+    for i in range(len(vec)):
+        if i == 0:
+            totalVec = vec[i]
+        else:
+            totalVec = np.column_stack((totalVec,vec[i]))
+
+    return totalVec,dictVar
+
+
 
 
 def applyCut(vec,varNum,cut,option='greater'):

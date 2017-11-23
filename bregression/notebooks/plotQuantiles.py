@@ -43,7 +43,7 @@ for i in range(len(utils.IO.featuresName)):
 branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,noexpand:fabs(Jet_eta),Jet_mcPt,Jet_mcFlavour'.split(",")
 #branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,noexpand:fabs(Jet_eta),Jet_corr,Jet_mcPtq,Jet_mcPt,Jet_mcFlavour,dR,rho,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_e,noexpand:Jet_energyRing_dR0_em/Jet_e,noexpand:Jet_energyRing_dR1_em/Jet_e,noexpand:Jet_energyRing_dR2_em/Jet_e,noexpand:Jet_energyRing_dR3_em/Jet_e,noexpand:Jet_energyRing_dR4_em/Jet_e,noexpand:Jet_energyRing_dR0_neut/Jet_e,noexpand:Jet_energyRing_dR1_neut/Jet_e,noexpand:Jet_energyRing_dR2_neut/Jet_e,noexpand:Jet_energyRing_dR3_neut/Jet_e,noexpand:Jet_energyRing_dR4_neut/Jet_e,noexpand:Jet_energyRing_dR0_ch/Jet_e,noexpand:Jet_energyRing_dR1_ch/Jet_e,noexpand:Jet_energyRing_dR2_ch/Jet_e,noexpand:Jet_energyRing_dR3_ch/Jet_e,noexpand:Jet_energyRing_dR4_ch/Jet_e,Jet_numDaughters_pt03'.split(",")
 target = 'Jet_mcPt/Jet_pt'.split(",")
-cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5)'
+cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_mcPt>0) & (Jet_mcPt<6000) '
 
 branch_names = [c.strip() for c in branch_names]
 target = [c.strip() for c in target]
@@ -77,6 +77,8 @@ for region in eta_regions:
     X_eta_region.append(preprocessing.cut_region(utils.IO.featuresName[0],"tree",branch_names,target_dist,cuts_regions))
 
 
-#plotting.fit_quantiles(X_pt_region,pt_regions,True,400,"Pol3","pt_4point_set6_400bins")
-plotting.fit_quantiles(X_eta_region,eta_regions_names,True,400,"Pol3","eta_4point_set6_400bins")
+style = True
+plotting.fit_quantiles(X_pt_region,pt_regions,style,400,"Polyfit","pt_4point_polyfit_400bins")
+style=False
+plotting.fit_quantiles(X_eta_region,eta_regions_names,True,400,"Polyfit","eta_4point_polyfit_400bins")
 

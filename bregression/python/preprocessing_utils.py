@@ -176,9 +176,9 @@ def set_features(treeName,branch_names,features,cuts):
 
     for j in range(len(features)):
         if j == 0:
-            X_features = utils.IO.features_df[0][[features[j].replace('noexpand:','')]]
+            X_features = tmp_data_frame[[features[j].replace('noexpand:','')]]
         else:
-            X_features = np.concatenate([X_features,utils.IO.features_df[0][[features[j].replace('noexpand:','')]]],axis=1)
+            X_features = np.concatenate([X_features,tmp_data_frame[[features[j].replace('noexpand:','')]]],axis=1)
     
     return np.round(X_features,5)
 
@@ -202,9 +202,9 @@ def set_target(treeName,branch_names,target,cuts):
 
     for j in range(len(target)):
         if j == 0:
-            X_target = utils.IO.target_df[0][[target[j].replace('noexpand:','')]]
+            X_target = tmp_data_frame[[target[j].replace('noexpand:','')]]
         else:
-            X_target = np.concatenate([X_target,utils.IO.target_df[0][[target[j].replace('noexpand:','')]]],axis=1)
+            X_target = np.concatenate([X_target,tmp_data_frame[[target[j].replace('noexpand:','')]]],axis=1)
     
     return np.round(X_target,5)
     

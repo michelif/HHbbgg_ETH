@@ -556,8 +556,9 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
 
    #     fit_cdf = TF1("fit_%s"%h, myCDF, 0., 2., 4)   
        # fit_cdf = TF1("fit_%s"%h, myCDF,quantiles_x[0]*0.98,quantiles_x[4]*1.02,4) 
-        fit_cdf = TF1("fit_%s"%h, myErFuncCdf,quantiles_x[0]*0.98,quantiles_x[3]*1.02,4) 
+     #   fit_cdf = TF1("fit_%s"%h, myErFuncCdf,quantiles_x[0]*0.98,quantiles_x[3]*1.02,4) 
     #    fit_cdf = TF1("fit_%s"%h,"pol3",quantiles_x[0]*0.98,quantiles_x[nqx-1]*1.02)   #final with pol3
+        fit_cdf = TF1("fit_%s"%h,"pol3",quantiles_x[0]*0.98,quantiles_x[nqx-1]*1.02)   #final with pol3
   #      fit_cdf.FixParameter(1,quantiles_x[0] )  #q1   
   #      fit_cdf.FixParameter(2,quantiles_x[2] )  #q3   
   #      fit_cdf.SetParameter(0,1. )  #x0   
@@ -574,7 +575,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
     #    x0_CDFfit.append(pol_roots[min(xrange(len(pol_roots_diff)), key=pol_roots_diff.__getitem__)])
 
     #    x0_CDFfit.append(-1*fit_cdf.GetParameter(2)/3/fit_cdf.GetParameter(3))  #for pol3 only
-        x0_CDFfit.append(fit_cdf.GetParameter(0))  #for pol3 only
+        x0_CDFfit.append(fit_cdf.GetParameter(0))  #for erFunc
 
     c = TCanvas("canv","canv",1600,800)
     c.Divide(2,1)
@@ -881,7 +882,7 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
 def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
-    styles=['r^','bs','go']
+    styles=['r^','bs','go','xk']
     for i,s in enumerate(styles):
        y_prime = [y[k][i] for k in range(len(y))]
        plt.plot(regions,y_prime,s, label=labels[i])
@@ -890,14 +891,14 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
     plt.ylabel(what[0])
     plt.legend(loc="lower right",numpoints=1)
     x_text,y_text = float(regions[len(regions)-1])-100,float(y_prime[len(y_prime)-1])+0.05
-    x_text0,y_text0 = float(regions[0])-200,float(y_prime[0])+0.05
+    x_text0,y_text0 = float(regions[0])-100,float(y_prime[0])+0.05
     if 'p_T' in what[1] : 
         plt.annotate('low stat', xy=(regions[len(regions)-1],y_prime[len(y_prime)-1]), xytext=(x_text,y_text))
         plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
             
     axes = plt.gca()
-    if 'mean' in what[0] :axes.set_ylim([0.8,1.2])
-    if 'FWHM' in what[0] :axes.set_ylim([0.0,0.6])
+    if 'mean' in what[0] :axes.set_ylim([0.8,1.1])
+    if 'FWHM' in what[0] :axes.set_ylim([0.0,0.45])
     plt.grid()
    # plt.show()
     plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png")
