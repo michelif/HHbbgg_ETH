@@ -1,10 +1,10 @@
 import ROOT
 
-fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts/Total_preselection_diffNaming.root")
+#fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts/Total_preselection_diffNaming.root")
 #fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20171002_BJetsSamples/Total_preselection_diffNaming.root")
 #fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20171002_resH/Total_preselection_diffNaming.root")
 #fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20171002_ttH/Total_preselection_diffNaming.root")
-
+fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts_ggH_ttH_reweight/Total_preselection_diffNaming.root")
 
 processes = {}
 trees = [
@@ -56,7 +56,7 @@ for iMVA in range(0,len(MVACat)-1):
             else:
                 integ_err = 0.
             h_highMass.Delete()
-            table.write(processes[str(tree)]+": "+str(integ)+"+-"+str(integ_err)+"\n")
+            table.write(processes[str(tree)]+": "+str(integ)+" +- "+str(integ_err)+"\n")
             
         table.write("-------------------\n")
 
