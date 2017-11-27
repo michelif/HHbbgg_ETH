@@ -1,7 +1,4 @@
-
 # coding: utf-8
-
-# In[9]:
 
 import os
 import sys; sys.path.append("~/HHbbgg_ETH_devel/bregression/python") # to load packages
@@ -17,9 +14,22 @@ reload(optimization)
 import postprocessing_utils as postprocessing
 reload(postprocessing)
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 
 
-# In[10]:
+def poly_bound(x,par_f,par_p2,par_p3,par_a):
+    model = par_a*(-1./3.*x*x*x + par_f*x*x + par_p2*x + par_p3)
+ #   model = par_a*x*x*x + par_f*x*x + par_p2*x + par_p3
+    return model
+
+#def poly_bound(x,par_p0,par_p1,par_p2,par_p3):
+  ####  model = par_p0*x*x*x - 3*par_p0*par_f*x*x + par_p2*x + par_p3
+ #   model = par_p0*x*x*x + par_p1*x*x + par_p2*x + par_p3
+  #  return model
+
+
+
+
 
 ntuples = 'heppy_05_10_2017'
 # "%" sign allows to interpret the rest as a system command
@@ -66,8 +76,8 @@ for j in range(len(features)):
 	else:
  		X_features = np.concatenate([X_features,data_frame[[features[j].replace('noexpand:','')]]],axis=1)
 
-#X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.)
-X_test_features=X_features
+X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.9)
+#X_test_features=X_features
 print len(X_test_features)
 
 alpha_q_nom=np.array([0.1,0.2,0.4,0.7])
@@ -83,12 +93,22 @@ for num,q in enumerate(alpha_q_nom):
 
 n_evt = len(X_predicted_all[0])
 
-#X_predictions_for_fit = np.row_stack([x for x in X_predicted_all])
 X_predictions_for_fit = np.column_stack([x for x in X_predicted_all])
-np.save("predictions_array_reverse",X_predictions_for_fit)
-#fit_quantile = np.polyfit(alpha_q,X_predictions_for_fit, deg=3)
-fit_quantile = np.array([np.polyfit(X_predictions_for_fit[i], alpha_q, deg=3) for i in range(n_evt)]) 
-np.save("predictions_fit_array_reserse",fit_quantile)
+
+
+best_parameters=[]
+mpvs=[]
+
+print 'here'
+#fit_quantile = np.array( [ curve_fit(poly_bound, X_predictions_for_fit[i],alpha_q, bounds=( (-np.inf, -np.inf, -np.inf, -np.inf), (np.inf, np.inf, np.inf, np.inf) )  )[0]  for i in range(10)  ])
+fit_quantile = np.array( [ curve_fit(poly_bound, X_predictions_for_fit[i],alpha_q,method='dogbox'   )[0]  for i in range(10)  ])
+print fit_quantile
+mpvs = np.array([ fit_quantile[i,0] for i in range(10) ])
+print mpvs
+
+
+
+#np.save("predictions_fit_array_reserse",fit_quantile)
 #mpvs_tau = [ -1*fit_quantile[1,i]/3/fit_quantile[0,i] for i in range(n_evt)]
 #mpvs=[np.polyval(fit_quantile[:,i],mpvs_tau[i]) for i in range(n_evt)]
 #mpvs_up=[np.polyval(fit_quantile[:,i],mpvs_tau[i]+0.25) for i in range(n_evt)]
@@ -101,8 +121,7 @@ np.save("predictions_fit_array_reserse",fit_quantile)
 #derivative_coeff = [ [3*fit_quantile[0,i],2*fit_quantile[1,i],mpvs(fit_quantile[2,i] - )]  for i in range(n_evt)])
 #roots_der = [np.roots(derivative_coeff[i]) for i in range(n_evt)] 
 
-mpvs = np.array([ -1*fit_quantile[i,1]/3/fit_quantile[i,0] for i in range(n_evt)])
-np.save("predictions_mpvs_array_reverse",mpvs)
+#np.save("predictions_mpvs_array_reverse",mpvs)
 
 #addDictionary ={}
 #addDictionary['b_scale'] = mpvs
@@ -126,19 +145,19 @@ np.save("predictions_mpvs_array_reverse",mpvs)
 #	funcs.append(np.poly1d(fit_quantile[:,i] ))
 
 
-n, bins, patches = plt.hist(mpvs, 50, range=[0,2],facecolor='green', alpha=0.75)
-plt.xlabel('MPVS')
-plt.ylabel('Events')
-plt.grid(True)
-plt.savefig(utils.IO.plotFolder+"quantileReg_distr_reverse_mpvs.png")
-plt.clf()
+#n, bins, patches = plt.hist(mpvs, 50, range=[0,2],facecolor='green', alpha=0.75)
+#plt.xlabel('MPVS')
+#plt.ylabel('Events')
+#plt.grid(True)
+#plt.savefig(utils.IO.plotFolder+"quantileReg_distr_reverse_mpvs.png")
+#plt.clf()
 
-for i in range(len(alpha_q_nom)):
-	n, bins, patches = plt.hist(X_predicted_all[i], 50, facecolor='green', alpha=0.75)
-	plt.xlabel('MPVS')
-	plt.ylabel('Events')
-	plt.title('Quantile = %s'%(str(alpha_q_nom[i])))
-	#plt.xlim(0, 2)
-	plt.grid(True)
+#for i in range(len(alpha_q_nom)):
+#	n, bins, patches = plt.hist(X_predicted_all[i], 50, facecolor='green', alpha=0.75)
+#	plt.xlabel('MPVS')
+#	plt.ylabel('Events')
+#	plt.title('Quantile = %s'%(str(alpha_q_nom[i])))
+#	#plt.xlim(0, 2)
+#	plt.grid(True)
 #	plt.savefig(utils.IO.plotFolder+"quantileReg_distr_"+str(alpha_q[i])+".png")
-	plt.clf()
+#	plt.clf()

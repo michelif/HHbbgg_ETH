@@ -1,7 +1,4 @@
-
 # coding: utf-8
-
-# In[9]:
 
 import os
 import sys; sys.path.append("~/HHbbgg_ETH_devel/bregression/python") # to load packages
@@ -17,9 +14,27 @@ reload(optimization)
 import postprocessing_utils as postprocessing
 reload(postprocessing)
 import matplotlib.pyplot as plt
+import lmfit  
+from lmfit import Model,minimize, Minimizer, Parameters, Parameter, report_fit
+import time
+start_time = time.time()
 
 
-# In[10]:
+def poly_bound(x,par_p0,par_f,par_p2,par_p3):
+    model = par_p0*(-1./3*x*x*x + par_f*x*x + par_p2*x + par_p3)
+    return model
+
+def fcn2min(params, x, data):
+    par_p0 = params['par_p0']
+    par_p1 = params['par_p1']
+    par_p2 = params['par_p2']
+    par_p3 = params['par_p3']
+    polx = par_p0*x*x*x+par_p1*x*x+par_p2*x+par_p3
+    par_f= -1*par_p1/3/par_p0
+    model = pow((data - polx ),2) + 1*pow((par_f - 1),2)
+    return model 
+
+
 
 ntuples = 'heppy_05_10_2017'
 # "%" sign allows to interpret the rest as a system command
@@ -67,7 +82,8 @@ for j in range(len(features)):
  		X_features = np.concatenate([X_features,data_frame[[features[j].replace('noexpand:','')]]],axis=1)
 
 #X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.)
-X_test_features=X_features
+X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.)
+#X_test_features=X_features
 print len(X_test_features)
 
 alpha_q_nom=np.array([0.1,0.2,0.4,0.7])
@@ -83,12 +99,41 @@ for num,q in enumerate(alpha_q_nom):
 
 n_evt = len(X_predicted_all[0])
 
-#X_predictions_for_fit = np.row_stack([x for x in X_predicted_all])
 X_predictions_for_fit = np.column_stack([x for x in X_predicted_all])
-np.save("predictions_array_reverse",X_predictions_for_fit)
-#fit_quantile = np.polyfit(alpha_q,X_predictions_for_fit, deg=3)
-fit_quantile = np.array([np.polyfit(X_predictions_for_fit[i], alpha_q, deg=3) for i in range(n_evt)]) 
-np.save("predictions_fit_array_reserse",fit_quantile)
+
+params = Parameters()
+params.add('par_p0',   value= 1)
+#params.add('par_f', value= 1.0, min=0.7, max=1.3)
+params.add('par_p1', value= 1.0)
+params.add('par_p2', value= 1.)
+params.add('par_p3', value= 1.)
+
+
+#gmodel = Model(poly_bound)
+mpvs=[]
+
+print 'here'
+#fit_quantile = np.array( [gmodel.fit(alpha_q,params,x=X_predictions_for_fit[i]) for i in range(n_evt)  ]  )
+fit_quantile=[]
+for i in range(n_evt):
+	minner = Minimizer(fcn2min, params, fcn_args=(X_predictions_for_fit[i], alpha_q))
+	result = minner.minimize()
+	fit_quantile.append(result)
+	f = -1*result.params['par_p1'].value/3./result.params['par_p0'].value
+#	print i,f
+	mpvs.append(f)
+
+fit_quantile = np.array(fit_quantile) 
+mpvs = np.array(mpvs)
+print 'here2'
+#mpvs = np.array([ fit_quantile[i].params['par_f'].value for i in range(n_evt) ])
+
+#print mpvs
+
+
+
+np.save("minimizer_fitquant",fit_quantile)
+np.save("minimizer_mpvs",mpvs)
 #mpvs_tau = [ -1*fit_quantile[1,i]/3/fit_quantile[0,i] for i in range(n_evt)]
 #mpvs=[np.polyval(fit_quantile[:,i],mpvs_tau[i]) for i in range(n_evt)]
 #mpvs_up=[np.polyval(fit_quantile[:,i],mpvs_tau[i]+0.25) for i in range(n_evt)]
@@ -101,8 +146,7 @@ np.save("predictions_fit_array_reserse",fit_quantile)
 #derivative_coeff = [ [3*fit_quantile[0,i],2*fit_quantile[1,i],mpvs(fit_quantile[2,i] - )]  for i in range(n_evt)])
 #roots_der = [np.roots(derivative_coeff[i]) for i in range(n_evt)] 
 
-mpvs = np.array([ -1*fit_quantile[i,1]/3/fit_quantile[i,0] for i in range(n_evt)])
-np.save("predictions_mpvs_array_reverse",mpvs)
+#np.save("predictions_mpvs_array_reverse",mpvs)
 
 #addDictionary ={}
 #addDictionary['b_scale'] = mpvs
@@ -126,19 +170,20 @@ np.save("predictions_mpvs_array_reverse",mpvs)
 #	funcs.append(np.poly1d(fit_quantile[:,i] ))
 
 
-n, bins, patches = plt.hist(mpvs, 50, range=[0,2],facecolor='green', alpha=0.75)
-plt.xlabel('MPVS')
-plt.ylabel('Events')
-plt.grid(True)
-plt.savefig(utils.IO.plotFolder+"quantileReg_distr_reverse_mpvs.png")
-plt.clf()
+#n, bins, patches = plt.hist(mpvs, 50, range=[0,2],facecolor='green', alpha=0.75)
+#plt.xlabel('MPVS')
+#plt.ylabel('Events')
+#plt.grid(True)
+#plt.savefig(utils.IO.plotFolder+"quantileReg_distr_reverse_mpvs.png")
+#plt.clf()
 
-for i in range(len(alpha_q_nom)):
-	n, bins, patches = plt.hist(X_predicted_all[i], 50, facecolor='green', alpha=0.75)
-	plt.xlabel('MPVS')
-	plt.ylabel('Events')
-	plt.title('Quantile = %s'%(str(alpha_q_nom[i])))
-	#plt.xlim(0, 2)
-	plt.grid(True)
+#for i in range(len(alpha_q_nom)):
+#	n, bins, patches = plt.hist(X_predicted_all[i], 50, facecolor='green', alpha=0.75)
+#	plt.xlabel('MPVS')
+#	plt.ylabel('Events')
+#	plt.title('Quantile = %s'%(str(alpha_q_nom[i])))
+#	#plt.xlim(0, 2)
+#	plt.grid(True)
 #	plt.savefig(utils.IO.plotFolder+"quantileReg_distr_"+str(alpha_q[i])+".png")
-	plt.clf()
+#	plt.clf()
+print 'It took', time.time()-start_time, 'seconds.'

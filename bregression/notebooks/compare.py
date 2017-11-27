@@ -48,14 +48,12 @@ branch_names = 'Jet_pt_reg,Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,noexpand:Jet_mc
 features = 'Jet_pt,Jet_eta,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") #same as Caterina
 features_cat = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
 
-target = 'Jet_mcPt/Jet_pt'.split(",")
 base_cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_mcPt>0) & (Jet_mcPt<6000) & (Jet_pt_reg>0)'
 
 
 branch_names = [c.strip() for c in branch_names]
 features = [c.strip() for c in features]
 features_cat = [c.strip() for c in features_cat]
-target = [c.strip() for c in target]
 
 
 #pt_regions = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
@@ -82,7 +80,7 @@ for i_r,region in enumerate(pt_regions+eta_regions):
 
 ########loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'))   ###final one used to compare with caterina
 #outTags = ['full_energyring_wo_Pt_reweight']
-    outTags = ['full_sample_w_weights_opt_onwo','full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables']
+    outTags = ['full_sample_w_weights_opt_onwo','full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','full_sample_wo_weights_Catvariables_targetPt','full_sample_wo_weights_Catvariables_targetPt_oldParameters']
     X_predictions_compare = []
     for num in range(len(outTags)):
         outTag = outTags[num]
@@ -91,7 +89,8 @@ for i_r,region in enumerate(pt_regions+eta_regions):
         if ('Catvariables') in outTag : X_pred_data = loaded_model.predict(X_features_cat).astype(np.float64)
         else : X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
 
-        predictions_pt = X_pred_data*nTot[:,dictVar['Jet_pt']]
+        if ('targetPt' in outTag) : predictions_pt = X_pred_data
+        else : predictions_pt = X_pred_data*nTot[:,dictVar['Jet_pt']]
         rel_diff_regressed = true_pt/predictions_pt
 
         if num==0  : 
@@ -99,7 +98,7 @@ for i_r,region in enumerate(pt_regions+eta_regions):
         X_predictions_compare.append(rel_diff_regressed)
 
     comparison_tags = ['Caterina'] + outTags
-    outTagComparison = 'ComparisonThird' + region_names[i_r]
+    outTagComparison = 'ComparisonFifth' + region_names[i_r]
     style=False 
     if i_r==0 : style=True
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTagComparison,False,region_names[i_r])
