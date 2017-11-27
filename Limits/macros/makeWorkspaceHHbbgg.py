@@ -311,7 +311,8 @@ kmax * number of nuisance parameters
 #        datacard.write(pdfName[icat].replace("cat0","$CHANNEL")+"\n")
 
     for icat in range(0,len(allcats)):
-        datacard.write("shapes bkg %s" % allcats[icat] )
+#        datacard.write("shapes bkg %s" % allcats[icat] )
+        datacard.write("shapes bkg %s" % (pdfName[icat].split('_bkg_')[-1]).replace('_pdf',''))
         datacard.write(" %s cms_hgg:" % str(os.getcwd()+str("/")+options.out))
         datacard.write(pdfName[icat]+"\n")
 
