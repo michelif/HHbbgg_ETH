@@ -1,5 +1,5 @@
 {
-    "file" : "/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/files/20170828_optimizedCuts/Total_preselection_diffNaming.root",
+    "file" : "/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/files/20170828_optimizedCuts/Total_preselection.root",
     "observable": [
         "Mgg", 
         100.000, 

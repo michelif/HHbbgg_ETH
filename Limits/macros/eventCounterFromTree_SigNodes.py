@@ -1,10 +1,10 @@
 import ROOT
 
-#fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts/Total_preselection_diffNaming.root")
+fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts/Total_preselection_diffNaming_transformedMVA.root")
 #fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20171002_BJetsSamples/Total_preselection_diffNaming.root")
 #fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20171002_resH/Total_preselection_diffNaming.root")
 #fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20171002_ttH/Total_preselection_diffNaming.root")
-fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts_ggH_ttH_reweight/Total_preselection_diffNaming.root")
+#fileDir= ROOT.TString("/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts_noDR_minDRGJet/Total_preselection_diffNaming_transformedMVA.root")
 
 processes = {}
 trees = [
@@ -30,24 +30,29 @@ processes["reducedTree_bkg_7"]= str("ttH")
 processes["reducedTree_bkg_8"]= str("Data")
 
 MXCat = [250,340,480,100000]
-MVACat = [0.88,0.97,0.99,1.05]
+#MVACat = [0.88,0.97,0.99,1.05]
+MVACat = [0.289,0.530,0.783,1.05]
 
+#MXCat = [250,385,560,100000]
+#MVACat = [0.300,0.561,0.8256,1.05]
 
 
 _file0 = ROOT.TFile.Open(str(fileDir))
 
+#print str(fileDir).replace("root","txt")
+
 table = open(str(fileDir).replace("root","txt"),"w+")
 for iMVA in range(0,len(MVACat)-1):
     table.write("-------------------\n")
-    table.write("MVAOutput>"+str(MVACat[iMVA])+" && MVAOutput<"+str(MVACat[iMVA+1])+"\n")
+    table.write("MVAOutputTransformed>"+str(MVACat[iMVA])+" && MVAOutputTransformed<"+str(MVACat[iMVA+1])+"\n")
     table.write("-------------------\n")
     for iMX in range(0,len(MXCat)-1):
         table.write("MX>"+ str(MXCat[iMX])+ " && MX<"+str(MXCat[iMX+1])+"\n")
         for tree in trees:
             Tree = _file0.Get(tree)
             h_highMass = ROOT.TH1F("h_highMass","h_highMass",80,100,180)
-            print "weight*(MVAOutput>"+str(MVACat[iMVA])+" && MVAOutput<"+str(MVACat[iMVA+1])+" && Mgg>123.5 && Mgg<126.5 && Mjj>90 && Mjj<155 && MX>"+ str(MXCat[iMX])+ " && MX<"+str(MXCat[iMX+1])+str(")")
-            Tree.Project("h_highMass","Mgg","weight*(MVAOutput>"+str(MVACat[iMVA])+" && MVAOutput<"+str(MVACat[iMVA+1])+" && Mgg>123.5 && Mgg<126.5 && Mjj>90 && Mjj<155 && MX>"+ str(MXCat[iMX])+ " && MX<"+str(MXCat[iMX+1])+str(")"))
+            print "weight*(MVAOutputTransformed>"+str(MVACat[iMVA])+" && MVAOutputTransformed<"+str(MVACat[iMVA+1])+" && Mgg>123.5 && Mgg<126.5 && Mjj>90 && Mjj<155 && MX>"+ str(MXCat[iMX])+ " && MX<"+str(MXCat[iMX+1])+str(")")
+            Tree.Project("h_highMass","Mgg","weight*(MVAOutputTransformed>"+str(MVACat[iMVA])+" && MVAOutputTransformed<"+str(MVACat[iMVA+1])+" && Mgg>123.5 && Mgg<126.5 && Mjj>90 && Mjj<155 && MX>"+ str(MXCat[iMX])+ " && MX<"+str(MXCat[iMX+1])+str(")"))
             print "#################################################"
             print Tree.GetName()+str(" ")+str(h_highMass.Integral())
             integ = (h_highMass.Integral())
