@@ -94,11 +94,15 @@ final_mpvs=[]
 linear_mpvs=[]
 tau_peak = 0.295
 for i in range(n_evt):
-	if mpvs[i]<2 and mpvs[i]>0 : final_mpvs.append(mpvs[i])
+	if mpvs[i]<X_predictions_for_fit[i][3] and mpvs[i]>X_predictions_for_fit[i][1] : final_mpvs.append(mpvs[i])
 	else:
 		fit_i = np.polyfit([X_predictions_for_fit[i][1],X_predictions_for_fit[i][2]], [alpha_q[1],alpha_q[2]], deg=1)
 		final_mpvs.append(np.array( (tau_peak-fit_i[1])/fit_i[0] ))
 		linear_mpvs.append(np.array( (tau_peak-fit_i[1])/fit_i[0] ))
+
+
+print 'linear num = ', len(linear_mpvs)
+print 'normal fit num = ', len(final_mpvs)
 
 resolution = np.array([ (X_predictions_for_fit[i][3] - X_predictions_for_fit[i][1])/2. for i in range(n_evt)] )
 
@@ -128,7 +132,7 @@ addDictionary['b_res_20p70'] = resolution
 
 
 nTot,dictVar = postprocessing.stackAddFeaturesReg(data_frame,branch_names,addDictionary,5)
-processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p70_op2_')+outTag_name+'.root'
+processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p70_minmax_')+outTag_name+'.root'
 postprocessing.saveTreeReg(processPath,dictVar,nTot)
 
 
@@ -137,9 +141,9 @@ postprocessing.saveTreeReg(processPath,dictVar,nTot)
 #	funcs.append(np.poly1d(fit_quantile[:,i] ))
 
 saveName = 'quantileReg_distr_'
-plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_02',True)
-plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_02',True)
-plotting.plot_hist([resolution],saveName+'Resoution_02',True)
+plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_minmax',True)
+plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_minmax',True)
+plotting.plot_hist([resolution],saveName+'Resoution_minmax',True)
 
 
 #for i in range(len(alpha_q_nom)):

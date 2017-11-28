@@ -33,7 +33,7 @@ files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
 #ttbar= ["../../bregression//output_root/treeScaleResolution20p70_full_quantile_regression_alpha.root" ] 
-ttbar= ["../../bregression//output_root/treeScaleResolution20p70_op2_full_quantile_regression_alpha.root" ] 
+ttbar= ["../../bregression//output_root/treeScaleResolution20p70_minmax_full_quantile_regression_alpha.root" ] 
 treeName = 'reducedTree'
 
 utils.IO.add_target(ntuples,ttbar,1)
@@ -75,7 +75,7 @@ if (1>0):
     X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.)
     nTot,dictVar = postprocessing.stackFeaturesReg(data_frame,branch_names,5)
 
-    outTags = ['full_sample_w_weights_opt_onwo','20p70_full_quantile_regression']
+    outTags = ['full_sample_wo_weights_opt_onwo','20p70_full_quantile_regression']
     X_predictions_compare = []
     for num in range(len(outTags)):
         outTag = outTags[num]
@@ -85,11 +85,12 @@ if (1>0):
         else : X_pred_data = nTot[:,dictVar['b_scale']]
         X_predictions_compare.append(X_pred_data)
 
+    print len(X_predictions_compare[0]),len(X_predictions_compare[1])
+    print min(X_predictions_compare[0]),min(X_predictions_compare[1])
+    print max(X_predictions_compare[0]),max(X_predictions_compare[1])
     comparison_tags = outTags
-    outTagComparison = 'ComparisonScale0p2' 
-    style=False 
-    style=True
-    plotting.plot_hist(X_predictions_compare,outTagComparison,True,['reg','quantile 0-2'])
+    outTagComparison = 'ComparisonScale_minmax' 
+    plotting.plot_hist(X_predictions_compare,outTagComparison,True,['reg','quantile min-max'])
 
 
 ########################################

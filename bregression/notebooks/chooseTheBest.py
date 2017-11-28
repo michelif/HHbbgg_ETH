@@ -21,8 +21,9 @@ path = '/mnt/t3nfs01/data01/shome/nchernya//HHbbgg_ETH_devel/bregression/fitResu
 #pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
 pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
 eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
-labels=['Caterina','XGb w weights','XGb wo weights', 'only Cat variables', 'only Cat var, target pt','only Cat var, target pt, old par','quantile 0-4,20-70']
-which = 'Quantile'
+#labels=['Caterina','XGb w weights','XGb wo weights', 'only Cat variables', 'only Cat var, target pt','only Cat var, target pt, old par','quantile 0-4,20-70']
+labels=['Caterina','XGb wo weights', 'only Cat variables','quantile min-max']
+which = 'QuantileMinMax'
 num_pt=len(pt_regions_names)
 num_eta=len(eta_regions_names)
 pt_region=[-500,0,100,300,400,600,1200]

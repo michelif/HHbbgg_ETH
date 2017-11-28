@@ -316,8 +316,8 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
     h_names = [ 'region'+str(t) for t in range(0,len(X_region))]
 
     c_min=0
-  #  c_max=2.
-    c_max=4.
+    c_max=2.
+    if log : c_max=4.
     c = TCanvas("canv","canv",900,900)
     c.cd()
     frame = TH1F("hframe", "hframe", n_bins, c_min, c_max)
@@ -884,9 +884,9 @@ def bisection(array,value):#be careful, works with sorted arrays
     
 def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
     styles=['r^','bs','go','xk','xm','xy','hc']
-    for i,s in enumerate(styles):
+    for i in range(len(labels)):
        y_prime = [y[k][i] for k in range(len(y))]
-       plt.plot(regions,y_prime,s, label=labels[i])
+       plt.plot(regions,y_prime,styles[i], label=labels[i])
 
     plt.xlabel(what[1])
     plt.ylabel(what[0])
@@ -1003,7 +1003,9 @@ def plot_hist(hists,saveName,log=False,labels=None):
 	colors=['blue','green','red']
 	for i in range(len(hists)):
 		if labels==None : n, bins, patches = plt.hist(hists[i], 100,color='green', alpha=0.75)
-		else : n, bins, patches = plt.hist(hists[i], 100,color=colors[i], alpha=0.5,label=labels[i])
+		else : n, bins, patches = plt.hist(hists[i], 100,range=[0,4],color=colors[i], alpha=0.5,label=labels[i])
+		area = sum(np.diff(bins)*n)
+		print 'num, intergral = ',i,area
 	plt.xlabel('MPVS')
 	plt.ylabel('Events')
 	if log : plt.yscale('log')

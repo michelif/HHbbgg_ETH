@@ -32,7 +32,7 @@ get_ipython().magic(u'env data=$utils.IO.ldata$ntuples')
 files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
-ttbar= ["../../bregression//output_root/treeScaleResolution20p70_full_quantile_regression_alpha.root" ] 
+ttbar= ["../../bregression//output_root/treeScaleResolution20p70_minmax_full_quantile_regression_alpha.root" ] 
 treeName = 'reducedTree'
 
 utils.IO.add_target(ntuples,ttbar,1)
@@ -81,7 +81,8 @@ for i_r,region in enumerate(pt_regions+eta_regions):
 
 ########loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'))   ###final one used to compare with caterina
 #outTags = ['full_energyring_wo_Pt_reweight']
-    outTags = ['full_sample_w_weights_opt_onwo','full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','full_sample_wo_weights_Catvariables_targetPt','full_sample_wo_weights_Catvariables_targetPt_oldParameters','20p70_full_quantile_regression']
+  #  outTags = ['full_sample_w_weights_opt_onwo','full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','full_sample_wo_weights_Catvariables_targetPt','full_sample_wo_weights_Catvariables_targetPt_oldParameters','20p70_full_quantile_regression']
+    outTags = ['full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','quantile_regression_minmax']
     X_predictions_compare = []
     for num in range(len(outTags)):
         outTag = outTags[num]
@@ -101,7 +102,7 @@ for i_r,region in enumerate(pt_regions+eta_regions):
         X_predictions_compare.append(rel_diff_regressed)
 
     comparison_tags = ['Caterina'] + outTags
-    outTagComparison = 'ComparisonQuantile' + region_names[i_r]
+    outTagComparison = 'ComparisonQuantileMinMax' + region_names[i_r]
     style=False 
     if i_r==0 : style=True
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTagComparison,False,region_names[i_r])
