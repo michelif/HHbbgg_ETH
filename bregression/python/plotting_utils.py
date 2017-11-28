@@ -316,7 +316,8 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
     h_names = [ 'region'+str(t) for t in range(0,len(X_region))]
 
     c_min=0
-    c_max=2.
+  #  c_max=2.
+    c_max=4.
     c = TCanvas("canv","canv",900,900)
     c.cd()
     frame = TH1F("hframe", "hframe", n_bins, c_min, c_max)
@@ -351,7 +352,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
     scale_factors=[]
     scaled=[]
     func=[]
-    colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring+8, ROOT.kOrange]
+    colors=[ROOT.kBlue+1,ROOT.kAzure+5,ROOT.kCyan-1, ROOT.kGreen, ROOT.kSpring+8, ROOT.kOrange, ROOT.kPink+10]
  
  
     for j in range(len(X_region)):
@@ -882,7 +883,7 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
 def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
-    styles=['r^','bs','go','xk']
+    styles=['r^','bs','go','xk','xm','xy','hc']
     for i,s in enumerate(styles):
        y_prime = [y[k][i] for k in range(len(y))]
        plt.plot(regions,y_prime,s, label=labels[i])
@@ -898,7 +899,7 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
             
     axes = plt.gca()
     if 'mean' in what[0] :axes.set_ylim([0.8,1.1])
-    if 'FWHM' in what[0] :axes.set_ylim([0.0,0.45])
+    if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
     plt.grid()
    # plt.show()
     plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png")
@@ -997,3 +998,16 @@ def plot_feature_importance(clf,features,end='',path='/mnt/t3nfs01/data01/shome/
 	plt.savefig(utils.IO.plotFolder+"importanceBar_"+end+".pdf")
 	plt.clf()
 
+
+def plot_hist(hists,saveName,log=False,labels=None):
+	colors=['blue','green','red']
+	for i in range(len(hists)):
+		if labels==None : n, bins, patches = plt.hist(hists[i], 100,color='green', alpha=0.75)
+		else : n, bins, patches = plt.hist(hists[i], 100,color=colors[i], alpha=0.5,label=labels[i])
+	plt.xlabel('MPVS')
+	plt.ylabel('Events')
+	if log : plt.yscale('log')
+	plt.grid(True)
+	if labels!=None : plt.legend(loc='upper right')
+	plt.savefig(utils.IO.plotFolder+saveName+".png")
+	plt.clf()

@@ -84,34 +84,21 @@ for num,q in enumerate(alpha_q_nom):
 n_evt = len(X_predicted_all[0])
 #n_evt=100
 
-#X_predictions_for_fit = np.row_stack([x for x in X_predicted_all])
 X_predictions_for_fit = np.column_stack([x for x in X_predicted_all])
 np.save("predictions_array_reverse",X_predictions_for_fit)
-#fit_quantile = np.polyfit(alpha_q,X_predictions_for_fit, deg=3)
 fit_quantile = np.array([np.polyfit(X_predictions_for_fit[i], alpha_q, deg=3) for i in range(n_evt)])
-#print fit_quantile 
-#np.save("predictions_fit_array_reserse",fit_quantile)
-#mpvs_tau = [ -1*fit_quantile[1,i]/3/fit_quantile[0,i] for i in range(n_evt)]
-#mpvs=[np.polyval(fit_quantile[:,i],mpvs_tau[i]) for i in range(n_evt)]
-#mpvs_up=[np.polyval(fit_quantile[:,i],mpvs_tau[i]+0.25) for i in range(n_evt)]
-#mpvs_low=[np.polyval(fit_quantile[:,i],mpvs_tau[i]-0.25) for i in range(n_evt)]
-#resolution = np.array(mpvs_up)-np.array(mpvs_low)
-#
-#mpvs_up_20=[np.polyval(fit_quantile[:,i],mpvs_tau[i]+0.2) for i in range(n_evt)]
-#mpvs_low_20=[np.polyval(fit_quantile[:,i],mpvs_tau[i]-0.2) for i in range(n_evt)]
-
-#derivative_coeff = [ [3*fit_quantile[0,i],2*fit_quantile[1,i],mpvs(fit_quantile[2,i] - )]  for i in range(n_evt)])
-#roots_der = [np.roots(derivative_coeff[i]) for i in range(n_evt)] 
 
 mpvs = np.array([ -1*fit_quantile[i,1]/3/fit_quantile[i,0] for i in range(n_evt)])
 
 final_mpvs=[]
+linear_mpvs=[]
 tau_peak = 0.295
 for i in range(n_evt):
-	if mpvs[i]<4 and mpvs[i]>0 : final_mpvs.append(mpvs[i])
+	if mpvs[i]<2 and mpvs[i]>0 : final_mpvs.append(mpvs[i])
 	else:
 		fit_i = np.polyfit([X_predictions_for_fit[i][1],X_predictions_for_fit[i][2]], [alpha_q[1],alpha_q[2]], deg=1)
 		final_mpvs.append(np.array( (tau_peak-fit_i[1])/fit_i[0] ))
+		linear_mpvs.append(np.array( (tau_peak-fit_i[1])/fit_i[0] ))
 
 resolution = np.array([ (X_predictions_for_fit[i][3] - X_predictions_for_fit[i][1])/2. for i in range(n_evt)] )
 
@@ -138,47 +125,23 @@ resolution = np.array([ (X_predictions_for_fit[i][3] - X_predictions_for_fit[i][
 addDictionary ={}
 addDictionary['b_scale'] = final_mpvs
 addDictionary['b_res_20p70'] = resolution
-#addDictionary['b_res_0p20'] = np.array(mpvs_up_20)-np.array(mpvs_low_20)
 
 
 nTot,dictVar = postprocessing.stackAddFeaturesReg(data_frame,branch_names,addDictionary,5)
-processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p70_')+outTag_name+'.root'
+processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p70_op2_')+outTag_name+'.root'
 postprocessing.saveTreeReg(processPath,dictVar,nTot)
 
-n, bins, patches = plt.hist(resolution, 100,facecolor='green', alpha=0.75)
-plt.xlabel('resolution')
-plt.ylabel('Events')
-plt.grid(True)
-plt.savefig(utils.IO.plotFolder+"quantileReg_distr_FinalResolution.png")
-plt.clf()
 
 ##funcs=[]
 #for i in range(len(X_predicted_all[0])):
 #	funcs.append(np.poly1d(fit_quantile[:,i] ))
 
-
-#n, bins, patches = plt.hist(mpvs, 50, range=[0,2],facecolor='green', alpha=0.75)
-n, bins, patches = plt.hist(final_mpvs, 50,facecolor='green', alpha=0.75)
-plt.xlabel('MPVS')
-plt.ylabel('Events')
-plt.yscale('log')
-plt.grid(True)
-plt.savefig(utils.IO.plotFolder+"quantileReg_distr_FinalMpvs.png")
-plt.clf()
-
-#n, bins, patches = plt.hist(mpvs_tau, 100,facecolor='green', alpha=0.75)
-#print n, bins
-#print n.max()
-#plt.xlabel('qunatiles')
-#plt.ylabel('Events')
-#plt.yscale('log')
-#plt.grid(True)
-#plt.savefig(utils.IO.plotFolder+"quantileReg_distr_quantiles.png")
-#plt.clf()
+saveName = 'quantileReg_distr_'
+plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_02',True)
+plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_02',True)
+plotting.plot_hist([resolution],saveName+'Resoution_02',True)
 
 
-
-#
 #for i in range(len(alpha_q_nom)):
 #	n, bins, patches = plt.hist(X_predicted_all[i], 50, facecolor='green', alpha=0.75)
 #	plt.xlabel('MPVS')
