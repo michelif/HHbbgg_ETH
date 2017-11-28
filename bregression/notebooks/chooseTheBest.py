@@ -21,7 +21,8 @@ path = '/mnt/t3nfs01/data01/shome/nchernya//HHbbgg_ETH_devel/bregression/fitResu
 #pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
 pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
 eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
-labels=['Caterina','XGb w weights','XGb wo weights', 'only Cat variables', 'only Cat var, target pt','only Cat var, target pt, old par']
+labels=['Caterina','XGb w weights','XGb wo weights', 'only Cat variables', 'only Cat var, target pt','only Cat var, target pt, old par','quantile 0-4,20-70']
+which = 'Quantile'
 num_pt=len(pt_regions_names)
 num_eta=len(eta_regions_names)
 pt_region=[-500,0,100,300,400,600,1200]
@@ -35,8 +36,9 @@ fwhm_all_eta=[]
 mean_all_eta=[]
 fwhm_all_pt=[]
 
+
 for i_r,region in enumerate(pt_regions_names+eta_regions_names):
-	file_name = path+'fitResultRegions_BukinComparisonFifth'+region+'.txt'
+	file_name = path+'fitResultRegions_BukinComparison'+which+region+'.txt'
 	mean,fwhm = postprocessing.get_mean_width(file_name)
 	fwhm = [float(x)*2*math.sqrt(2*math.log(2)) for x in fwhm]
 	if i_r<num_pt : 
@@ -46,7 +48,7 @@ for i_r,region in enumerate(pt_regions_names+eta_regions_names):
 		mean_all_eta.append(mean)
 		fwhm_all_eta.append(fwhm)
 
-outString='ComparisonFifth'
+outString='Comparison'+which
 
 plotting.plot_mean_fwhm(mean_all_pt,pt_region,what,outString,labels)
 what=['mean Xp','eta']
