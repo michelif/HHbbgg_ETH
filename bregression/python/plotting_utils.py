@@ -303,7 +303,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
  
     
     
-def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,title=''):  
+def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,title='',titleName=''):  
     if style==True:
         gROOT.SetBatch(True)
         gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
@@ -331,6 +331,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
     leg.SetBorderSize(0)
     leg.SetTextFont(42)
     leg.SetTextSize(0.025)
+    if titleName!='' :  leg.AddEntry(frame,titleName,"")
     if title!='' :  leg.AddEntry(frame,title,"")
 
     hist_list=[]
@@ -882,7 +883,7 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
     
-def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
+def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample=''):
     styles=['r^','bs','go','xk','xm','xy','hc']
     for i in range(len(labels)):
        y_prime = [y[k][i] for k in range(len(y))]
@@ -900,8 +901,12 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2']):
     axes = plt.gca()
     if 'mean' in what[0] :axes.set_ylim([0.8,1.1])
     if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
+    y_pos = max(y_prime)
+    x_pos = min(regions) 
+    if sample!='' : plt.text(x_pos, y_pos, 'DiHiggs %s'%sample)
     plt.grid()
    # plt.show()
+    outString = outString+sample
     plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png")
     plt.clf()
 
@@ -1012,4 +1017,29 @@ def plot_hist(hists,saveName,log=False,labels=None):
 	plt.grid(True)
 	if labels!=None : plt.legend(loc='upper right')
 	plt.savefig(utils.IO.plotFolder+saveName+".png")
+	plt.clf()
+
+
+
+def plot_hist_region(hist,region,saveName,log=False):
+	nbins=100
+	if len(hist) < 2000 : nbins = 50
+	if len(hist) < 500 : nbins = 20
+	n, bins, patches = plt.hist(hist, nbins,color='blue', alpha=0.75)
+	plt.xlabel('Jet Resolution')
+	plt.ylabel('Events')
+	plt.title(region)
+	if log : plt.yscale('log')
+	plt.grid(True)
+	mean = np.mean(hist) 
+	mpv = bins[np.where(n == n.max())]
+	median = np.percentile(hist,50) 
+	y_pos = max(n)*0.8
+	x_pos = 2*mean
+	plt.text(x_pos, y_pos, 'mean = %.2f'%mean)
+	plt.text(x_pos, y_pos-y_pos*0.1, 'MPV = %.2f'%mpv[0])
+	plt.text(x_pos, y_pos-y_pos*0.2, 'median = %.2f'%median)
+	#if labels!=None : plt.legend(loc='upper right')
+	region = 'Resolution_'+region.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_')
+	plt.savefig(utils.IO.plotFolder+saveName+region+".png")
 	plt.clf()

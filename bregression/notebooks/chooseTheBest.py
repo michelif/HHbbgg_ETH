@@ -12,18 +12,21 @@ import optimization_utils as optimization
 reload(optimization)
 import postprocessing_utils as postprocessing
 reload(postprocessing)
-
-
-
 import math
+
+testfile = sys.argv[1]
 
 path = '/mnt/t3nfs01/data01/shome/nchernya//HHbbgg_ETH_devel/bregression/fitResults/'
 #pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
 pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
 eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
 #labels=['Caterina','XGb w weights','XGb wo weights', 'only Cat variables', 'only Cat var, target pt','only Cat var, target pt, old par','quantile 0-4,20-70']
-labels=['Caterina','XGb wo weights', 'only Cat variables','quantile min-max']
-which = 'QuantileMinMax'
+#labels=['Caterina','XGb wo weights', 'only Cat variables','quantile min-max']
+#labels=['Caterina','XGb wo weights', 'quantile min-max 02-07','quantile min-max 02-04','quantile linear all']
+#labels=['Caterina','XGb wo weights', 'quantile min-max 02-07','quantile min-max 02-04','quantile linear all','quantile_04']
+labels=['Caterina','no Regression','XGb wo weights', 'quantile min-max 02-07','quantile_04']
+#which = 'QuantileMinMaxLinear04'
+which = 'DiHiggs'+testfile
 num_pt=len(pt_regions_names)
 num_eta=len(eta_regions_names)
 pt_region=[-500,0,100,300,400,600,1200]
@@ -39,7 +42,7 @@ fwhm_all_pt=[]
 
 
 for i_r,region in enumerate(pt_regions_names+eta_regions_names):
-	file_name = path+'fitResultRegions_BukinComparison'+which+region+'.txt'
+	file_name = path+'fitResultRegions_Bukin'+which+region+'.txt'
 	mean,fwhm = postprocessing.get_mean_width(file_name)
 	fwhm = [float(x)*2*math.sqrt(2*math.log(2)) for x in fwhm]
 	if i_r<num_pt : 
@@ -51,12 +54,13 @@ for i_r,region in enumerate(pt_regions_names+eta_regions_names):
 
 outString='Comparison'+which
 
-plotting.plot_mean_fwhm(mean_all_pt,pt_region,what,outString,labels)
+sample = testfile
+plotting.plot_mean_fwhm(mean_all_pt,pt_region,what,outString,labels,sample)
 what=['mean Xp','eta']
-plotting.plot_mean_fwhm(mean_all_eta,eta_region,what,outString,labels)
+plotting.plot_mean_fwhm(mean_all_eta,eta_region,what,outString,labels,sample)
 
 what=['FWHM','p_T']
-plotting.plot_mean_fwhm(fwhm_all_pt,pt_region,what,outString,labels)
+plotting.plot_mean_fwhm(fwhm_all_pt,pt_region,what,outString,labels,sample)
 what=['FWHM','eta']
-plotting.plot_mean_fwhm(fwhm_all_eta,eta_region,what,outString,labels)
+plotting.plot_mean_fwhm(fwhm_all_eta,eta_region,what,outString,labels,sample)
 

@@ -26,7 +26,11 @@ ntuples = 'heppy_05_10_2017'
 get_ipython().magic(u'env data=$utils.IO.ldata$ntuples')
 files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
-ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
+#ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
+#ttbar=["ggHHbbgg_res500_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
+#ttbar=["ggHHbbgg_res700_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
+ttbar=["ggHHbbgg_sm_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
+
 
 
 utils.IO.add_features(ntuples,ttbar,1)
@@ -93,9 +97,8 @@ tau_peak = 0.295
 
 mpvs = np.array([ -1*fit_quantile[i,1]/3/fit_quantile[i,0] for i in range(n_evt)])
 mpvs_linear_fit =  np.array( [(tau_peak-all_linear_fit[i,1])/all_linear_fit[i,0] for i in range(n_evt)])
+mpvs_just_04 =  np.array( [ X_predictions_for_fit[i][2] for i in range(n_evt)])
 
-print mpvs
-print mpvs_linear_fit
 
 
 final_mpvs=[]
@@ -151,11 +154,13 @@ addDictionary ={}
 addDictionary['b_scale_0207'] = final_mpvs
 addDictionary['b_scale_0204'] = final_mpvs_0204
 addDictionary['b_scale_linear_all'] = mpvs_linear_fit
+addDictionary['b_scale_04'] = mpvs_just_04
 addDictionary['b_res_20p70'] = resolution
 
 
 nTot,dictVar = postprocessing.stackAddFeaturesReg(data_frame,branch_names,addDictionary,5)
-processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p40p70_lin_minmax_')+outTag_name+'.root'
+#processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p40p70p04_lin_minmax_')+outTag_name+'.root'
+processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/applied_')+outTag_name+utils.IO.featuresName[0].split("/")[len(utils.IO.featuresName[0].split("/"))-1]
 postprocessing.saveTreeReg(processPath,dictVar,nTot)
 
 

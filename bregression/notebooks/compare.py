@@ -23,8 +23,11 @@ import matplotlib.pyplot as plt
 import training_utils as utils
 import ROOT
 from ROOT import gROOT
+import sys
 
 
+testfile = sys.argv[1]
+samplename = 'DiHiggs '+testfile
 
 ntuples = 'heppy_05_10_2017'
 # "%" sign allows to interpret the rest as a system command
@@ -32,7 +35,8 @@ get_ipython().magic(u'env data=$utils.IO.ldata$ntuples')
 files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
-ttbar= ["../../bregression//output_root/treeScaleResolution20p70_minmax_full_quantile_regression_alpha.root" ] 
+#ttbar= ["../../bregression//output_root/treeScaleResolution20p40p70p04_lin_minmax_full_quantile_regression_alpha.root" ] 
+ttbar= ["../../bregression//output_root/applied_full_quantile_regression_alphaggHHbbgg_%s_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"%(testfile) ] 
 treeName = 'reducedTree'
 
 utils.IO.add_target(ntuples,ttbar,1)
@@ -45,7 +49,7 @@ for i in range(len(utils.IO.featuresName)):
 
 
 
-branch_names = 'Jet_pt_reg,Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,noexpand:Jet_mcPt/Jet_pt,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03,nPVs,Jet_leptonPt,b_scale,b_res_20p70'.split(",") #
+branch_names = 'Jet_pt_reg,Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,noexpand:Jet_mcPt/Jet_pt,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03,nPVs,Jet_leptonPt,b_scale_0207,b_scale_0204,b_res_20p70,b_scale_linear_all,b_scale_04'.split(",") #
 features = 'Jet_pt,Jet_eta,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") #
 features_cat = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
 
@@ -74,7 +78,9 @@ for i_r,region in enumerate(pt_regions+eta_regions):
     nTot,dictVar = postprocessing.stackFeaturesReg(data_frame,branch_names,5)
     true_pt = nTot[:,dictVar['Jet_mcPt']]
     predictions_pt_caterina = nTot[:,dictVar['Jet_pt_reg']]
+    reco_pt = nTot[:,dictVar['Jet_pt']]
     rel_diff_caterina = true_pt/predictions_pt_caterina
+    rel_diff_noreg = true_pt/reco_pt
 
 
 
@@ -82,7 +88,9 @@ for i_r,region in enumerate(pt_regions+eta_regions):
 ########loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'))   ###final one used to compare with caterina
 #outTags = ['full_energyring_wo_Pt_reweight']
   #  outTags = ['full_sample_w_weights_opt_onwo','full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','full_sample_wo_weights_Catvariables_targetPt','full_sample_wo_weights_Catvariables_targetPt_oldParameters','20p70_full_quantile_regression']
-    outTags = ['full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','quantile_regression_minmax']
+   # outTags = ['full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','quantile_minmax_02-07','quantile_minmax_02-04','quantile_linear_all']
+#    outTags = ['full_sample_wo_weights_opt_onwo','quantile_minmax_02-07','quantile_minmax_02-04','quantile_linear_all','quantile_04']
+    outTags = ['full_sample_wo_weights_opt_onwo','quantile_minmax_02-07','quantile_04']
     X_predictions_compare = []
     for num in range(len(outTags)):
         outTag = outTags[num]
@@ -91,7 +99,11 @@ for i_r,region in enumerate(pt_regions+eta_regions):
         #    if (i_r==0) : plotting.plot_feature_importance(loaded_model,features,outTags[num])
             if ('Catvariables') in outTag : X_pred_data = loaded_model.predict(X_features_cat).astype(np.float64)
             else : X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
-        else : X_pred_data = nTot[:,dictVar['b_scale']]
+        else :
+             if ('02-07') in outTag : X_pred_data = nTot[:,dictVar['b_scale_0207']]
+             if ('02-04') in outTag : X_pred_data = nTot[:,dictVar['b_scale_0204']]
+             if ('_04') in outTag : X_pred_data = nTot[:,dictVar['b_scale_04']]
+             if ('linear_all') in outTag : X_pred_data = nTot[:,dictVar['b_scale_linear_all']]
 
         if ('targetPt' in outTag) : predictions_pt = X_pred_data
         else : predictions_pt = X_pred_data*nTot[:,dictVar['Jet_pt']]
@@ -99,13 +111,14 @@ for i_r,region in enumerate(pt_regions+eta_regions):
 
         if num==0  : 
              X_predictions_compare.append(rel_diff_caterina)
+             X_predictions_compare.append(rel_diff_noreg)
         X_predictions_compare.append(rel_diff_regressed)
 
-    comparison_tags = ['Caterina'] + outTags
-    outTagComparison = 'ComparisonQuantileMinMax' + region_names[i_r]
+    comparison_tags = ['Caterina'] + ['No regression']+ outTags
+    outTagComparison = 'DiHiggs'+testfile + region_names[i_r]
     style=False 
     if i_r==0 : style=True
-    plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTagComparison,False,region_names[i_r])
+    plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTagComparison,False,region_names[i_r],samplename)
 
 
 ########################################
