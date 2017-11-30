@@ -87,18 +87,39 @@ n_evt = len(X_predicted_all[0])
 X_predictions_for_fit = np.column_stack([x for x in X_predicted_all])
 np.save("predictions_array_reverse",X_predictions_for_fit)
 fit_quantile = np.array([np.polyfit(X_predictions_for_fit[i], alpha_q, deg=3) for i in range(n_evt)])
+all_linear_fit = np.array([np.polyfit([X_predictions_for_fit[i][1],X_predictions_for_fit[i][2]], [alpha_q[1],alpha_q[2]], deg=1) for i in range(n_evt)])
+
+tau_peak = 0.295
 
 mpvs = np.array([ -1*fit_quantile[i,1]/3/fit_quantile[i,0] for i in range(n_evt)])
+mpvs_linear_fit =  np.array( [(tau_peak-all_linear_fit[i,1])/all_linear_fit[i,0] for i in range(n_evt)])
+
+print mpvs
+print mpvs_linear_fit
+
 
 final_mpvs=[]
+final_mpvs_0204=[]
 linear_mpvs=[]
-tau_peak = 0.295
+linear_mpvs_0204=[]
+difference_pol_linear=[]
+difference_pol_linear_0204=[]
 for i in range(n_evt):
-	if mpvs[i]<X_predictions_for_fit[i][3] and mpvs[i]>X_predictions_for_fit[i][1] : final_mpvs.append(mpvs[i])
+	if mpvs[i]<X_predictions_for_fit[i][3] and mpvs[i]>X_predictions_for_fit[i][1] :  #between 0.2 and 0.7 
+		final_mpvs.append(mpvs[i])
+		print mpvs[i]
+		print mpvs_linear_fit[i]
+		difference_pol_linear.append(mpvs[i]-mpvs_linear_fit[i])	
 	else:
-		fit_i = np.polyfit([X_predictions_for_fit[i][1],X_predictions_for_fit[i][2]], [alpha_q[1],alpha_q[2]], deg=1)
-		final_mpvs.append(np.array( (tau_peak-fit_i[1])/fit_i[0] ))
-		linear_mpvs.append(np.array( (tau_peak-fit_i[1])/fit_i[0] ))
+		final_mpvs.append(mpvs_linear_fit[i])
+		linear_mpvs.append(mpvs_linear_fit[i])
+	if mpvs[i]<X_predictions_for_fit[i][2] and mpvs[i]>X_predictions_for_fit[i][1] :  # between 0.2 and 0.4
+		final_mpvs_0204.append(mpvs[i])
+		difference_pol_linear_0204.append(mpvs[i]-mpvs_linear_fit[i])	
+	else:
+		final_mpvs_0204.append(mpvs_linear_fit[i])
+		linear_mpvs_0204.append(mpvs_linear_fit[i])
+
 
 
 print 'linear num = ', len(linear_mpvs)
@@ -127,12 +148,14 @@ resolution = np.array([ (X_predictions_for_fit[i][3] - X_predictions_for_fit[i][
 #np.save("predictions_mpvs_array_reverse",mpvs)
 
 addDictionary ={}
-addDictionary['b_scale'] = final_mpvs
+addDictionary['b_scale_0207'] = final_mpvs
+addDictionary['b_scale_0204'] = final_mpvs_0204
+addDictionary['b_scale_linear_all'] = mpvs_linear_fit
 addDictionary['b_res_20p70'] = resolution
 
 
 nTot,dictVar = postprocessing.stackAddFeaturesReg(data_frame,branch_names,addDictionary,5)
-processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p70_minmax_')+outTag_name+'.root'
+processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p40p70_lin_minmax_')+outTag_name+'.root'
 postprocessing.saveTreeReg(processPath,dictVar,nTot)
 
 
@@ -141,9 +164,12 @@ postprocessing.saveTreeReg(processPath,dictVar,nTot)
 #	funcs.append(np.poly1d(fit_quantile[:,i] ))
 
 saveName = 'quantileReg_distr_'
-plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_minmax',True)
-plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_minmax',True)
-plotting.plot_hist([resolution],saveName+'Resoution_minmax',True)
+saveName2 = 'minmax2'
+plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_'+saveName2,True)
+plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_'+saveName2,True)
+plotting.plot_hist([resolution],saveName+'Resoution_'+saveName2,True)
+plotting.plot_hist([difference_pol_linear],saveName+'Differece0207_'+saveName2,True)
+plotting.plot_hist([difference_pol_linear_0204],saveName+'Differece0204_'+saveName2,True)
 
 
 #for i in range(len(alpha_q_nom)):
