@@ -292,7 +292,18 @@ def main(options,args):
 
 #                pdfNorm.append(pdf.expectedEvents(ROOT.RooArgSet(mgg)))
                 catName=("%s_cat%d" % (name, icat)).replace("bkg_","")
-                pdfNorm[catName]=pdf.expectedEvents(ROOT.RooArgSet(mgg))
+                pdfNorm[catName]=pdf.expectedEvents(ROOT.RooArgSet(mgg)) # the fit is done on the blinded region but expected events is in 100-180, checked with the code below
+#                if options.reweight == True:
+#                    if catName == 'subcat0_cat0':
+#                        print "dajeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+#                        print pdfNorm[catName],pdf.getNormIntegral(ROOT.RooArgSet(mgg))
+#                        hist = pdf.createHistogram("prova",mgg)
+#                        c1 = ROOT.TCanvas()
+#                        hist.Draw()
+#                        c1.SaveAs("dummy.png")
+#                        print "int total", hist.Integral(hist.FindBin(100),hist.FindBin(180),"width")
+#                        print "int blinded", hist.Integral(hist.FindBin(100),hist.FindBin(115),"width")+hist.Integral(hist.FindBin(135),hist.FindBin(180),"width")
+
 
     ws.writeToFile(options.out)
 
@@ -373,7 +384,7 @@ kmax * number of nuisance parameters
             if "node" in procs[proc]:
                 continue
             datacard.write(" -1".ljust(5) )
-        datacard.write(("%d" % pdfNorm[allcats[icat]]).ljust(5) )
+        datacard.write(("%f" % pdfNorm[allcats[icat]]).ljust(5) )
     datacard.write("\n")
 
     datacard.write("----------------------------------------------------------------------------------------------------------------------------------\n\n")
@@ -417,6 +428,7 @@ if __name__ == "__main__":
                         default="",
                         help="number of categories",
                         ),
+
             ]
                           )
 
