@@ -29,8 +29,8 @@ files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
 #ttbar=["ggHHbbgg_res500_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
 #ttbar=["ggHHbbgg_res700_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
-ttbar=["ggHHbbgg_sm_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
-
+#ttbar=["ggHHbbgg_sm_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
+ttbar=["ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.root"]
 
 
 utils.IO.add_features(ntuples,ttbar,1)
@@ -78,7 +78,8 @@ alpha_q_nom=np.array([0.1,0.2,0.4,0.7])
 alpha_q=alpha_q_nom-alpha_q_nom[0]
 
 X_predicted_all=[]
-outTag_name = 'full_quantile_regression_alpha'
+#outTag_name = 'full_quantile_regression_alpha'
+outTag_name = 'full_subsample09_quantile_regression_alpha'
 for num,q in enumerate(alpha_q_nom):
 	outTag =outTag_name+str(q)
 	loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+outTag+'.pkl'))   
@@ -93,6 +94,7 @@ np.save("predictions_array_reverse",X_predictions_for_fit)
 fit_quantile = np.array([np.polyfit(X_predictions_for_fit[i], alpha_q, deg=3) for i in range(n_evt)])
 all_linear_fit = np.array([np.polyfit([X_predictions_for_fit[i][1],X_predictions_for_fit[i][2]], [alpha_q[1],alpha_q[2]], deg=1) for i in range(n_evt)])
 
+#tau_peak = 0.295
 tau_peak = 0.295
 
 mpvs = np.array([ -1*fit_quantile[i,1]/3/fit_quantile[i,0] for i in range(n_evt)])
@@ -104,14 +106,14 @@ mpvs_just_04 =  np.array( [ X_predictions_for_fit[i][2] for i in range(n_evt)])
 final_mpvs=[]
 final_mpvs_0204=[]
 linear_mpvs=[]
+best_quantile=[]
 linear_mpvs_0204=[]
 difference_pol_linear=[]
 difference_pol_linear_0204=[]
 for i in range(n_evt):
 	if mpvs[i]<X_predictions_for_fit[i][3] and mpvs[i]>X_predictions_for_fit[i][1] :  #between 0.2 and 0.7 
 		final_mpvs.append(mpvs[i])
-		print mpvs[i]
-		print mpvs_linear_fit[i]
+		best_quantile.append( np.polyval(fit_quantile[i,:],mpvs[i]) )
 		difference_pol_linear.append(mpvs[i]-mpvs_linear_fit[i])	
 	else:
 		final_mpvs.append(mpvs_linear_fit[i])
@@ -128,6 +130,8 @@ for i in range(n_evt):
 print 'linear num = ', len(linear_mpvs)
 print 'normal fit num = ', len(final_mpvs)
 
+
+print 'best quantile = ',[o for o in best_quantile if o>0.9 or o<-0.1]
 resolution = np.array([ (X_predictions_for_fit[i][3] - X_predictions_for_fit[i][1])/2. for i in range(n_evt)] )
 
 #mpvs_tau = np.array([ np.polyval(fit_quantile[num,:],i) for num,i in enumerate(mpvs) if (i>=0)&(i<=4)   ])
@@ -168,13 +172,15 @@ postprocessing.saveTreeReg(processPath,dictVar,nTot)
 #for i in range(len(X_predicted_all[0])):
 #	funcs.append(np.poly1d(fit_quantile[:,i] ))
 
-saveName = 'quantileReg_distr_'
-saveName2 = 'minmax2'
-plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_'+saveName2,True)
-plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_'+saveName2,True)
-plotting.plot_hist([resolution],saveName+'Resoution_'+saveName2,True)
-plotting.plot_hist([difference_pol_linear],saveName+'Differece0207_'+saveName2,True)
-plotting.plot_hist([difference_pol_linear_0204],saveName+'Differece0204_'+saveName2,True)
+#saveName = 'quantileReg_distr_'
+#saveName2 = 'subsample09'
+#best_quantile = [o for o in best_quantile if o<0.91 and o>-0.11]
+#plotting.plot_hist([best_quantile],saveName+'BestQuantile_'+saveName2,True)
+#plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_'+saveName2,True)
+#plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_'+saveName2,True)
+#plotting.plot_hist([resolution],saveName+'Resoution_'+saveName2,True)
+#plotting.plot_hist([difference_pol_linear],saveName+'Differece0207_'+saveName2,True)
+#plotting.plot_hist([difference_pol_linear_0204],saveName+'Differece0204_'+saveName2,True)
 
 
 #for i in range(len(alpha_q_nom)):

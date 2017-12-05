@@ -278,7 +278,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
 
     
     if option=='caterina' :
-        leg.AddEntry(h_rel_diff,"Caterina, FWHM=%.3f"%fwhm[0] ,"P")
+        leg.AddEntry(h_rel_diff,"HIG-16-044, FWHM=%.3f"%fwhm[0] ,"P")
         leg.AddEntry(h_rel_diff,"FWHM Bukin =%.3f"%fwhm_bukin[0] ,"P")
         leg.AddEntry(h_rel_diff_reg,"XGboost, FWHM=%.3f"%fwhm[1],"P")
         leg.AddEntry(h_rel_diff_reg,"FWHM Bukin =%.3f"%fwhm_bukin[1],"P")
@@ -299,6 +299,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
    # c2.SaveAs(utils.IO.plotFolder+"pt_rel_fitCruijff_"+str(outString)+'.png')
   #  c2.SaveAs(utils.IO.plotFolder+"pt_rel_noFit_"+str(outString)+'.png')
     c2.SaveAs(utils.IO.plotFolder+"pt_rel_fit%s_"%(fitfunc)+str(outString)+'.png')
+    c2.SaveAs(utils.IO.plotFolder+"pt_rel_fit%s_"%(fitfunc)+str(outString)+'.pdf')
     c2.Draw()
  
     
@@ -361,10 +362,10 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         else : data =((X_region[j]).as_matrix()).ravel()
         print len(data)
         h_rel_diff = TH1F("hrel_diff_%s"%h_names[j], "hrel_diff_%s"%h_names[j], n_bins, c_min, c_max)
-        h_rel_diff.Sumw2(True)
+        h_rel_diff.Sumw2(ROOT.kTRUE)
         for i in xrange(len(data)): 
             h_rel_diff.Fill(data[i])
-        h_rel_diff.Scale(1./h_rel_diff.Integral())
+  #      h_rel_diff.Scale(1./h_rel_diff.Integral())
         h_rel_diff.SetLineColor(colors[j])
         h_rel_diff.SetMarkerColor(colors[j])
         h_rel_diff.SetLineWidth(2)
@@ -404,7 +405,8 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
 ###########################################################
 
 
-        res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE)))
+        res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Strategy(2),ROOT.RooFit.Save(ROOT.kTRUE),ROOT.RooFit.SumW2Error(ROOT.kTRUE)))
+        #res.append(sig[num].chi2FitTo(datahist[num]))
         fit_range_min = h_rel_diff.GetMean()-h_rel_diff.GetRMS()/2
         fit_range_max = h_rel_diff.GetMean()+h_rel_diff.GetRMS()/2
         print 'range of the fit : ', fit_range_min, fit_range_max
@@ -449,11 +451,13 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         func_list[j].Draw("same")
         hist_list[j].Draw("PEsame")
         leg.AddEntry(hist_list[j],names[j]+',Xp=%.2f,sigp=%.2f'%(Xp[j].getVal(),sigp[j].getVal()) ,"PE")
+        print j,' Sigma plus error : ',sigp[j].getVal(), ' +- ',sigp[j].getError()
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
   #  c.SaveAs("pt_region.png")
     outString = outString.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_')
     c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.png')
+    c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.pdf')
    # c.SaveAs(utils.IO.plotFolder+"fitCruijff_regions_"+str(outString)+log_name+'.png')
   #  c.SaveAs(utils.IO.plotFolder+"fitBifurgaus_regions_"+str(outString)+log_name+'.png')
  #   c.SaveAs(utils.IO.plotFolder+"fitVoigt_regions_"+str(outString)+log_name+'.png')
@@ -649,6 +653,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
     line.Draw("Lsame")
 
     c.SaveAs(utils.IO.plotFolder+"quantiles_"+str(outString)+str(pol)+'.png')
+    c.SaveAs(utils.IO.plotFolder+"quantiles_"+str(outString)+str(pol)+'.pdf')
 
  
 
@@ -696,6 +701,7 @@ def plot_input_variables_reg(X_data,branch_names,log_names='',n_bins=30,outStrin
             branch_names[i] = branch_names[i].replace('/','_').replace(':','_').replace('(','').replace(')','').replace('+','_')
         
         plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".png")
+        plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".pdf")
     #    plt.savefig(utils.IO.plotFolder+"variableDist"+str(branch_names[i])+"_"+str(outString)+".pdf")
 
 
@@ -883,31 +889,59 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
     
-def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample=''):
+def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylimits=None,fit=False,yerrorBars=['0']):
     styles=['r^','bs','go','xk','xm','xy','hc']
+    ylist = []
+    regions = np.array(regions)
     for i in range(len(labels)):
-       y_prime = [y[k][i] for k in range(len(y))]
-       plt.plot(regions,y_prime,styles[i], label=labels[i])
+       y_prime = np.asarray([y[k][i] for k in range(len(y))])
+       ey_prime =np.asarray([yerrorBars[k][i] for k in range(len(yerrorBars))])
+       plt.plot(regions,y_prime,styles[i],label=labels[i])
+      # plt.errorbar(regions, y, yerr=ey_prime,capsize=5, elinewidth=2,markeredgewidth=2)
+      # (_, caps, _) = plt.errorbar(regions, y_prime, ey_prime, capsize=20, elinewidth=3)
 
+       ylist.append(y_prime) 
+     #  if len(yerrorBars)!=1:
+      #     plt.errorbar(regions, y, yerr=ey_prime,fmt='none',ecolor=styles[i][0],elinewidth=2)
+       plt.errorbar(regions, y_prime, yerr=ey_prime,linestyle='None', marker=styles[i][1],ecolor=styles[i][0],color=styles[i][0])
+
+ #   plt.rc('text', usetex=True)
     plt.xlabel(what[1])
     plt.ylabel(what[0])
-    plt.legend(loc="lower right",numpoints=1)
+ #   plt.legend(loc="lower right",numpoints=1)
+    lgd = plt.legend(loc="lower center",numpoints=1,ncol=2,bbox_to_anchor=(0.0,-0.302,1.,-.302),borderaxespad=0.,mode='expand')
     x_text,y_text = float(regions[len(regions)-1])-100,float(y_prime[len(y_prime)-1])+0.05
-    x_text0,y_text0 = float(regions[0])-100,float(y_prime[0])+0.05
+    x_text0,y_text0 = float(regions[0])-100,float(y_prime[0])-0.02
     if 'p_T' in what[1] : 
         plt.annotate('low stat', xy=(regions[len(regions)-1],y_prime[len(y_prime)-1]), xytext=(x_text,y_text))
         plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
             
     axes = plt.gca()
-    if 'mean' in what[0] :axes.set_ylim([0.8,1.1])
+    if 'mean' in what[0] :axes.set_ylim([0.9,1.05])
     if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
-    y_pos = max(y_prime)
+    if 'sigma' in what[0] :axes.set_ylim([0.05,0.16])
+    if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.10,0.16])
+    if 'sigma' in what[0] and 'eta' in what[1] and '700' in sample :axes.set_ylim([0.08,0.15])
+    if ylimits!=None :  
+         axes.set_ylim(ylimits)
+         
+    y_pos = float(y_prime[0])+0.02
     x_pos = min(regions) 
-    if sample!='' : plt.text(x_pos, y_pos, 'DiHiggs %s'%sample)
     plt.grid()
+   # if sample!='' : plt.text(x_pos, y_pos, '%s'%sample)
+    if sample!='' : plt.title(sample)
+    if fit==True and 'sigma' in what[0]:
+        fit_curve = np.polyfit(regions, ylist[0], deg=1)
+        fit_curve2 = np.polyfit(regions, ylist[1], deg=1)
+        fit_1d = np.poly1d(fit_curve)
+        fit_1d2 = np.poly1d(fit_curve2)
+        xp = np.linspace(0., .4, 100)
+       # plt.plot(xp, fit_1d(xp), label="linear fit")
+       # plt.plot(xp, fit_1d2(xp), label="linear fit")
    # plt.show()
     outString = outString+sample
-    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png")
+    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.clf()
 
 
@@ -951,10 +985,11 @@ def plot_response(histos,profiles,profiles_noReg,profiles_Cat,style=False,outStr
     leg.SetTextSize(0.03)
     leg.AddEntry(profiles,"XGboost","PL")
     leg.AddEntry(profiles_noReg,"no regression","PL")
-    leg.AddEntry(profiles_Cat,"Caterina","PL")
+    leg.AddEntry(profiles_Cat,"HIG-16-044","PL")
     leg.Draw("same")
     
     c.SaveAs(utils.IO.plotFolder+"Response_"+histos.GetTitle()+'_'+str(outString)+'.png')
+    c.SaveAs(utils.IO.plotFolder+"Response_"+histos.GetTitle()+'_'+str(outString)+'.pdf')
 
 
 
@@ -1013,10 +1048,13 @@ def plot_hist(hists,saveName,log=False,labels=None):
 		print 'num, intergral = ',i,area
 	plt.xlabel('MPVS')
 	plt.ylabel('Events')
+	mpv = bins[np.where(n == n.max())]
+	print saveName, 'MPV = ', mpv[0]
 	if log : plt.yscale('log')
 	plt.grid(True)
 	if labels!=None : plt.legend(loc='upper right')
 	plt.savefig(utils.IO.plotFolder+saveName+".png")
+	plt.savefig(utils.IO.plotFolder+saveName+".pdf")
 	plt.clf()
 
 
@@ -1042,4 +1080,5 @@ def plot_hist_region(hist,region,saveName,log=False):
 	#if labels!=None : plt.legend(loc='upper right')
 	region = 'Resolution_'+region.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_')
 	plt.savefig(utils.IO.plotFolder+saveName+region+".png")
+	plt.savefig(utils.IO.plotFolder+saveName+region+".pdf")
 	plt.clf()

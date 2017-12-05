@@ -64,10 +64,13 @@ eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0
 eta_regions = '(Jet_eta<0.5 & Jet_eta>-0.5),((Jet_eta>=0.5 & Jet_eta<1.0) |(Jet_eta<=-0.5 & Jet_eta>-1.0)),(( Jet_eta>=1.0 & Jet_eta<1.5)|(Jet_eta<=-1.0 & Jet_eta>-1.5)),( (Jet_eta>=1.5 & Jet_eta<2.0)|(Jet_eta<=-1.5 & Jet_eta>=-2.0 )),(Jet_eta>=2.0 | Jet_eta<=-2.0)'.split(",")
 
 region_names = pt_regions+eta_regions_names
+X_pred_res_compare = []
 
-#for i_r,region in enumerate(pt_regions+eta_regions):
-if (1>0):
-    cuts = base_cuts
+outTagComparison = 'ComparisonScale_minmax' 
+for i_r,region in enumerate(pt_regions+eta_regions):
+#if (1>0):
+   # cuts = base_cuts
+    cuts = base_cuts+'&'+region
 
     data_frame = (rpd.read_root(utils.IO.featuresName[0],treeName, columns = branch_names)).query(cuts)
     X_features = preprocessing.set_features(treeName,branch_names,features,cuts)
@@ -75,57 +78,24 @@ if (1>0):
     X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.)
     nTot,dictVar = postprocessing.stackFeaturesReg(data_frame,branch_names,5)
 
+    X_pred_res = nTot[:,dictVar['b_res_20p70']]
+    plotting.plot_hist_region(X_pred_res,region,outTagComparison,False)
+
+
     outTags = ['full_sample_wo_weights_opt_onwo','20p70_full_quantile_regression']
     X_predictions_compare = []
-    for num in range(len(outTags)):
-        outTag = outTags[num]
-        if ('quantile' not in outTag) :
-            loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+outTag+'.pkl'))  
-            X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
-        else : X_pred_data = nTot[:,dictVar['b_scale']]
-        X_predictions_compare.append(X_pred_data)
+    if (i_r==0):
+        for num in range(len(outTags)):
+            outTag = outTags[num]
+            if ('quantile' not in outTag) :
+                loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+outTag+'.pkl'))  
+                X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
+            else : X_pred_data = nTot[:,dictVar['b_scale']]
+            X_predictions_compare.append(X_pred_data)
 
-    print len(X_predictions_compare[0]),len(X_predictions_compare[1])
-    print min(X_predictions_compare[0]),min(X_predictions_compare[1])
-    print max(X_predictions_compare[0]),max(X_predictions_compare[1])
-    comparison_tags = outTags
-    outTagComparison = 'ComparisonScale_minmax' 
-    plotting.plot_hist(X_predictions_compare,outTagComparison,True,['reg','quantile min-max'])
-
-
-########################################
-################plot regions##############
-    
-#pt_regions = '(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
-#eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
-#eta_regions = '(Jet_eta<0.5 & Jet_eta>-0.5),((Jet_eta>=0.5 & Jet_eta<1.0) |(Jet_eta<=-0.5 & Jet_eta>-1.0)),(( Jet_eta>=1.0 & Jet_eta<1.5)|(Jet_eta<=-1.0 & Jet_eta>-1.5)),( (Jet_eta>=1.5 & Jet_eta<2.0)|(Jet_eta<=-1.5 & Jet_eta>=-2.0 )),(Jet_eta>=2.0 | Jet_eta<=-2.0)'.split(",")
-#X_pt_region=[] # list of pandas DataFrame
-#X_eta_region=[] # list of pandas DataFrame
-#X_pt_region_Caterina=[] # list of pandas DataFrame
-#X_eta_region_Caterina=[] # list of pandas DataFrame
-#target_dist = []
-#target_dist_Caterina = []
-##target_dist.append('RegressedFactor')
-#target_dist.append('noexpand:Jet_mcPt/RegressedFactor/Jet_pt')
-#target_dist_Caterina.append('noexpand:Jet_mcPt/Jet_pt_regNew')
-#addName = 'RegressedFactor,noexpand:Jet_mcPt/RegressedFactor,noexpand:Jet_mcPt/Jet_pt_regNew,noexpand:Jet_mcPt/RegressedFactor/Jet_pt'.split(",")
-#for region in pt_regions:
-#    cuts_regions = cuts+'&'+region
-#    X_pt_region.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist,cuts_regions))
-#    X_pt_region_Caterina.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist_Caterina,cuts_regions))
-#for region in eta_regions:
-#    cuts_regions = cuts+'&'+region
-#    X_eta_region.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist,cuts_regions))
-#    X_eta_region_Caterina.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist_Caterina,cuts_regions))
-
-#plotting.plot_regions(X_pt_region,pt_regions,True,50,"AfterReg_ptregion",False)
-#plotting.plot_regions(X_eta_region,eta_regions_names,True,50,"AfterReg_etaregion",False)
-#plotting.plot_regions(X_pt_region_Caterina,pt_regions,True,50,outTag,False)
-#plotting.plot_regions(X_eta_region_Caterina,eta_regions_names,True,50,"AfterReg_etaregionCaterina",False)
-
-
-
-# In[ ]:
-
-
+        print len(X_predictions_compare[0]),len(X_predictions_compare[1])
+        print min(X_predictions_compare[0]),min(X_predictions_compare[1])
+        print max(X_predictions_compare[0]),max(X_predictions_compare[1])
+        comparison_tags = outTags
+        plotting.plot_hist(X_predictions_compare,outTagComparison,True,['reg','quantile min-max'])
 

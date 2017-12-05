@@ -27,7 +27,6 @@ import sys
 
 
 testfile = sys.argv[1]
-samplename = 'DiHiggs '+testfile
 
 ntuples = 'heppy_05_10_2017'
 # "%" sign allows to interpret the rest as a system command
@@ -36,7 +35,10 @@ files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
 #ttbar= ["../../bregression//output_root/treeScaleResolution20p40p70p04_lin_minmax_full_quantile_regression_alpha.root" ] 
-ttbar= ["../../bregression//output_root/applied_full_quantile_regression_alphaggHHbbgg_%s_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"%(testfile) ] 
+#ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphattbar_RegressionPerJet_heppy_energyRings3_forTesting.root" ] 
+#ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphaggHHbbgg_%s_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"%(testfile) ] 
+ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alpha%s_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.root"%(testfile)]
+
 treeName = 'reducedTree'
 
 utils.IO.add_target(ntuples,ttbar,1)
@@ -114,8 +116,16 @@ for i_r,region in enumerate(pt_regions+eta_regions):
              X_predictions_compare.append(rel_diff_noreg)
         X_predictions_compare.append(rel_diff_regressed)
 
-    comparison_tags = ['Caterina'] + ['No regression']+ outTags
-    outTagComparison = 'DiHiggs'+testfile + region_names[i_r]
+    comparison_tags = ['HIG-16-044'] + ['No regression']+ outTags
+    if testfile=='ZHbbll' : 
+        samplename = testfile
+        outTagComparison = 'Sumsample09_'+testfile + region_names[i_r]
+    elif testfile!='ttbar' : 
+        samplename = 'DiHiggs '+testfile
+        outTagComparison = 'Sumsample09_DiHiggs'+testfile + region_names[i_r]
+    else : 
+        samplename = 'ttbar'
+        outTagComparison = 'Sumsample09_ttbar'+ region_names[i_r]
     style=False 
     if i_r==0 : style=True
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTagComparison,False,region_names[i_r],samplename)

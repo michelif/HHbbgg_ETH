@@ -24,16 +24,23 @@ eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0
 #labels=['Caterina','XGb wo weights', 'only Cat variables','quantile min-max']
 #labels=['Caterina','XGb wo weights', 'quantile min-max 02-07','quantile min-max 02-04','quantile linear all']
 #labels=['Caterina','XGb wo weights', 'quantile min-max 02-07','quantile min-max 02-04','quantile linear all','quantile_04']
-labels=['Caterina','no Regression','XGb wo weights', 'quantile min-max 02-07','quantile_04']
+labels=['HIG-16-044','no Regression','XGb wo weights', 'quantile min-max 02-07','quantile_04']
 #which = 'QuantileMinMaxLinear04'
-which = 'DiHiggs'+testfile
+if testfile=='ZHbbll' : 
+	which = 'Sumsample09_'+testfile
+	sample = testfile
+elif testfile!='ttbar' : 
+	which = 'Sumsample09_DiHiggs'+testfile
+	sample = 'DiHiggs '+testfile
+else : 
+	which = 'Sumsample09_ttbar'
+	sample = 'ttbar'
 num_pt=len(pt_regions_names)
 num_eta=len(eta_regions_names)
 pt_region=[-500,0,100,300,400,600,1200]
 eta_region=[0.,0.5,1.,1.5,2,2.5]
 pt_region = [ pt_region[i]+(pt_region[i+1]-pt_region[i])/2. for i in range(0,len(pt_region)-1)]
 eta_region = [ eta_region[i]+(eta_region[i+1]-eta_region[i])/2. for i in range(0,len(eta_region)-1)]
-what=['mean Xp','p_T']
 
 mean_all_pt=[]
 fwhm_all_eta=[]
@@ -44,7 +51,8 @@ fwhm_all_pt=[]
 for i_r,region in enumerate(pt_regions_names+eta_regions_names):
 	file_name = path+'fitResultRegions_Bukin'+which+region+'.txt'
 	mean,fwhm = postprocessing.get_mean_width(file_name)
-	fwhm = [float(x)*2*math.sqrt(2*math.log(2)) for x in fwhm]
+#	fwhm = [float(x)*2*math.sqrt(2*math.log(2)) for x in fwhm]
+	fwhm = [float(x) for x in fwhm]
 	if i_r<num_pt : 
 		mean_all_pt.append(mean)
 		fwhm_all_pt.append(fwhm)
@@ -54,13 +62,14 @@ for i_r,region in enumerate(pt_regions_names+eta_regions_names):
 
 outString='Comparison'+which
 
-sample = testfile
+what=['mean Xp','p_T']
 plotting.plot_mean_fwhm(mean_all_pt,pt_region,what,outString,labels,sample)
 what=['mean Xp','eta']
 plotting.plot_mean_fwhm(mean_all_eta,eta_region,what,outString,labels,sample)
 
-what=['FWHM','p_T']
+#what=['FWHM','p_T']
+what=['sigma','p_T']
 plotting.plot_mean_fwhm(fwhm_all_pt,pt_region,what,outString,labels,sample)
-what=['FWHM','eta']
+what=['sigma','eta']
 plotting.plot_mean_fwhm(fwhm_all_eta,eta_region,what,outString,labels,sample)
 
