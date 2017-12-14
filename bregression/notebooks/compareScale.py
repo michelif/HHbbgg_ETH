@@ -66,7 +66,7 @@ eta_regions = '(Jet_eta<0.5 & Jet_eta>-0.5),((Jet_eta>=0.5 & Jet_eta<1.0) |(Jet_
 region_names = pt_regions+eta_regions_names
 X_pred_res_compare = []
 
-outTagComparison = 'ComparisonScale_minmax' 
+outTagComparison = 'resolution_axis' 
 for i_r,region in enumerate(pt_regions+eta_regions):
 #if (1>0):
    # cuts = base_cuts
@@ -82,20 +82,20 @@ for i_r,region in enumerate(pt_regions+eta_regions):
     plotting.plot_hist_region(X_pred_res,region,outTagComparison,False)
 
 
-    outTags = ['full_sample_wo_weights_opt_onwo','20p70_full_quantile_regression']
-    X_predictions_compare = []
-    if (i_r==0):
-        for num in range(len(outTags)):
-            outTag = outTags[num]
-            if ('quantile' not in outTag) :
-                loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+outTag+'.pkl'))  
-                X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
-            else : X_pred_data = nTot[:,dictVar['b_scale']]
-            X_predictions_compare.append(X_pred_data)
-
-        print len(X_predictions_compare[0]),len(X_predictions_compare[1])
-        print min(X_predictions_compare[0]),min(X_predictions_compare[1])
-        print max(X_predictions_compare[0]),max(X_predictions_compare[1])
-        comparison_tags = outTags
-        plotting.plot_hist(X_predictions_compare,outTagComparison,True,['reg','quantile min-max'])
+#    outTags = ['full_sample_wo_weights_opt_onwo','20p70_full_quantile_regression']
+#    X_predictions_compare = []
+#    if (i_r==0):
+ #       for num in range(len(outTags)):
+ #           outTag = outTags[num]
+ #           if ('quantile' not in outTag) :
+ #               loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+outTag+'.pkl'))  
+ #               X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
+ #           else : X_pred_data = nTot[:,dictVar['b_scale']]
+ #           X_predictions_compare.append(X_pred_data)
+#
+#        print len(X_predictions_compare[0]),len(X_predictions_compare[1])
+#        print min(X_predictions_compare[0]),min(X_predictions_compare[1])
+#        print max(X_predictions_compare[0]),max(X_predictions_compare[1])
+#        comparison_tags = outTags
+#        plotting.plot_hist(X_predictions_compare,outTagComparison,True,['reg','quantile min-max'])
 

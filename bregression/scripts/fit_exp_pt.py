@@ -61,19 +61,38 @@ pad2.SetLogy()
 pad2.Draw()
 pad2.cd()
 frame2 = ROOT.TH1F("frame2","",1,xmin,xmax)
-frame2.SetMinimum(5e-02)	
-frame2.SetMaximum(20) 
+#frame2.SetMinimum(5e-02)	
+#frame2.SetMaximum(20) 
+frame2.SetMinimum(5e-03)	
+frame2.SetMaximum(5) 
 frame2.GetYaxis().SetLabelSize(0.02)
 frame2.GetXaxis().SetLabelSize(0.04)
 frame2.GetYaxis().SetTitleSize(0.04)
 frame2.GetXaxis().SetTitle("p_{T}")
 frame2.SetStats(0)
-frame2.GetYaxis().SetTitle("Jet_pt/func")	
+#frame2.GetYaxis().SetTitle("Jet_pt/func")	
+frame2.GetYaxis().SetTitle("func/Jet_pt")	
 frame2.Draw()
 
 for i in range(1,hist.GetNbinsX()+1):
-	hist_ratio.SetBinContent(i,hist.GetBinContent(i)/func_w.Eval(hist.GetBinCenter(i)))
+#	hist_ratio.SetBinContent(i,hist.GetBinContent(i)/func_w.Eval(hist.GetBinCenter(i)))
+	res=1
+	if	hist.GetBinContent(i)!=0:
+		res = func_w.Eval(hist.GetBinCenter(i))/hist.GetBinContent(i)
+		div = func_w.Eval(hist.GetBinCenter(hist.FindBin(400)))/hist.GetBinContent(hist.FindBin(400))
+		if hist.GetBinCenter(i)>400 : 
+			res =  func_w.Eval(hist.GetBinCenter(hist.FindBin(400)))/hist.GetBinContent(hist.FindBin(400))
+	#	print i,res,func_w.Eval(hist.GetBinCenter(hist.FindBin(400)))/hist.GetBinContent(hist.FindBin(400))
+#		print i,res
+#		if hist.GetBinCenter(i)<50 : 
+#			res = func_w.Eval(hist.GetBinCenter(hist.FindBin(50)))/hist.GetBinContent(hist.FindBin(50))
+		res = res/div
+	hist_ratio.SetBinContent(i,res)
 
 hist_ratio.Draw("same")
 
-c.SaveAs("../plots/fit_exp_pt7.png")
+fout = TFile.Open('../output_root/unweighting_hist_up.root', "recreate")
+hist_ratio.Write()
+fout.Close()
+
+c.SaveAs("../plots/fit_exp_inverse_smooth.png")

@@ -165,9 +165,11 @@ def get_mean_width(file_pt):
     open_pt = open(file_pt, 'r') 
     data = open_pt.readlines()
     data_pt=[]
+    data_er=[]
     for item,line in enumerate(data):
         words = line.split()
         if '+/-' in words:
-            data_pt.append(words[0])
+            data_pt.append(float(words[0]))
+            data_er.append(float(words[2]))
     open_pt.close() 
-    return data_pt[:len(data_pt)/2], data_pt[len(data_pt)/2:]
+    return data_pt[:len(data_pt)/2], data_pt[len(data_pt)/2:],data_er[:len(data_er)/2], data_er[len(data_er)/2:]

@@ -382,7 +382,9 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         datahist.append(RooDataHist("roohist_%s"%h,"roohist_%s"%h,RooArgList(x[num]),datahists[num]))
         #######################Bukin function ################## 
         Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
-        sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,sigp_initial,0.01,0.3))
+        if ('unweighted' in names[j]) and ('Jet_mcPt>=300' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
+        elif ('No regression' in names[j]) and ('Jet_mcPt>=600' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
+        else  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,sigp_initial,0.01,0.3))
         xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
         rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
         rho2.append(RooRealVar("rho2_%s"%h,"rho2_%s"%h,rho2_initial,-1,1)) #right
@@ -890,20 +892,18 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
 def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylimits=None,fit=False,yerrorBars=['0']):
-    styles=['r^','bs','go','xk','xm','xy','hc']
+   # styles=['r^','bs','go','xk','xm','xy','hc']
+    styles=['r^','bs','go','k*','mh','xy','xc']
     ylist = []
     regions = np.array(regions)
     for i in range(len(labels)):
        y_prime = np.asarray([y[k][i] for k in range(len(y))])
-       ey_prime =np.asarray([yerrorBars[k][i] for k in range(len(yerrorBars))])
-       plt.plot(regions,y_prime,styles[i],label=labels[i])
-      # plt.errorbar(regions, y, yerr=ey_prime,capsize=5, elinewidth=2,markeredgewidth=2)
-      # (_, caps, _) = plt.errorbar(regions, y_prime, ey_prime, capsize=20, elinewidth=3)
+       if len(yerrorBars)!=1: ey_prime =np.asarray([yerrorBars[k][i] for k in range(len(yerrorBars))])
+       plt.plot(regions,y_prime,styles[i],markersize=8,label=labels[i]) #10
 
        ylist.append(y_prime) 
-     #  if len(yerrorBars)!=1:
-      #     plt.errorbar(regions, y, yerr=ey_prime,fmt='none',ecolor=styles[i][0],elinewidth=2)
-       plt.errorbar(regions, y_prime, yerr=ey_prime,linestyle='None', marker=styles[i][1],ecolor=styles[i][0],color=styles[i][0])
+       if len(yerrorBars)!=1:
+          plt.errorbar(regions, y_prime, yerr=ey_prime,linestyle='None', marker=styles[i][1],ecolor=styles[i][0],color=styles[i][0])
 
  #   plt.rc('text', usetex=True)
     plt.xlabel(what[1])
@@ -919,7 +919,7 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylim
     axes = plt.gca()
     if 'mean' in what[0] :axes.set_ylim([0.9,1.05])
     if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
-    if 'sigma' in what[0] :axes.set_ylim([0.05,0.16])
+    if 'sigma' in what[0] :axes.set_ylim([0.04,0.16])
     if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.10,0.16])
     if 'sigma' in what[0] and 'eta' in what[1] and '700' in sample :axes.set_ylim([0.08,0.15])
     if ylimits!=None :  
@@ -928,16 +928,18 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylim
     y_pos = float(y_prime[0])+0.02
     x_pos = min(regions) 
     plt.grid()
+  #  plt.xlim(-1,6)
    # if sample!='' : plt.text(x_pos, y_pos, '%s'%sample)
     if sample!='' : plt.title(sample)
     if fit==True and 'sigma' in what[0]:
         fit_curve = np.polyfit(regions, ylist[0], deg=1)
-        fit_curve2 = np.polyfit(regions, ylist[1], deg=1)
-        fit_1d = np.poly1d(fit_curve)
-        fit_1d2 = np.poly1d(fit_curve2)
+     #   fit_curve2 = np.polyfit(regions, ylist[1], deg=1)
+     #   fit_1d = np.poly1d(fit_curve)
+     #   fit_1d2 = np.poly1d(fit_curve2)
         xp = np.linspace(0., .4, 100)
-       # plt.plot(xp, fit_1d(xp), label="linear fit")
-       # plt.plot(xp, fit_1d2(xp), label="linear fit")
+      #  plt.plot(xp, fit_1d(xp), color=styles[0][0], label="slope %.2f"%fit_curve[0])
+      #  plt.plot(xp, fit_1d2(xp), label="slope %.2f"%fit_curve2[0])
+        plt.legend(loc='lower right',numpoints=1)
    # plt.show()
     outString = outString+sample
     plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -1074,6 +1076,7 @@ def plot_hist_region(hist,region,saveName,log=False):
 	median = np.percentile(hist,50) 
 	y_pos = max(n)*0.8
 	x_pos = 2*mean
+	plt.xlim(0, 0.4)
 	plt.text(x_pos, y_pos, 'mean = %.2f'%mean)
 	plt.text(x_pos, y_pos-y_pos*0.1, 'MPV = %.2f'%mpv[0])
 	plt.text(x_pos, y_pos-y_pos*0.2, 'median = %.2f'%median)

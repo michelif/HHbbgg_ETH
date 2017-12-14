@@ -35,11 +35,12 @@ files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
 #ttbar= ["../../bregression//output_root/treeScaleResolution20p40p70p04_lin_minmax_full_quantile_regression_alpha.root" ] 
-#ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphattbar_RegressionPerJet_heppy_energyRings3_forTesting.root" ] 
+ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphattbar_RegressionPerJet_heppy_energyRings3_forTesting.root" ] 
 #ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphaggHHbbgg_%s_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"%(testfile) ] 
-ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alpha%s_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.root"%(testfile)]
+#ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alpha%s_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.root"%(testfile)]
 
 treeName = 'reducedTree'
+#treeName = 'tree'
 
 utils.IO.add_target(ntuples,ttbar,1)
 utils.IO.add_features(ntuples,ttbar,1)
@@ -64,7 +65,10 @@ features_cat = [c.strip() for c in features_cat]
 
 
 #pt_regions = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
-pt_regions = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
+#pt_regions = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
+#pt_regions = '(Jet_mcPt>0),(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<150),(Jet_mcPt>=150 & Jet_mcPt<200),(Jet_mcPt>=200 & Jet_mcPt<250),(Jet_mcPt>=250 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
+pt_regions = '(Jet_mcPt>0),(Jet_mcPt<60),(Jet_mcPt>=60 & Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<150),(Jet_mcPt>=150 & Jet_mcPt<200),(Jet_mcPt>=200 & Jet_mcPt<250),(Jet_mcPt>=250 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
+#pt_regions = '(Jet_mcPt>=300 & Jet_mcPt<400)'.split(",")
 eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
 eta_regions = '(Jet_eta<0.5 & Jet_eta>-0.5),((Jet_eta>=0.5 & Jet_eta<1.0) |(Jet_eta<=-0.5 & Jet_eta>-1.0)),(( Jet_eta>=1.0 & Jet_eta<1.5)|(Jet_eta<=-1.0 & Jet_eta>-1.5)),( (Jet_eta>=1.5 & Jet_eta<2.0)|(Jet_eta<=-1.5 & Jet_eta>=-2.0 )),(Jet_eta>=2.0 | Jet_eta<=-2.0)'.split(",")
 
@@ -87,12 +91,11 @@ for i_r,region in enumerate(pt_regions+eta_regions):
 
 
 
-########loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_noratio_bjets_recoJetpt.pkl'))   ###final one used to compare with caterina
-#outTags = ['full_energyring_wo_Pt_reweight']
-  #  outTags = ['full_sample_w_weights_opt_onwo','full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','full_sample_wo_weights_Catvariables_targetPt','full_sample_wo_weights_Catvariables_targetPt_oldParameters','20p70_full_quantile_regression']
-   # outTags = ['full_sample_wo_weights_opt_onwo','full_sample_wo_weights_Catvariables','quantile_minmax_02-07','quantile_minmax_02-04','quantile_linear_all']
-#    outTags = ['full_sample_wo_weights_opt_onwo','quantile_minmax_02-07','quantile_minmax_02-04','quantile_linear_all','quantile_04']
-    outTags = ['full_sample_wo_weights_opt_onwo','quantile_minmax_02-07','quantile_04']
+ #   outTags_names = ['quntile fit','quantile 0.4']
+    outTags = ['full_sample_wo_weights_opt_onwo','unweighted_5mil_full']
+    outTags_names = ['MSE','high pT']
+  #  outTags = ['full_sample_wo_weights_opt_onwo']
+  #  outTags_names = ['MSE']
     X_predictions_compare = []
     for num in range(len(outTags)):
         outTag = outTags[num]
@@ -100,6 +103,7 @@ for i_r,region in enumerate(pt_regions+eta_regions):
             loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+outTag+'.pkl'))  
         #    if (i_r==0) : plotting.plot_feature_importance(loaded_model,features,outTags[num])
             if ('Catvariables') in outTag : X_pred_data = loaded_model.predict(X_features_cat).astype(np.float64)
+            elif ('unweighted') in outTag : X_pred_data = loaded_model.predict(X_test_features.as_matrix()).astype(np.float64)
             else : X_pred_data = loaded_model.predict(X_test_features).astype(np.float64)
         else :
              if ('02-07') in outTag : X_pred_data = nTot[:,dictVar['b_scale_0207']]
@@ -116,54 +120,20 @@ for i_r,region in enumerate(pt_regions+eta_regions):
              X_predictions_compare.append(rel_diff_noreg)
         X_predictions_compare.append(rel_diff_regressed)
 
-    comparison_tags = ['HIG-16-044'] + ['No regression']+ outTags
+    comparison_tags = ['HIG-16-044'] + ['No regression']+ outTags_names
+#    comparison_tags = outTags_names
+    saveTag = 'CatnoregMSEHighPt'
     if testfile=='ZHbbll' : 
         samplename = testfile
-        outTagComparison = 'Sumsample09_'+testfile + region_names[i_r]
+        outTagComparison = saveTag+testfile + region_names[i_r]
     elif testfile!='ttbar' : 
         samplename = 'DiHiggs '+testfile
-        outTagComparison = 'Sumsample09_DiHiggs'+testfile + region_names[i_r]
+        outTagComparison = saveTag+'DiHiggs'+testfile + region_names[i_r]
     else : 
         samplename = 'ttbar'
-        outTagComparison = 'Sumsample09_ttbar'+ region_names[i_r]
+        outTagComparison = saveTag + 'ttbar'+ region_names[i_r]
     style=False 
     if i_r==0 : style=True
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTagComparison,False,region_names[i_r],samplename)
-
-
-########################################
-################plot regions##############
-    
-#pt_regions = '(Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<700),(Jet_mcPt>700)'.split(",")
-#eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
-#eta_regions = '(Jet_eta<0.5 & Jet_eta>-0.5),((Jet_eta>=0.5 & Jet_eta<1.0) |(Jet_eta<=-0.5 & Jet_eta>-1.0)),(( Jet_eta>=1.0 & Jet_eta<1.5)|(Jet_eta<=-1.0 & Jet_eta>-1.5)),( (Jet_eta>=1.5 & Jet_eta<2.0)|(Jet_eta<=-1.5 & Jet_eta>=-2.0 )),(Jet_eta>=2.0 | Jet_eta<=-2.0)'.split(",")
-#X_pt_region=[] # list of pandas DataFrame
-#X_eta_region=[] # list of pandas DataFrame
-#X_pt_region_Caterina=[] # list of pandas DataFrame
-#X_eta_region_Caterina=[] # list of pandas DataFrame
-#target_dist = []
-#target_dist_Caterina = []
-##target_dist.append('RegressedFactor')
-#target_dist.append('noexpand:Jet_mcPt/RegressedFactor/Jet_pt')
-#target_dist_Caterina.append('noexpand:Jet_mcPt/Jet_pt_regNew')
-#addName = 'RegressedFactor,noexpand:Jet_mcPt/RegressedFactor,noexpand:Jet_mcPt/Jet_pt_regNew,noexpand:Jet_mcPt/RegressedFactor/Jet_pt'.split(",")
-#for region in pt_regions:
-#    cuts_regions = cuts+'&'+region
-#    X_pt_region.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist,cuts_regions))
-#    X_pt_region_Caterina.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist_Caterina,cuts_regions))
-#for region in eta_regions:
-#    cuts_regions = cuts+'&'+region
-#    X_eta_region.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist,cuts_regions))
-#    X_eta_region_Caterina.append(preprocessing.cut_region(processPath,"reducedTree",branch_names+addName,target_dist_Caterina,cuts_regions))
-
-#plotting.plot_regions(X_pt_region,pt_regions,True,50,"AfterReg_ptregion",False)
-#plotting.plot_regions(X_eta_region,eta_regions_names,True,50,"AfterReg_etaregion",False)
-#plotting.plot_regions(X_pt_region_Caterina,pt_regions,True,50,outTag,False)
-#plotting.plot_regions(X_eta_region_Caterina,eta_regions_names,True,50,"AfterReg_etaregionCaterina",False)
-
-
-
-# In[ ]:
-
 
 

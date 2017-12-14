@@ -37,20 +37,22 @@ files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings_forTraining.root" in s] #energy rings tiny sample
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings2_forTraining_Large0.root" in s] #energy rings large and proper sample with Jet_e
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings2_forTraining_LargeAll2.root" in s] #energy rings large and proper sample with Jet_e
-ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll.root" in s] #energy rings large and proper sample with Jet_e
-
+#ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll.root" in s] #energy rings large and proper sample with Jet_e
+#ttbar = ["ttbar_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll_available_unweighted.root"]
+ttbar = ["ttbar_unweighted_full80M.root"]
 
 utils.IO.add_target(ntuples,ttbar,1)
 utils.IO.add_features(ntuples,ttbar,1)
 
 
-#branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,Jet_corr,Jet_mcPt,Jet_mcFlavour,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_e,noexpand:Jet_energyRing_dR0_em/Jet_e,noexpand:Jet_energyRing_dR1_em/Jet_e,noexpand:Jet_energyRing_dR2_em/Jet_e,noexpand:Jet_energyRing_dR3_em/Jet_e,noexpand:Jet_energyRing_dR4_em/Jet_e,noexpand:Jet_energyRing_dR0_neut/Jet_e,noexpand:Jet_energyRing_dR1_neut/Jet_e,noexpand:Jet_energyRing_dR2_neut/Jet_e,noexpand:Jet_energyRing_dR3_neut/Jet_e,noexpand:Jet_energyRing_dR4_neut/Jet_e,noexpand:Jet_energyRing_dR0_ch/Jet_e,noexpand:Jet_energyRing_dR1_ch/Jet_e,noexpand:Jet_energyRing_dR2_ch/Jet_e,noexpand:Jet_energyRing_dR3_ch/Jet_e,noexpand:Jet_energyRing_dR4_ch/Jet_e,noexpand:Jet_energyRing_dR0_mu/Jet_e,noexpand:Jet_energyRing_dR1_mu/Jet_e,noexpand:Jet_energyRing_dR2_mu/Jet_e,noexpand:Jet_energyRing_dR3_mu/Jet_e,noexpand:Jet_energyRing_dR4_mu/Jet_e,Jet_numDaughters_pt03'.split(",")
-#branch_names = 'Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,noexpand:Jet_mcPt/Jet_pt,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") #same as Caterina
-branch_names = 'Jet_mcFlavour,Jet_mcPt,noexpand:Jet_mcPt/Jet_pt,Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
-#features = 'Jet_pt,Jet_eta,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") #same as Caterina
-features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
+#branch_names = 'Jet_pt,noexpand:Jet_mcPt/Jet_pt,Jet_eta,Jet_corr,Jet_mcPt,Jet_mcFlavour,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_chMult,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_e,noexpand:Jet_energyRing_dR0_em/Jet_e,noexpand:Jet_energyRing_dR1_em/Jet_e,noexpand:Jet_energyRing_dR2_em/Jet_e,noexpand:Jet_energyRing_dR3_em/Jet_e,noexpand:Jet_energyRing_dR4_em/Jet_e,noexpand:Jet_energyRing_dR0_neut/Jet_e,noexpand:Jet_energyRing_dR1_neut/Jet_e,noexpand:Jet_energyRing_dR2_neut/Jet_e,noexpand:Jet_energyRing_dR3_neut/Jet_e,noexpand:Jet_energyRing_dR4_neut/Jet_e,noexpand:Jet_energyRing_dR0_ch/Jet_e,noexpand:Jet_energyRing_dR1_ch/Jet_e,noexpand:Jet_energyRing_dR2_ch/Jet_e,noexpand:Jet_energyRing_dR3_ch/Jet_e,noexpand:Jet_energyRing_dR4_ch/Jet_e,noexpand:Jet_energyRing_dR0_mu/Jet_e,noexpand:Jet_energyRing_dR1_mu/Jet_e,noexpand:Jet_energyRing_dR2_mu/Jet_e,noexpand:Jet_energyRing_dR3_mu/Jet_e,noexpand:Jet_energyRing_dR4_mu/Jet_e,Jet_numDaughters_pt03'.split(",") # with int Jet_e energy
+branch_names = 'Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,noexpand:Jet_mcPt/Jet_pt,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") 
+#branch_names = 'Jet_mcFlavour,Jet_mcPt,noexpand:Jet_mcPt/Jet_pt,Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
+features = 'Jet_pt,Jet_eta,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") 
+#features = 'Jet_pt,Jet_eta,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL'.split(",") #same as Caterina
 
 target = 'Jet_mcPt/Jet_pt'.split(",")
+#target = 'Jet_mcPt'.split(",")
 cuts='(Jet_pt > 20) & (Jet_eta<2.5 & Jet_eta>-2.5) & (Jet_mcFlavour==5 | Jet_mcFlavour==-5) & (Jet_mcPt>0) & (Jet_mcPt<6000)'
 
 
@@ -91,11 +93,11 @@ X_features = preprocessing.set_features("tree",branch_names,features,cuts)
 X_target = preprocessing.set_target("tree",branch_names,target,cuts)
 X_features,X_target=preprocessing.randomize_ft(X_features,X_target)
 
-X_train_target = preprocessing.get_training_sample(pd.DataFrame(X_target),0.9)
-X_train_features = preprocessing.get_training_sample(pd.DataFrame(X_features),0.9)
+X_train_target = preprocessing.get_training_sample(pd.DataFrame(X_target),0.915)
+X_train_features = preprocessing.get_training_sample(pd.DataFrame(X_features),.915)
 
-X_test_target = preprocessing.get_test_sample(pd.DataFrame(X_target),0.9)
-X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),0.9)
+X_test_target = preprocessing.get_test_sample(pd.DataFrame(X_target),.915)
+X_test_features = preprocessing.get_test_sample(pd.DataFrame(X_features),.915)
 
 
 #now no need to split in test and training because i am not using testing here
@@ -150,7 +152,8 @@ clf = xgb.XGBRegressor(base_score=1.0, colsample_bylevel=1, colsample_bytree=1, 
 #	'reg_lambda':[0,0.2,1.],
 #	'nthread':[10]} #4 the same as in the engine scipt smp 4
 ###register the cluster with setupJoblib(gcc_...)
-param_grid = {'n_estimators': [100,500,700,1000],
+param_grid = {#'n_estimators': [100,500,700,1000],
+	'n_estimators': [1000], ##for  a mempry queue to test
 	'base_score':[1.],
 	'objective':['reg:linear'],
 	'learning_rate':[0.05,0.1,0.2,0.8],
@@ -160,20 +163,23 @@ param_grid = {'n_estimators': [100,500,700,1000],
 	'reg_lambda':[0,0.5,1.],
 	'gamma':[0,0.3],
    'subsample':[1.],
-	'nthread':[2]} #4 the same as in the engine scipt smp 4
+	'nthread':[1]} #4 the same as in the engine scipt smp 4
 ###register the cluster with setupJoblib(gcc_...)
 
 import scoring_function as scoring_function
 from sklearn.metrics import r2_score, make_scorer
 #my_scorer = make_scorer(scoring_function.scoring_function)
-my_scorer = make_scorer(r2_score)
+#my_scorer = make_scorer(r2_score)
 
-#optimization.setupJoblib("gcc49_5gb_smp4")
+#optimization.setupJoblib("gcc49_5gb_smp4_short")
+#optimization.setupJoblib("gcc49_8gb_smp1_wn-test")
+
+
 #clf = optimization.optimize_parameters_randomizedCV_reg(xgb_model,X_train_features,X_train_target,X_test_features,X_test_target,param_grid,my_scorer,40,5,50,True)#nIter=20,cvOpt=5,nJobs=20
 #clf = optimization.optimize_parameters_randomizedCV_reg(xgb_model,X_train_features,X_train_target,X_test_features,X_test_target,param_grid,my_scorer,15,5,50,True,X_train_weights)#nIter=20,cvOpt=5,nJobs=20
-#clf = optimization.optimize_parameters_randomizedCV_reg(xgb_model,X_train_features.values,X_train_target.values,X_test_features.values,X_test_target.values,param_grid,my_scorer,1,2,1,False,X_train_weights)#nIter=20,cvOpt=5,nJobs=20
+#clf = optimization.optimize_parameters_randomizedCV_reg(xgb_model,X_train_features.values,X_train_target.values,X_test_features.values,X_test_target.values,param_grid,my_scorer,1,5,1,False)#nIter=20,cvOpt=5,nJobs=20
 
-#clf = optimization.optimize_parameters_randomizedCV_reg(xgb_model,X_train_features,X_train_target,X_test_features,X_test_target,param_grid,my_scorer,1,2,4,True)#nIter=20,cvOpt=5,nJobs=20
+#clf = optimization.optimize_parameters_randomizedCV_reg(xgb_model,X_train_features,X_train_target,X_test_features,X_test_target,param_grid,my_scorer,1,2,1,True)#nIter=20,cvOpt=5,nJobs=20
 #clf.fit(X_train_features,X_train_target,sample_weight=X_train_weights)  ### no need because refit by default is true
 clf.fit(X_train_features.values,X_train_target.values)  ### no need because refit by default is true
 
@@ -193,7 +199,8 @@ clf.fit(X_train_features.values,X_train_target.values)  ### no need because refi
 #end= 'tiny_energyring_fraction_oldparam_wo_mu'
 #end= 'full_sample_wo_weights_opt_onwo'
 #end= 'full_sample_w_weights_optimization_50jobs_worker'
-end= 'full_sample_wo_weights_Catvariables'
+#end= 'full_sample_wo_weights_Catvariables_targetPt_oldParameters'
+end= 'unweighted_5mil_full'
 #end= 'full_energyring_wo_Pt_reweight_local'
 ################
 #joblib.dump(clf.best_estimator_, os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_files/regression_heppy_'+end+'.pkl'), compress=9)

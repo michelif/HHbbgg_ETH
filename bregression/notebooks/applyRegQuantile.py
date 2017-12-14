@@ -26,11 +26,11 @@ ntuples = 'heppy_05_10_2017'
 get_ipython().magic(u'env data=$utils.IO.ldata$ntuples')
 files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
-#ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
+ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
 #ttbar=["ggHHbbgg_res500_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
 #ttbar=["ggHHbbgg_res700_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
 #ttbar=["ggHHbbgg_sm_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"]
-ttbar=["ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.root"]
+#ttbar=["ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.root"]
 
 
 utils.IO.add_features(ntuples,ttbar,1)
@@ -90,12 +90,12 @@ n_evt = len(X_predicted_all[0])
 #n_evt=100
 
 X_predictions_for_fit = np.column_stack([x for x in X_predicted_all])
-np.save("predictions_array_reverse",X_predictions_for_fit)
+#np.save("predictions_array_reverse",X_predictions_for_fit)
 fit_quantile = np.array([np.polyfit(X_predictions_for_fit[i], alpha_q, deg=3) for i in range(n_evt)])
 all_linear_fit = np.array([np.polyfit([X_predictions_for_fit[i][1],X_predictions_for_fit[i][2]], [alpha_q[1],alpha_q[2]], deg=1) for i in range(n_evt)])
 
 #tau_peak = 0.295
-tau_peak = 0.295
+tau_peak = 0.299 # - is the true one with subsample 0.9
 
 mpvs = np.array([ -1*fit_quantile[i,1]/3/fit_quantile[i,0] for i in range(n_evt)])
 mpvs_linear_fit =  np.array( [(tau_peak-all_linear_fit[i,1])/all_linear_fit[i,0] for i in range(n_evt)])
@@ -134,25 +134,6 @@ print 'normal fit num = ', len(final_mpvs)
 print 'best quantile = ',[o for o in best_quantile if o>0.9 or o<-0.1]
 resolution = np.array([ (X_predictions_for_fit[i][3] - X_predictions_for_fit[i][1])/2. for i in range(n_evt)] )
 
-#mpvs_tau = np.array([ np.polyval(fit_quantile[num,:],i) for num,i in enumerate(mpvs) if (i>=0)&(i<=4)   ])
-#mpvs_tau = np.array([ i for i in mpvs_tau if (i>=0)&(i<=1)])
-#mpvs = np.array([ i for i in mpvs if (i>=0)&(i<=4)])
-
-#count = [i for i in mpvs if not( (i>=0)&(i<=10)) ]
-#print count
-
-#print mpvs
-#funcs=[]
-#xp = np.linspace(0.6, 1.4, 100)
-#for i in range(n_evt):
-#	funcs.append(np.poly1d(fit_quantile[i,:] ))
-#	plt.plot(X_predictions_for_fit[i], alpha_q, 'o')
-#	plt.plot(xp, funcs[i](xp), label="fit")
-#plt.show()
-#plt.savefig(utils.IO.plotFolder+"plotFit_quantile_polyfit.png")
-#plt.clf()
-
-#np.save("predictions_mpvs_array_reverse",mpvs)
 
 addDictionary ={}
 addDictionary['b_scale_0207'] = final_mpvs
@@ -163,19 +144,19 @@ addDictionary['b_res_20p70'] = resolution
 
 
 nTot,dictVar = postprocessing.stackAddFeaturesReg(data_frame,branch_names,addDictionary,5)
-#processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/treeScaleResolution20p40p70p04_lin_minmax_')+outTag_name+'.root'
-processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/applied_')+outTag_name+utils.IO.featuresName[0].split("/")[len(utils.IO.featuresName[0].split("/"))-1]
-postprocessing.saveTreeReg(processPath,dictVar,nTot)
+#processPath=os.path.expanduser('~/HHbbgg_ETH_devel/bregression/output_root/applied_')+outTag_name+utils.IO.featuresName[0].split("/")[len(utils.IO.featuresName[0].split("/"))-1]
+#postprocessing.saveTreeReg(processPath,dictVar,nTot)
 
 
 ##funcs=[]
 #for i in range(len(X_predicted_all[0])):
 #	funcs.append(np.poly1d(fit_quantile[:,i] ))
 
-#saveName = 'quantileReg_distr_'
-#saveName2 = 'subsample09'
+saveName = 'quantileReg_distr_'
+saveName2 = 'subsample09'
 #best_quantile = [o for o in best_quantile if o<0.91 and o>-0.11]
-#plotting.plot_hist([best_quantile],saveName+'BestQuantile_'+saveName2,True)
+best_quantile = [o for o in best_quantile if o<0.6 and o>0.1]
+plotting.plot_hist([best_quantile],saveName+'BestQuantile_'+saveName2,True)
 #plotting.plot_hist([linear_mpvs],saveName+'LinearMpvs_'+saveName2,True)
 #plotting.plot_hist([final_mpvs],saveName+'FinalMpvs_'+saveName2,True)
 #plotting.plot_hist([resolution],saveName+'Resoution_'+saveName2,True)

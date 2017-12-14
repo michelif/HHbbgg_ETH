@@ -42,7 +42,8 @@ def optimize_parameters_randomizedCV_reg(classifier,X_features,X_target,X_featur
                                  #  scoring='neg_mean_squared_error',
                                  #  scoring='r2',
                                    scoring=scoring_func,
-                                   n_jobs=nJobs, verbose=50,refit=refit,fit_params={'sample_weight': weights})
+                               #    n_jobs=nJobs, verbose=50,refit=refit,fit_params={'sample_weight': weights})
+                                   n_jobs=nJobs, verbose=50,refit=refit)
     clf.fit(X_features, X_target)
     if refit==True:
         print "Best parameter set found on development set:"

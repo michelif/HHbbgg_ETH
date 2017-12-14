@@ -35,8 +35,8 @@ files = get_ipython().getoutput(u'ls $data | sort -t_ -k 3 -n')
 
 #ttbar= [s for s in files if "ttbar_RegressionPerJet_heppy_energyRings3_forTesting.root" in s] #energy rings large and proper sample with Jet_e
 #ttbar= ["../../bregression//output_root/treeScaleResolution20p40p70p04_lin_minmax_full_quantile_regression_alpha.root" ] 
-#ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphattbar_RegressionPerJet_heppy_energyRings3_forTesting.root" ] 
-ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphaggHHbbgg_%s_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"%(testfile) ] 
+ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphattbar_RegressionPerJet_heppy_energyRings3_forTesting.root" ] 
+#ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alphaggHHbbgg_%s_RegressionPerJet_heppy_energyRings3_forTraining_Large0.root"%(testfile) ] 
 #ttbar= ["../../bregression//output_root/applied_full_subsample09_quantile_regression_alpha%s_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.root"%(testfile)]
 
 treeName = 'reducedTree'
@@ -84,7 +84,8 @@ for i_r,region in enumerate(bres_regions):
     rel_diff_noreg = true_pt/reco_pt
 
 
-    outTags = ['quantile_minmax_02-07','quantile_04']
+   # outTags = ['quantile_minmax_02-07','quantile_04']
+    outTags = ['quantile_04']
     X_predictions_compare = []
     for num in range(len(outTags)):
         outTag = outTags[num]
@@ -101,13 +102,13 @@ for i_r,region in enumerate(bres_regions):
     comparison_tags = outTags
     if testfile=='ZHbbll' : 
         samplename = testfile
-        outTagComparison = 'Sumsample09er_'+testfile + region_names[i_r]
+        outTagComparison = 'Sumsample09erSingle_'+testfile + region_names[i_r]
     elif testfile!='ttbar' : 
         samplename = 'DiHiggs '+testfile
-        outTagComparison = 'Sumsample09er_DiHiggs'+testfile + region_names[i_r]
+        outTagComparison = 'Sumsample09erSingle_DiHiggs'+testfile + region_names[i_r]
     else : 
         samplename = 'ttbar'
-        outTagComparison = 'Sumsample09er_ttbar'+ region_names[i_r]
+        outTagComparison = 'Sumsample09erSingle_ttbar'+ region_names[i_r]
     style=False 
     if i_r==0 : style=True
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTagComparison,False,region_names[i_r],samplename)

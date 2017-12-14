@@ -11,14 +11,16 @@ y=np.array(y_list)
 print x
 print y
 z = np.polyfit(x,y,deg=3)
-print z[1,0]
+print z
 f0 = np.poly1d( z[:,0] )
 f1 = np.poly1d( z[:,1] )
+print f0, f1
 
 xp = np.linspace(-1, 6, 100)
 plt.plot(x, y, '.')
-plt.plot(xp, f0(xp), label="fit 0")
-plt.plot(xp, f1(xp), label="fit 1")
+plt.plot(xp, f0(xp), label="slope %.2f"%z[0,0])
+plt.plot(xp, f1(xp), label="slope %.2f"%z[1,0])
+plt.legend(loc='upper right')
 plt.show()
 #xx = np.random.randint(0,10,num_samples*10)
 
