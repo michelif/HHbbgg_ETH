@@ -21,7 +21,8 @@ from itertools import izip
 from optparse import OptionParser, make_option
 from  pprint import pprint
 
-features = ['leadingJet_bDis', 'subleadingJet_bDis', 'leadingPhotonSigOverE', 'subleadingPhotonSigOverE', 'sigmaMOverMDecorr', 'PhoJetMinDr']
+#features = ['leadingJet_bDis', 'subleadingJet_bDis', 'leadingPhotonSigOverE', 'subleadingPhotonSigOverE', 'sigmaMOverMDecorr', 'PhoJetMinDr']
+features = ['leadingJet_bDis','subleadingJet_bDis','noexpand:fabs(CosThetaStar_CS)','noexpand:fabs(CosTheta_bb)','noexpand:fabs(CosTheta_gg)','noexpand:diphotonCandidate.Pt()/diHiggsCandidate.M()','noexpand:dijetCandidate.Pt()/diHiggsCandidate.M()','customLeadingPhotonIDMVA','customSubLeadingPhotonIDMVA','leadingPhotonSigOverE','subleadingPhotonSigOverE','sigmaMOverMDecorr','PhoJetMinDr']
 
 #this is just for testing if you want to check on one event, be careful, you have to put the correct variables
 new_dict = OrderedDict([('leadingJet_bDis',0.9889938831329346),('subleadingJet_bDis',0.0648464784026146),('leadingPhotonSigOverE',0.005494383163750172),('subleadingPhotonSigOverE',0.0067262412048876286),('sigmaMOverMDecorr',0.006000000052154064),('PhoJetMinDr',1.1405941247940063)])

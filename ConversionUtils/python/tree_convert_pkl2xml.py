@@ -223,12 +223,13 @@ class BDT(object):
     def to_tmva(self, outfile_name, mva_name="bdt"):
 
         #Create list of variables
-        #we assume that all variables are 'simple', that is, not expressions
+        #we assume that all variables are 'simple', that is, not expressions --> not true, added expressions (division, fabs, check for others). added also "noexpand:" which is the common way for scikit-learn to save expressions
         varstring = ""
         for i in range(len(self.feature_names)):
-            varstring += '<Variable VarIndex="{0}" Expression="{1}" Label="{1}" Title="{1}" Unit="" Internal="{1}" Type="F" Min="{2:.64E}" Max="{3:.64E}"/>\n'.format(
-                i, self.feature_names[i], 0, 0
+            varstring += '<Variable VarIndex="{0}" Expression="{1}" Label="{1}" Title="{1}" Unit="" Internal="{4}" Type="F" Min="{2:.64E}" Max="{3:.64E}"/>\n'.format(
+                i, self.feature_names[i].replace("noexpand:",""), 0, 0, self.feature_names[i].replace("noexpand:","").replace("(","_").replace(")","_").replace("/","_D_")
             )
+        print "vaaaaar", varstring
 
         if self.kind == "regression":
             class_string = ""
