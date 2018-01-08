@@ -76,7 +76,7 @@ def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTre
 
          array2root(v, processPath, nameTree, mode = writeMode)
 
-    if MVAVector != None:
+    if MVAVector.all() != None:
 
             v=(np.asarray(MVAVector.ravel()))
             v.dtype = [('MVAOutput', np.float64)]
