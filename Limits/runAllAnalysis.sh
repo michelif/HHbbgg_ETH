@@ -34,5 +34,5 @@ else
 fi
     
 ####transform MVA output
-python $HOME/HHbbgg_ETH_devel/Limits/macros/transformMVAOutput.py -i '/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/'$outTag'/Total_preselection_diffNaming.root'
+python $HOME/HHbbgg_ETH_devel/Limits/macros/transformMVAOutput.py -i $HOME'/HHbbgg_ETH_devel/outfiles/'$outTag'/Total_preselection_diffNaming.root'
 
