@@ -1,4 +1,3 @@
-from IPython import get_ipython
 from optparse import OptionParser, make_option
 from  pprint import pprint
 
@@ -15,14 +14,13 @@ import pandas as pd
 import root_pandas as rpd
 
 
+
 def addSamples():#define here the samples you want to process
     ntuples = options.ntup
     samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","GluGluHToGG","VBFHToGG","VHToGG","bbHToGG_M-125_4FS_yb2","ttHToGG"]#is bbH correct?
 
-    # "%" sign allows to interpret the rest as a system command
-    get_ipython().magic(u'env data=$utils.IO.ldata$ntuples')
-    files = get_ipython().getoutput('ls $data | sort -t_ -k 3 -n')
-    #pick only SM
+    files= os.listdir(utils.IO.ldata+ntuples)
+
     for iSample in samples:
         process  = [s for s in files if iSample in s]
         if iSample == "GluGluToHHTo2B2G_node_SM":
@@ -30,7 +28,6 @@ def addSamples():#define here the samples you want to process
         elif not "GJet" in str(iSample):
             utils.IO.add_background(ntuples,process,-(samples.index(iSample)-(samples.index(iSample)>2)))
         else:
-            print iSample,str(-2)
             utils.IO.add_background(ntuples,process,-2)
 
     
@@ -89,14 +86,15 @@ def main(options,args):
     
         
     #compute the MVA
-    Y_pred_sig = loaded_model.predict_proba(X_sig)[:,loaded_model.n_classes_-1].astype(np.float64)
-    Y_pred_bkg = []
-    for i in range(0,len(utils.IO.backgroundName)-1):  
-        print str(i)
-        Y_pred_bkg.append(loaded_model.predict_proba(bkg[i])[:,loaded_model.n_classes_-1].astype(np.float64))
+    if not options.addHHTagger:
+        Y_pred_sig = loaded_model.predict_proba(X_sig)[:,loaded_model.n_classes_-1].astype(np.float64)
+        Y_pred_bkg = []
+        for i in range(0,len(utils.IO.backgroundName)-1):  
+            print str(i)
+            Y_pred_bkg.append(loaded_model.predict_proba(bkg[i])[:,loaded_model.n_classes_-1].astype(np.float64))
     
-    Y_pred_data = loaded_model.predict_proba(X_data)[:,loaded_model.n_classes_-1].astype(np.float64)
-    print Y_pred_data 
+        Y_pred_data = loaded_model.predict_proba(X_data)[:,loaded_model.n_classes_-1].astype(np.float64)
+        print Y_pred_data 
     
     
     
@@ -119,18 +117,20 @@ def main(options,args):
     nTot,dictVar = postprocessing.stackFeatures(sig_count_df,branch_names+additionalCut_names)
     #apply isSignal cleaning
     nCleaned = nTot[np.where(nTot[:,dictVar['weight']]!=0),:][0]
-    print "Y_pred"
-    print Y_pred_sig.shape
-    
-    #it's a stupid way to save also mva output after cuts, more efficient solutions should be found
-    Y_pred_total = np.column_stack((nCleaned,Y_pred_sig))
     
     processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.signalName[0].split("/")[len(utils.IO.signalName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
-    postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_sig)
+
+    if not options.addHHTagger:
+        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_sig)
+    else:
+        postprocessing.saveTree(processPath,dictVar,nCleaned)        
     
     processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.signalName[0].split("/")[len(utils.IO.signalName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
-    postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_sig,nameTree="reducedTree_sig")
-    
+
+    if not options.addHHTagger:
+        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_sig,nameTree="reducedTree_sig")
+    else:    
+        postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_sig")
     
     ## do gJets not in the loop since they have two samples for one process, to be fixed
     bkg_1_count_df = rpd.read_root(utils.IO.backgroundName[1],"bbggSelectionTree", columns = branch_names+additionalCut_names)
@@ -156,11 +156,17 @@ def main(options,args):
     print nCleaned.shape
     
     processPath=(os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[1].split("/")[len(utils.IO.backgroundName[1].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root").replace("_Pt-20to40","")
-    postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[1])
-    
+    if not options.addHHTagger:
+        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[1])
+    else:
+        postprocessing.saveTree(processPath,dictVar,nCleaned) 
+   
     processPath=(os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[1].split("/")[len(utils.IO.backgroundName[1].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root").replace("_Pt-20to40","")
-    postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[1],nameTree="reducedTree_bkg_2")
-    
+
+    if not options.addHHTagger:
+        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[1],nameTree="reducedTree_bkg_2")
+    else:
+        postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_bkg_2")    
     
     
     
@@ -188,16 +194,20 @@ def main(options,args):
         print nCleaned.shape
     
         processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
-        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[iSample])
+        if not options.addHHTagger:
+            postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[iSample])
+        else:
+            postprocessing.saveTree(processPath,dictVar,nCleaned)
         
         processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
         if "GluGluToHHTo2B2G_node_"in processPath:
             treeName = "reducedTree_sig_node_"+str(iProcess-6)
         else:
             treeName = "reducedTree_bkg_"+str(iProcess)
-        
-        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[iSample],nameTree=treeName)
-    
+        if not options.addHHTagger:        
+            postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[iSample],nameTree=treeName)
+        else:
+            postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree=treeName)    
     
     ##data    
     data_count_df = rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = branch_names+additionalCut_names)
@@ -209,15 +219,19 @@ def main(options,args):
     nCleaned = nTot[np.where(nTot[:,dictVar['weight']]!=0),:][0]
     print "nCleaned"
     print nCleaned.shape
-    print Y_pred_data.shape
     
     #save preselection data
     processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
-    postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data)
+    if not options.addHHTagger:        
+        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data)
+    else:
+        postprocessing.saveTree(processPath,dictVar,nCleaned)
     
     processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
-    postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data,nameTree="reducedTree_bkg")
-    
+    if not options.addHHTagger:        
+        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data,nameTree="reducedTree_bkg")
+    else:
+        postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_bkg")
     
     os.system('hadd '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
     

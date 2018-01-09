@@ -54,6 +54,7 @@ def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTre
     from root_numpy import array2root
     i=0
     for key in dictVar.keys():
+
          if i == 0:
              writeMode='recreate'
              i=1
@@ -62,10 +63,13 @@ def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTre
 
          v=(np.asarray(vector[:,dictVar[key]]))
          name = key
+
          if key == 'diphotonCandidate.M()':
              name = 'Mgg'
          elif key == 'dijetCandidate.M()':
              name = 'Mjj'
+         elif key == 'HHTagger2017':
+             name = 'MVAOutput'
 
          if SF != 1:
              if key == 'weight':
@@ -76,8 +80,7 @@ def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTre
 
          array2root(v, processPath, nameTree, mode = writeMode)
 
-    if MVAVector.all() != None:
-
-            v=(np.asarray(MVAVector.ravel()))
-            v.dtype = [('MVAOutput', np.float64)]
-            array2root(v, processPath, nameTree, mode ='update')
+    if MVAVector is not None: 
+        v=(np.asarray(MVAVector.ravel()))
+        v.dtype = [('MVAOutput', np.float64)]
+        array2root(v, processPath, nameTree, mode ='update')
