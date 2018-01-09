@@ -25,18 +25,19 @@ def addSamples():#define here the samples you want to process
     #pick only SM
     for iSample in samples:
         process  = [s for s in files if iSample in s]
-        print iSample, -samples.index(iSample)
         if iSample == "GluGluToHHTo2B2G_node_SM":
             utils.IO.add_signal(ntuples,process,1)
         elif not "GJet" in str(iSample):
-            utils.IO.add_background(ntuples,process,-samples.index(iSample))
+            utils.IO.add_background(ntuples,process,-(samples.index(iSample)-(samples.index(iSample)>2)))
         else:
+            print iSample,str(-2)
             utils.IO.add_background(ntuples,process,-2)
 
     
-    Data= [s for s in files if "DoubleEG" in s]
+
     nBkg = len(utils.IO.backgroundName)
     
+    Data= [s for s in files if "DoubleEG" in s]
     utils.IO.add_data(ntuples,Data,-10)
     
     #add all nodes
@@ -91,7 +92,7 @@ def main(options,args):
     Y_pred_sig = loaded_model.predict_proba(X_sig)[:,loaded_model.n_classes_-1].astype(np.float64)
     Y_pred_bkg = []
     for i in range(0,len(utils.IO.backgroundName)-1):  
-        print i
+        print str(i)
         Y_pred_bkg.append(loaded_model.predict_proba(bkg[i])[:,loaded_model.n_classes_-1].astype(np.float64))
     
     Y_pred_data = loaded_model.predict_proba(X_data)[:,loaded_model.n_classes_-1].astype(np.float64)
