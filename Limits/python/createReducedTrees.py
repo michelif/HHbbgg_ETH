@@ -15,35 +15,26 @@ import pandas as pd
 import root_pandas as rpd
 
 
-def main(options,args):
+def addSamples():#define here the samples you want to process
     ntuples = options.ntup
+    samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","GluGluHToGG","VBFHToGG","VHToGG","bbHToGG_M-125_4FS_yb2","ttHToGG"]#is bbH correct?
+
     # "%" sign allows to interpret the rest as a system command
     get_ipython().magic(u'env data=$utils.IO.ldata$ntuples')
     files = get_ipython().getoutput('ls $data | sort -t_ -k 3 -n')
     #pick only SM
-    signal = [s for s in files if "GluGluToHHTo2B2G_node_SM" in s]
-    diphotonJets = [s for s in files if "DiPhotonJetsBox_" in s]
-    gJets_lowPt = [s for s in files if "GJet_Pt-20to40" in s]
-    gJets_highPt = [s for s in files if "GJet_Pt-40" in s]
-    ggH = [s for s in files if "GluGluHToGG" in s]
-    vbf = [s for s in files if "VBFHToGG" in s]
-    VH = [s for s in files if "VHToGG" in s]
-    bbH = [s for s in files if "bbHToGG_M-125_4FS_yb2" in s] #is this correct?
-    ttH = [s for s in files if "ttHToGG" in s]
+    for iSample in samples:
+        process  = [s for s in files if iSample in s]
+        print iSample, -samples.index(iSample)
+        if iSample == "GluGluToHHTo2B2G_node_SM":
+            utils.IO.add_signal(ntuples,process,1)
+        elif not "GJet" in str(iSample):
+            utils.IO.add_background(ntuples,process,-samples.index(iSample))
+        else:
+            utils.IO.add_background(ntuples,process,-2)
+
     
     Data= [s for s in files if "DoubleEG" in s]
-    
-    utils.IO.add_signal(ntuples,signal,1)
-    print diphotonJets
-    utils.IO.add_background(ntuples,diphotonJets,-1)
-    utils.IO.add_background(ntuples,gJets_lowPt,-2)
-    utils.IO.add_background(ntuples,gJets_highPt,-2)
-    utils.IO.add_background(ntuples,ggH,-3)
-    utils.IO.add_background(ntuples,vbf,-4)
-    utils.IO.add_background(ntuples,VH,-5)
-    utils.IO.add_background(ntuples,bbH,-6)
-    utils.IO.add_background(ntuples,ttH,-7)
-    
     nBkg = len(utils.IO.backgroundName)
     
     utils.IO.add_data(ntuples,Data,-10)
@@ -60,6 +51,12 @@ def main(options,args):
     for i in range(len(utils.IO.signalName)):    
         print "using signal file n."+str(i)+": "+utils.IO.signalName[i]
     print "using data file: "+ utils.IO.dataName[0]
+    
+
+
+def main(options,args):
+
+    addSamples()
     
     #mva variables, use noexpand for root expressions, it needs this file https://github.com/ibab/root_pandas/blob/master/root_pandas/readwrite.py
     branch_names = 'leadingJet_bDis,subleadingJet_bDis,noexpand:fabs(CosThetaStar_CS),noexpand:fabs(CosTheta_bb),noexpand:fabs(CosTheta_gg)'.split(",")
@@ -223,9 +220,6 @@ def main(options,args):
     
     os.system('hadd '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
     
-    
-    # In[ ]:
-
 
 
 if __name__ == "__main__":
