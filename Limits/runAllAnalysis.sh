@@ -28,11 +28,11 @@ shift $((OPTIND-1))
 
 ####create Trees
 if ((addHHTagger)); then
-    python Limits/python/createReducedTrees.py -n $ntup -t $training  -o $outTag -a
+    python $HOME/HHbbgg_ETH_devel/Limits/python/createReducedTrees.py -n $ntup -t $training  -o $outTag -a
 else
-    python Limits/python/createReducedTrees.py -n $ntup -t $training  -o $outTag 
+    python $HOME/HHbbgg_ETH_devel/Limits/python/createReducedTrees.py -n $ntup -t $training  -o $outTag 
 fi
     
 ####transform MVA output
-python transformMVAOutput.py -i '/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/'$outTag'/Total_preselection_diffNaming.root'
+python $HOME/HHbbgg_ETH_devel/Limits/macros/transformMVAOutput.py -i '/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/'$outTag'/Total_preselection_diffNaming.root'
 
