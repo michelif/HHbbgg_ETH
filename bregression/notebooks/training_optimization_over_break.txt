@@ -1,0 +1,688 @@
+
+[1mRooFit v3.60 -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2013 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+env: data=/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/root_files/heppy_05_10_2017
+/swshare/anaconda/lib/python2.7/site-packages/sklearn/cross_validation.py:44: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. Also note that the interface of the new CV iterators are different from that of this module. This module will be removed in 0.20.
+  "This module will be removed in 0.20.", DeprecationWarning)
+/swshare/anaconda/lib/python2.7/site-packages/sklearn/grid_search.py:43: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. This module will be removed in 0.20.
+  DeprecationWarning)
+ready to train
+=====Optimization with randomized search cv=====
+Fitting 5 folds for each of 300 candidates, totalling 1500 fits
+[Parallel(n_jobs=20)]: Done   1 tasks      | elapsed: 423.4min
+[Parallel(n_jobs=20)]: Done   2 tasks      | elapsed: 431.2min
+[Parallel(n_jobs=20)]: Done   3 tasks      | elapsed: 452.8min
+[Parallel(n_jobs=20)]: Done   4 tasks      | elapsed: 459.8min
+[Parallel(n_jobs=20)]: Done   5 tasks      | elapsed: 467.2min
+[Parallel(n_jobs=20)]: Done   6 tasks      | elapsed: 467.6min
+[Parallel(n_jobs=20)]: Done   7 tasks      | elapsed: 471.7min
+[Parallel(n_jobs=20)]: Done   8 tasks      | elapsed: 472.8min
+[Parallel(n_jobs=20)]: Done   9 tasks      | elapsed: 474.6min
+[Parallel(n_jobs=20)]: Done  10 tasks      | elapsed: 479.5min
+[Parallel(n_jobs=20)]: Done  11 tasks      | elapsed: 619.0min
+[Parallel(n_jobs=20)]: Done  12 tasks      | elapsed: 619.6min
+[Parallel(n_jobs=20)]: Done  13 tasks      | elapsed: 628.9min
+[Parallel(n_jobs=20)]: Done  14 tasks      | elapsed: 635.2min
+[Parallel(n_jobs=20)]: Done  15 tasks      | elapsed: 636.3min
+[Parallel(n_jobs=20)]: Done  16 tasks      | elapsed: 1042.5min
+[Parallel(n_jobs=20)]: Done  17 tasks      | elapsed: 1050.4min
+[Parallel(n_jobs=20)]: Done  18 tasks      | elapsed: 1064.2min
+[Parallel(n_jobs=20)]: Done  19 tasks      | elapsed: 1096.5min
+[Parallel(n_jobs=20)]: Done  20 tasks      | elapsed: 1113.3min
+[Parallel(n_jobs=20)]: Done  21 tasks      | elapsed: 1342.7min
+[Parallel(n_jobs=20)]: Done  22 tasks      | elapsed: 1348.9min
+[Parallel(n_jobs=20)]: Done  23 tasks      | elapsed: 1355.0min
+[Parallel(n_jobs=20)]: Done  24 tasks      | elapsed: 1369.3min
+[Parallel(n_jobs=20)]: Done  25 tasks      | elapsed: 1369.6min
+[Parallel(n_jobs=20)]: Done  26 tasks      | elapsed: 1403.7min
+[Parallel(n_jobs=20)]: Done  27 tasks      | elapsed: 1426.6min
+[Parallel(n_jobs=20)]: Done  28 tasks      | elapsed: 1501.6min
+[Parallel(n_jobs=20)]: Done  29 tasks      | elapsed: 1560.1min
+[Parallel(n_jobs=20)]: Done  30 tasks      | elapsed: 1594.4min
+[Parallel(n_jobs=20)]: Done  31 tasks      | elapsed: 1745.6min
+[Parallel(n_jobs=20)]: Done  32 tasks      | elapsed: 1746.9min
+[Parallel(n_jobs=20)]: Done  33 tasks      | elapsed: 1770.1min
+[Parallel(n_jobs=20)]: Done  34 tasks      | elapsed: 1772.5min
+[Parallel(n_jobs=20)]: Done  35 tasks      | elapsed: 1796.4min
+[Parallel(n_jobs=20)]: Done  36 tasks      | elapsed: 1804.2min
+[Parallel(n_jobs=20)]: Done  37 tasks      | elapsed: 1825.6min
+[Parallel(n_jobs=20)]: Done  38 tasks      | elapsed: 1828.9min
+[Parallel(n_jobs=20)]: Done  39 tasks      | elapsed: 1832.7min
+[Parallel(n_jobs=20)]: Done  40 tasks      | elapsed: 1845.9min
+[Parallel(n_jobs=20)]: Done  41 tasks      | elapsed: 2287.0min
+[Parallel(n_jobs=20)]: Done  42 tasks      | elapsed: 2358.1min
+[Parallel(n_jobs=20)]: Done  43 tasks      | elapsed: 2375.0min
+[Parallel(n_jobs=20)]: Done  44 tasks      | elapsed: 2437.4min
+[Parallel(n_jobs=20)]: Done  45 tasks      | elapsed: 2438.9min
+[Parallel(n_jobs=20)]: Done  46 tasks      | elapsed: 2869.6min
+[Parallel(n_jobs=20)]: Done  47 tasks      | elapsed: 2999.2min
+[Parallel(n_jobs=20)]: Done  48 tasks      | elapsed: 3017.7min
+[Parallel(n_jobs=20)]: Done  49 tasks      | elapsed: 3031.5min
+[Parallel(n_jobs=20)]: Done  50 tasks      | elapsed: 3046.0min
+[Parallel(n_jobs=20)]: Done  51 tasks      | elapsed: 3129.1min
+[Parallel(n_jobs=20)]: Done  52 tasks      | elapsed: 3140.6min
+[Parallel(n_jobs=20)]: Done  53 tasks      | elapsed: 3149.1min
+[Parallel(n_jobs=20)]: Done  54 tasks      | elapsed: 3187.4min
+[Parallel(n_jobs=20)]: Done  55 tasks      | elapsed: 3202.3min
+[Parallel(n_jobs=20)]: Done  56 tasks      | elapsed: 3240.9min
+[Parallel(n_jobs=20)]: Done  57 tasks      | elapsed: 3274.6min
+[Parallel(n_jobs=20)]: Done  58 tasks      | elapsed: 3573.3min
+[Parallel(n_jobs=20)]: Done  59 tasks      | elapsed: 3601.3min
+[Parallel(n_jobs=20)]: Done  60 tasks      | elapsed: 3617.2min
+[Parallel(n_jobs=20)]: Done  61 tasks      | elapsed: 3698.8min
+[Parallel(n_jobs=20)]: Done  62 tasks      | elapsed: 3722.4min
+[Parallel(n_jobs=20)]: Done  63 tasks      | elapsed: 3768.3min
+[Parallel(n_jobs=20)]: Done  64 tasks      | elapsed: 3797.2min
+[Parallel(n_jobs=20)]: Done  65 tasks      | elapsed: 3839.4min
+[Parallel(n_jobs=20)]: Done  66 tasks      | elapsed: 4023.5min
+[Parallel(n_jobs=20)]: Done  67 tasks      | elapsed: 4052.2min
+[Parallel(n_jobs=20)]: Done  68 tasks      | elapsed: 4093.7min
+[Parallel(n_jobs=20)]: Done  69 tasks      | elapsed: 4115.5min
+[Parallel(n_jobs=20)]: Done  70 tasks      | elapsed: 4191.4min
+[Parallel(n_jobs=20)]: Done  71 tasks      | elapsed: 4408.4min
+[Parallel(n_jobs=20)]: Done  72 tasks      | elapsed: 4458.7min
+[Parallel(n_jobs=20)]: Done  73 tasks      | elapsed: 4556.9min
+[Parallel(n_jobs=20)]: Done  74 tasks      | elapsed: 4583.2min
+[Parallel(n_jobs=20)]: Done  75 tasks      | elapsed: 4584.0min
+[Parallel(n_jobs=20)]: Done  76 tasks      | elapsed: 4608.5min
+[Parallel(n_jobs=20)]: Done  77 tasks      | elapsed: 4652.3min
+[Parallel(n_jobs=20)]: Done  78 tasks      | elapsed: 4838.3min
+[Parallel(n_jobs=20)]: Done  79 tasks      | elapsed: 4896.1min
+[Parallel(n_jobs=20)]: Done  80 tasks      | elapsed: 4908.1min
+[Parallel(n_jobs=20)]: Done  81 tasks      | elapsed: 5484.0min
+[Parallel(n_jobs=20)]: Done  82 tasks      | elapsed: 5509.3min
+[Parallel(n_jobs=20)]: Done  83 tasks      | elapsed: 5517.1min
+[Parallel(n_jobs=20)]: Done  84 tasks      | elapsed: 5573.2min
+[Parallel(n_jobs=20)]: Done  85 tasks      | elapsed: 5624.3min
+[Parallel(n_jobs=20)]: Done  86 tasks      | elapsed: 6105.8min
+[Parallel(n_jobs=20)]: Done  87 tasks      | elapsed: 6209.8min
+[Parallel(n_jobs=20)]: Done  88 tasks      | elapsed: 6272.7min
+[Parallel(n_jobs=20)]: Done  89 tasks      | elapsed: 6292.1min
+[Parallel(n_jobs=20)]: Done  90 tasks      | elapsed: 6329.9min
+[Parallel(n_jobs=20)]: Done  91 tasks      | elapsed: 6352.8min
+[Parallel(n_jobs=20)]: Done  92 tasks      | elapsed: 6374.2min
+[Parallel(n_jobs=20)]: Done  93 tasks      | elapsed: 6376.5min
+[Parallel(n_jobs=20)]: Done  94 tasks      | elapsed: 6432.6min
+[Parallel(n_jobs=20)]: Done  95 tasks      | elapsed: 6537.4min
+[Parallel(n_jobs=20)]: Done  96 tasks      | elapsed: 6701.3min
+[Parallel(n_jobs=20)]: Done  97 tasks      | elapsed: 6725.1min
+[Parallel(n_jobs=20)]: Done  98 tasks      | elapsed: 6797.0min
+[Parallel(n_jobs=20)]: Done  99 tasks      | elapsed: 6896.2min
+[Parallel(n_jobs=20)]: Done 100 tasks      | elapsed: 6959.9min
+[Parallel(n_jobs=20)]: Done 101 tasks      | elapsed: 7042.7min
+[Parallel(n_jobs=20)]: Done 102 tasks      | elapsed: 7078.0min
+[Parallel(n_jobs=20)]: Done 103 tasks      | elapsed: 7149.7min
+[Parallel(n_jobs=20)]: Done 104 tasks      | elapsed: 7271.1min
+[Parallel(n_jobs=20)]: Done 105 tasks      | elapsed: 7328.0min
+[Parallel(n_jobs=20)]: Done 106 tasks      | elapsed: 7498.4min
+[Parallel(n_jobs=20)]: Done 107 tasks      | elapsed: 7662.5min
+[Parallel(n_jobs=20)]: Done 108 tasks      | elapsed: 7669.4min
+[Parallel(n_jobs=20)]: Done 109 tasks      | elapsed: 7786.5min
+[Parallel(n_jobs=20)]: Done 110 tasks      | elapsed: 7804.0min
+[Parallel(n_jobs=20)]: Done 111 tasks      | elapsed: 7875.8min
+[Parallel(n_jobs=20)]: Done 112 tasks      | elapsed: 7910.8min
+[Parallel(n_jobs=20)]: Done 113 tasks      | elapsed: 8005.2min
+[Parallel(n_jobs=20)]: Done 114 tasks      | elapsed: 8005.9min
+[Parallel(n_jobs=20)]: Done 115 tasks      | elapsed: 8083.4min
+[Parallel(n_jobs=20)]: Done 116 tasks      | elapsed: 8096.9min
+[Parallel(n_jobs=20)]: Done 117 tasks      | elapsed: 8229.0min
+[Parallel(n_jobs=20)]: Done 118 tasks      | elapsed: 8266.6min
+[Parallel(n_jobs=20)]: Done 119 tasks      | elapsed: 8302.7min
+[Parallel(n_jobs=20)]: Done 120 tasks      | elapsed: 8344.8min
+[Parallel(n_jobs=20)]: Done 121 tasks      | elapsed: 8377.5min
+[Parallel(n_jobs=20)]: Done 122 tasks      | elapsed: 8382.5min
+[Parallel(n_jobs=20)]: Done 123 tasks      | elapsed: 8404.0min
+[Parallel(n_jobs=20)]: Done 124 tasks      | elapsed: 8460.2min
+[Parallel(n_jobs=20)]: Done 125 tasks      | elapsed: 8563.9min
+[Parallel(n_jobs=20)]: Done 126 tasks      | elapsed: 8636.1min
+[Parallel(n_jobs=20)]: Done 127 tasks      | elapsed: 8692.8min
+[Parallel(n_jobs=20)]: Done 128 tasks      | elapsed: 8719.9min
+[Parallel(n_job[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.053902 - 3.3min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.051980 - 3.8min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050408 - 1.3min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049793 - 3.2min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050162 - 2.2min
+[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.059036 -15.7min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052973 -27.6min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049812 - 1.3min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048980 - 1.7min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050292 - 2.4min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049734 - 2.3min
+[CV] reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.050157 -11.6min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049318 - 3.1min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049348 - 2.2min
+[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.058435 -19.5min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053929 -27.1min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052063 -18.8min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051391 - 9.8min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.047973 - 1.7min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.048872 - 3.0min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  r[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049573 - 2.3min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050051 - 3.5min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054575 -27.4min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.056989 -11.2min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053482 -32.7min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050077 - 1.3min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049240 - 1.9min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.052354 -11.4min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048425 - 1.9min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049319 - 2.7min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV] [CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.059112 -12.7min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053540 -21.3min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.057104 -11.1min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054199 -37.7min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049486 - 1.2min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049816 - 1.7min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.051121 - 2.1min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049367 - 2.1min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.050496 - 9.9min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.052973 - 2.7min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.059229 -12.5min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053227 -20.1min
+[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.058902 -16.3min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053796 -27.3min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049349 - 1.3min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048633 - 1.8min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049804 - 2.2min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.064221 -14.5min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.054920 - 4.4min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.051133 - 1.4min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=s=20)]: Done 129 tasks      | elapsed: 8914.2min
+[Parallel(n_jobs=20)]: Done 130 tasks      | elapsed: 8919.4min
+[Parallel(n_jobs=20)]: Done 131 tasks      | elapsed: 8926.5min
+[Parallel(n_jobs=20)]: Done 132 tasks      | elapsed: 8943.4min
+[Parallel(n_jobs=20)]: Done 133 tasks      | elapsed: 8991.4min
+[Parallel(n_jobs=20)]: Done 134 tasks      | elapsed: 9007.5min
+[Parallel(n_jobs=20)]: Done 135 tasks      | elapsed: 9100.1min
+[Parallel(n_jobs=20)]: Done 136 tasks      | elapsed: 9117.1min
+[Parallel(n_jobs=20)]: Done 137 tasks      | elapsed: 9138.3min
+[Parallel(n_jobs=20)]: Done 138 tasks      | elapsed: 9263.0min
+[Parallel(n_jobs=20)]: Done 139 tasks      | elapsed: 9276.2min
+[Parallel(n_jobs=20)]: Done 140 tasks      | elapsed: 9308.2min
+[Parallel(n_jobs=20)]: Done 141 tasks      | elapsed: 9326.9min
+[Parallel(n_jobs=20)]: Done 142 tasks      | elapsed: 9328.2min
+[Parallel(n_jobs=20)]: Done 143 tasks      | elapsed: 9341.6min
+[Parallel(n_jobs=20)]: Done 144 tasks      | elapsed: 9386.0min
+[Parallel(n_jobs=20)]: Done 145 tasks      | elapsed: 9410.8min
+[Parallel(n_jobs=20)]: Done 146 tasks      | elapsed: 9422.3min
+[Parallel(n_jobs=20)]: Done 147 tasks      | elapsed: 9473.2min
+[Parallel(n_jobs=20)]: Done 148 tasks      | elapsed: 9510.8min
+[Parallel(n_jobs=20)]: Done 149 tasks      | elapsed: 9547.0min
+[Parallel(n_jobs=20)]: Done 150 tasks      | elapsed: 9601.6min
+[Parallel(n_jobs=20)]: Done 151 tasks      | elapsed: 9680.4min
+[Parallel(n_jobs=20)]: Done 152 tasks      | elapsed: 9701.0min
+[Parallel(n_jobs=20)]: Done 153 tasks      | elapsed: 9726.7min
+[Parallel(n_jobs=20)]: Done 154 tasks      | elapsed: 9850.4min
+[Parallel(n_jobs=20)]: Done 155 tasks      | elapsed: 9920.7min
+[Parallel(n_jobs=20)]: Done 156 tasks      | elapsed: 9946.2min
+[Parallel(n_jobs=20)]: Done 157 tasks      | elapsed: 9999.7min
+[Parallel(n_jobs=20)]: Done 158 tasks      | elapsed: 10020.8min
+[Parallel(n_jobs=20)]: Done 159 tasks      | elapsed: 10023.9min
+[Parallel(n_jobs=20)]: Done 160 tasks      | elapsed: 10044.1min
+[Parallel(n_jobs=20)]: Done 161 tasks      | elapsed: 10050.8min
+[Parallel(n_jobs=20)]: Done 162 tasks      | elapsed: 10055.8min
+[Parallel(n_jobs=20)]: Done 163 tasks      | elapsed: 10078.6min
+[Parallel(n_jobs=20)]: Done 164 tasks      | elapsed: 10091.3min
+[Parallel(n_jobs=20)]: Done 165 tasks      | elapsed: 10299.1min
+[Parallel(n_jobs=20)]: Done 166 tasks      | elapsed: 10304.5min
+[Parallel(n_jobs=20)]: Done 167 tasks      | elapsed: 10309.9min
+[Parallel(n_jobs=20)]: Done 168 tasks      | elapsed: 10336.0min
+[Parallel(n_jobs=20)]: Done 169 tasks      | elapsed: 10339.4min
+[Parallel(n_jobs=20)]: Done 170 tasks      | elapsed: 10370.3min
+[Parallel(n_jobs=20)]: Done 171 tasks      | elapsed: 10394.6min
+[Parallel(n_jobs=20)]: Done 172 tasks      | elapsed: 10408.9min
+[Parallel(n_jobs=20)]: Done 173 tasks      | elapsed: 10430.2min
+[Parallel(n_jobs=20)]: Done 174 tasks      | elapsed: 10506.9min
+[Parallel(n_jobs=20)]: Done 175 tasks      | elapsed: 10523.1min
+[Parallel(n_jobs=20)]: Done 176 tasks      | elapsed: 10537.1min
+[Parallel(n_jobs=20)]: Done 177 tasks      | elapsed: 10541.0min
+[Parallel(n_jobs=20)]: Done 178 tasks      | elapsed: 10565.2min
+[Parallel(n_jobs=20)]: Done 179 tasks      | elapsed: 10601.2min
+[Parallel(n_jobs=20)]: Done 180 tasks      | elapsed: 10625.2min
+[Parallel(n_jobs=20)]: Done 181 tasks      | elapsed: 10658.4min
+[Parallel(n_jobs=20)]: Done 182 tasks      | elapsed: 10703.4min
+[Parallel(n_jobs=20)]: Done 183 tasks      | elapsed: 10704.6min
+[Parallel(n_jobs=20)]: Done 184 tasks      | elapsed: 10720.0min
+[Parallel(n_jobs=20)]: Done 185 tasks      | elapsed: 10796.5min
+[Parallel(n_jobs=20)]: Done 186 tasks      | elapsed: 11062.5min
+[Parallel(n_jobs=20)]: Done 187 tasks      | elapsed: 11062.7min
+[Parallel(n_jobs=20)]: Done 188 tasks      | elapsed: 11111.6min
+[Parallel(n_jobs=20)]: Done 189 tasks      | elapsed: 11126.6min
+[Parallel(n_jobs=20)]: Done 190 tasks      | elapsed: 11237.9min
+[Parallel(n_jobs=20)]: Done 191 tasks      | elapsed: 11273.6min
+[Parallel(n_jobs=20)]: Done 192 tasks      | [CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050093 - 1.6min
+[CV] reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.050404 -14.1min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050568 - 3.0min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049851 - 2.3min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.056188 -11.4min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052676 -39.4min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.051589 -20.6min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051515 -15.2min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.054343 - 5.0min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049839 - 1.4min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.053435 - 3.1min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.052852 - 3.5min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050911 - 1.6min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053834 -20.4min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.059894 -20.4min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053298 -46.2min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048121 - 2.5min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049376 - 1.8min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.057760 -10.5min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.060028 -10.3min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.058323 -12.4min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054274 -18.7min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.057735 - 9.9min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054217 -37.4min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050733 - 1.2min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048572 - 1.8min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049823 - 2.3min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.063284 -11.3min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.059152 - 9.0min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.060299 - 8.7min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alph[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.054393 - 3.1min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.052771 - 3.7min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050728 - 1.5min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049372 - 3.8min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050758 - 2.3min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.056714 -12.0min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052739 -42.6min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052402 -48.4min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.054193 - 4.4min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.053433 - 4.2min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.053657 - 3.3min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.052323 - 4.4min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050150 - 1.4min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054200 -20.7min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.059981 -19.7min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052942 -50.4min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048260 - 2.3min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.050172 -10.9min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051809 - 7.1min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.050894 -12.7min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.053303 - 3.1min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.053561 - 4.6min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.051623 - 1.8min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054685 -20.1min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.060567 -16.8min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054188 -42.3min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.062931 -11.6min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050200 - 3.6min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050170 - 1.4min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054483 -17.1min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_al[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049485 - 1.6min
+[CV] reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.049818 -11.2min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049729 - 3.1min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049555 - 2.3min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.055750 -12.4min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053262 -44.1min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053456 -42.4min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051354 -13.1min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.053504 - 3.7min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049356 - 4.3min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050131 - 2.2min
+[CV] reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.049572 -11.9min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054731 -21.7min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.060280 -24.2min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053933 -31.2min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.063835 - 9.8min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049007 - 3.0min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.052434 - 7.2min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051479 -11.9min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.051248 - 1.2min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alp[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.049351 - 1.7min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049594 - 3.2min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054838 -29.8min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.056486 - 9.1min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053822 -39.3min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052342 -47.3min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.055388 - 4.5min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.052983 - 3.4min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049772 - 3.8min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.052619 -13.1min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alp[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050006 - 1.9min
+[CV] reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.050925 -10.8min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053588 -32.2min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.061290 -27.9min
+[CV] reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053107 -33.3min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=1200, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048846 - 2.7min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048096 - 1.9min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.058597 - 9.3min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.059869 -10.1min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.053106 -14.2min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048848 - 1.3min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050737 - 3.3min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.055831 -23.3min
+[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.057969 -14.8min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053168 -24.0min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052250 -17.8min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051838 -14.6min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.058170 -11.1min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.055608 -13.6min
+[CV] reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050151 - 4.5min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alp[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.059544 -17.1min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053854 -25.0min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.056666 -11.5min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054581 -26.4min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.051710 -23.0min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050719 - 2.1min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.063467 -12.0min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.057990 - 9.3min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050608 - 3.9min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.053687 -11.7min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.058470 -18.5min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053033 -23.2min
+[CV] reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.5, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.057161 - 8.6min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053638 -22.6min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.053094 -35.4min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.050195 - 9.5min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049445 - 3.9min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.060608 -11.4min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050613 - 2.1min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.050662 - 1.1min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=1.0[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048692 - 1.5min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049565 - 3.0min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.055552 -28.5min
+[CV] reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.057712 -20.5min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.01, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054839 -32.6min
+[CV] reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.15, nthread=1, min_child_weight=0.05, n_estimators=1200, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052660 -48.0min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.05, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=7, gamma=0, score=0.048644 - 1.9min
+[CV] reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.054370 - 3.6min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.05, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.059755 - 9.0min
+[CV] reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.15, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049964 - 2.0min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.050924 - 2.0min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.049966 - 3.3min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.01, n_estimators=1000, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.054973 -37.0min
+[CV] reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.3, nthread=1, min_child_weight=0.01, n_estimators=500, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.055922 -13.0min
+[CV] reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.1, nthread=1, min_child_weight=0.02, n_estimators=1000, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052886 -49.9min
+[CV] reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alpha=1.0, learning_rate=0.1, nthread=1, min_child_weight=0.01, n_estimators=700, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0, score=0.052837 -15.0min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=800, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051071 -11.8min
+[CV] reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.5, nthread=1, min_child_weight=0.02, n_estimators=800, subsample=1.0, reg_lambda=0.5, base_score=1.0, objective=reg:linear, max_depth=10, gamma=0, score=0.054772 - 3.6min
+[CV] reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0, learning_rate=0.2, nthread=1, min_child_weight=0.02, n_estimators=500, subsample=1.0, reg_lambda=1.0, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051821 - 7.2min
+[CV] reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0 
+[CV]  reg_alpha=0.5, learning_rate=0.2, nthread=1, min_child_weight=0.05, n_estimators=800, subsample=1.0, reg_lambda=1.5, base_score=1.0, objective=reg:linear, max_depth=15, gamma=0, score=0.051316 -11.5min
+[CV] reg_alpha=1.0, learning_rate=0.2, nthread=1, min_child_weight=0.002, n_estimators=1000, subsample=1.0, reg_lambda=2.0, base_score=1.0, objective=reg:linear, max_depth=20, gamma=0 
+[CV]  reg_alphaelapsed: 11354.8min
+[Parallel(n_jobs=20)]: Done 193 tasks      | elapsed: 11358.1min
+[Parallel(n_jobs=20)]: Done 194 tasks      | elapsed: 11394.7min
+[Parallel(n_jobs=20)]: Done 195 tasks      | elapsed: 11410.7min
+[Parallel(n_jobs=20)]: Done 196 tasks      | elapsed: 11523.6min
+[Parallel(n_jobs=20)]: Done 197 tasks      | elapsed: 11542.9min
+[Parallel(n_jobs=20)]: Done 198 tasks      | elapsed: 11622.9min
+[Parallel(n_jobs=20)]: Done 199 tasks      | elapsed: 11698.0min
+[Parallel(n_jobs=20)]: Done 200 tasks      | elapsed: 11699.7min
+[Parallel(n_jobs=20)]: Done 201 tasks      | elapsed: 11734.3min
+[Parallel(n_jobs=20)]: Done 202 tasks      | elapsed: 11738.9min
+[Parallel(n_jobs=20)]: Done 203 tasks      | elapsed: 11740.5min
+[Parallel(n_jobs=20)]: Done 204 tasks      | elapsed: 11772.5min
+[Parallel(n_jobs=20)]: Done 205 tasks      | elapsed: 11774.5min
+[Parallel(n_jobs=20)]: Done 206 tasks      | elapsed: 11857.3min
+[Parallel(n_jobs=20)]: Done 207 tasks      | elapsed: 11861.4min
+[Parallel(n_jobs=20)]: Done 208 tasks      | elapsed: 11979.0min
+[Parallel(n_jobs=20)]: Done 209 tasks      | elapsed: 12097.7min
+[Parallel(n_jobs=20)]: Done 210 tasks      | elapsed: 12104.8min
+[Parallel(n_jobs=20)]: Done 211 tasks      | elapsed: 12226.0min
+[Parallel(n_jobs=20)]: Done 212 tasks      | elapsed: 12269.8min
+[Parallel(n_jobs=20)]: Done 213 tasks      | elapsed: 12335.6min
+[Parallel(n_jobs=20)]: Done 214 tasks      | elapsed: 12355.7min
+[Parallel(n_jobs=20)]: Done 215 tasks      | elapsed: 12423.6min
+[Parallel(n_jobs=20)]: Done 216 tasks      | elapsed: 12441.3min
+[Parallel(n_jobs=20)]: Done 217 tasks      | elapsed: 12464.6min
+[Parallel(n_jobs=20)]: Done 218 tasks      | elapsed: 12474.1min
+[Parallel(n_jobs=20)]: Done 219 tasks      | elapsed: 12507.5min
+[Parallel(n_jobs=20)]: Done 220 tasks      | elapsed: 12508.5min
+[Parallel(n_jobs=20)]: Done 221 tasks      | elapsed: 12518.2min
+[Parallel(n_jobs=20)]: Done 222 tasks      | elapsed: 12567.4min
+[Parallel(n_jobs=20)]: Done 223 tasks      | elapsed: 12609.4min
+[Parallel(n_jobs=20)]: Done 224 tasks      | elapsed: 12649.1min
+[Parallel(n_jobs=20)]: Done 225 tasks      | elapsed: 12703.7min
+[Parallel(n_jobs=20)]: Done 226 tasks      | elapsed: 13056.2min
+[Parallel(n_jobs=20)]: Done 227 tasks      | elapsed: 13078.5min
+[Parallel(n_jobs=20)]: Done 228 tasks      | elapsed: 13122.5min
+[Parallel(n_jobs=20)]: Done 229 tasks      | elapsed: 13185.7min
+[Parallel(n_jobs=20)]: Done 230 tasks      | elapsed: 13223.1min
+[Parallel(n_jobs=20)]: Done 231 tasks      | elapsed: 13483.8min
+[Parallel(n_jobs=20)]: Done 232 tasks      | elapsed: 13525.7min
+[Parallel(n_jobs=20)]: Done 233 tasks      | elapsed: 13547.6min
+[Parallel(n_jobs=20)]: Done 234 tasks      | elapsed: 13570.4min
+[Parallel(n_jobs=20)]: Done 235 tasks      | elapsed: 13576.7min
+[Parallel(n_jobs=20)]: Done 236 tasks      | elapsed: 13587.6min
+[Parallel(n_jobs=20)]: Done 237 tasks      | elapsed: 13730.8min
+[Parallel(n_jobs=20)]: Done 238 tasks      | elapsed: 13775.5min
+[Parallel(n_jobs=20)]: Done 239 tasks      | elapsed: 13784.2min
+[Parallel(n_jobs=20)]: Done 240 tasks      | elapsed: 13887.7min
+[Parallel(n_jobs=20)]: Done 241 tasks      | elapsed: 13933.6min
+[Parallel(n_jobs=20)]: Done 242 tasks      | elapsed: 13999.0min
+[Parallel(n_jobs=20)]: Done 243 tasks      | elapsed: 14015.6min
+[Parallel(n_jobs=20)]: Done 244 tasks      | elapsed: 14153.2min
+[Parallel(n_jobs=20)]: Done 245 tasks      | elapsed: 14165.0min
+[Parallel(n_jobs=20)]: Done 246 tasks      | elapsed: 14476.5min
+[Parallel(n_jobs=20)]: Done 247 tasks      | elapsed: 14640.2min
+[Parallel(n_jobs=20)]: Done 248 tasks      | elapsed: 14666.0min
+[Parallel(n_jobs=20)]: Done 249 tasks      | elapsed: 14761.0min
+[Parallel(n_jobs=20)]: Done 250 tasks      | elapsed: 14798.4min
+[Parallel(n_jobs=20)]: Done 251 tasks      | elapsed: 14806.3min
+[Parallel(n_jobs=20)]: Done 252 tasks      | elapsed: 14830.6min
+[Parallel(n_jobs=20)]: Done 253 tasks      | elapsed: 14840.1min
+[Parallel(n_jobs=20)]: Done 254 tasks      | elapsed: 14913.5min
+[Parallel(n_jobs=20)]: Done 255 tasks      | e
