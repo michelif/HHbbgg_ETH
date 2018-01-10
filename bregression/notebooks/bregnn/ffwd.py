@@ -6,6 +6,7 @@ from keras.layers import Activation, LeakyReLU, PReLU, Lambda
 from keras.layers import BatchNormalization, Dropout
 from keras.models import Model, Sequential
 from keras.layers import Layer
+from keras.constraints import non_neg
 
 import keras.optimizers
 
@@ -13,6 +14,9 @@ from keras.regularizers import l1,l2
 
 from keras import backend as K
 
+from keras.callbacks import TensorBoard, CSVLogger, ModelCheckpoint
+
+from sklearn.base import BaseEstimator
 
 from . import losses 
 
@@ -31,23 +35,31 @@ class ConstOffsetLayer(Layer):
 
 
 # --------------------------------------------------------------------------------------------------
-class FFWDRegression(object):
+class FFWDRegression(BaseEstimator):
 
     def __init__(self,name,input_shape,output_shape=None,
-                 dropout=0.5,batch_norm=True,activations="lrelu",layers=[256]*5+[128,64],
+                 non_neg=False,
+                 dropout=0.2, # 0.5 0.2
+                 batch_norm=True,activations="lrelu",
+                 layers=[1024]*5+[512,256,128], # 1024 / 2048
                  do_bn0=True,
                  const_output_biases=None, 
-                 optimizer="Adam", optimizer_params=dict(lr=1.e-4),
+                 optimizer="Adam", optimizer_params=dict(lr=1.e-3), # mse: 1e-3/5e-4
                  loss="RegularizedGaussNll",
-                 loss_params=dict(reg_sigma=1.e-2),
+                 loss_params=dict(),# dict(reg_sigma=3.e-2),
+                 monitor_dir=".",
+                 save_best_only=True,
+                 valid_frac=None
     ):
         self.name = name
         self.input_shape = input_shape
         self.output_shape = output_shape
         self.const_output_biases = const_output_biases
-        
+
+        self.non_neg = non_neg
         self.dropout = dropout
         self.batch_norm = batch_norm
+        self.use_bias = not batch_norm
         self.layers = layers
         if type(activations) == str:
             self.activations = [activations]*len(layers)
@@ -60,26 +72,31 @@ class FFWDRegression(object):
         else:
             self.activations = activations
         self.do_bn0 = do_bn0
-        self.use_bias = not do_bn0
         
         self.optimizer = optimizer
         self.optimizer_params = optimizer_params
         self.loss = loss
         self.loss_params = loss_params
 
+        self.valid_frac = valid_frac
+        self.save_best_only = save_best_only
+        self.monitor_dir = monitor_dir
+        
         self.model = None
 
-
-    
+        super(FFWDRegression,self).__init__()
+        
     # ----------------------------------------------------------------------------------------------
     def __call__(self,docompile=False):
         
         if hasattr(losses,self.loss):
             loss = getattr(losses,self.loss)
-            print(loss,isinstance(loss,object))
+            ## print(loss,isinstance(loss,object))
             if isinstance(loss,object):
                 loss = loss(**self.loss_params)
-            print(loss)
+            ## print(loss)
+        else:
+            loss = self.loss
 
         output_shape = self.output_shape
         if output_shape is None:
@@ -106,11 +123,11 @@ class FFWDRegression(object):
                     nslope = 0.2
                     if "_" in iact:
                         nslope = float(iact.rsplit("_",1))
-                        L = LeakyReLU(nslope,name="%s_act%d" % (self.name,il))(L)
+                    L = LeakyReLU(nslope,name="%s_act%d_%s" % (self.name,il,iact))(L)
                 elif iact == "prelu":
-                    L = PReLU(name="%s_act%d" % (self.name,il))(L)
+                    L = PReLU(name="%s_act%d_%s" % (self.name,il,iact))(L)
                 else:
-                    L = Activation(iact,name="%s_act%d" % (self.name,il))(L)
+                    L = Activation(iact,name="%s_act%d_%s" % (self.name,il,iact))(L)
             
             reshape = False
             out_size = output_shape[0]
@@ -118,6 +135,7 @@ class FFWDRegression(object):
                 reshape = True
                 for idim in output_shape[1:]:
                     out_size *= output_shape[idim]
+            constr = None
             output = Dense(out_size,use_bias=self.const_output_biases is None,
                            name="%s_out" % self.name)(L)
             if reshape:
@@ -125,21 +143,62 @@ class FFWDRegression(object):
             if self.const_output_biases is not None:
                 ## output = Lambda(lambda x: x+K.constant(self.const_output_biases))(output)
                 output = ConstOffsetLayer(self.const_output_biases,name="%s_outb" % self.name)(output)
-                
+
+            if self.non_neg:
+                output = Activation("relu",name="%s_outpos" % self.name)(output)
             self.model = Model( inputs=inputs, outputs=output )
             
         if docompile:
             optimizer = getattr(keras.optimizers,self.optimizer)(**self.optimizer_params)
 
-            self.model.compile(optimizer=optimizer,loss=loss)
+            self.model.compile(optimizer=optimizer,loss=loss,metrics=[losses.mse0,losses.mae0,
+                                                                      losses.r2_score0])
         return self.model
 
-
     # ----------------------------------------------------------------------------------------------
-    def fit(self,X,y,epochs=100):
+    def get_callbacks(self,has_valid=False,monitor='loss',save_best_only=True):
+        if has_valid:
+            monitor = 'val_'+monitor
+        monitor_dir = self.monitor_dir
+        csv = CSVLogger("%s/metrics.csv" % monitor_dir)
+        checkpoint = ModelCheckpoint("%s/model-{epoch:02d}.hdf5" % monitor_dir,
+                                     monitor=monitor,save_best_only=save_best_only,
+                                     save_weights_only=False)
+        return [csv,checkpoint]
+    
+    # ----------------------------------------------------------------------------------------------
+    def fit(self,X,y,**kwargs):
 
         model = self(True)
-
-        model.fit(X,y,epochs=epochs)
         
+        has_valid = kwargs.get('validation_data',None) is not None
+        if not has_valid and self.valid_frac is not None:
+            last_train = int( X.shape[0] * (1. - self.valid_frac) )
+            X_train = X[:last_train]
+            X_valid = X[last_train:]
+            y_train = y[:last_train]
+            y_valid = y[last_train:]
+            kwargs['validation_data'] = (X_valid,y_valid)
+            has_valid = True
+        else:
+            X_train, y_train = X, y
+            
+        if not 'callbacks' in kwargs:
+            save_best_only=kwargs.pop('save_best_only',self.save_best_only)
+            kwargs['callbacks'] = self.get_callbacks(has_valid=has_valid,
+                                                     save_best_only=save_best_only)
+            
+        return model.fit(X_train,y_train,**kwargs)
+    
+    # ----------------------------------------------------------------------------------------------
+    def predict(self,X,p0=True,**kwargs):
+        y_pred =  self.model.predict(X,**kwargs)
+        if p0:
+            return y_pred[:,0]
+        else:
+            return y_pred
+    
+    # ----------------------------------------------------------------------------------------------
+    def score(self,X,y,**kwargs):
+        return -self.model.evaluate(X,y,**kwargs)
     
