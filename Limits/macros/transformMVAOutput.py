@@ -24,7 +24,7 @@ def main(options,args):
 
 
 
-    fout = ROOT.TFile.Open("./plots/cumulatives/cumulativeTransformation_"+name+".root","recreate")
+    fout = ROOT.TFile.Open("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/cumulativeTransformation_"+name+".root","recreate")
 
     nbins = 10000
     xlow = 0.
@@ -61,15 +61,15 @@ def main(options,args):
     formats = [".png",".pdf"]
 
     for format in formats:
-        c.SaveAs("./plots/cumulatives/"+name+"_func"+format)
+        c.SaveAs("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_func"+format)
 
     cumulativeGraph.Draw("AP")
     for format in formats:
-        c.SaveAs("./plots/cumulatives/"+name+"_cum"+format)
+        c.SaveAs("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_cum"+format)
 
     evalCumulatives.Draw("EP")
     for format in formats:
-        c.SaveAs("./plots/cumulatives/"+name+"_evalx"+format)
+        c.SaveAs("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_evalx"+format)
     
 
     cumulativeGraph.Write()

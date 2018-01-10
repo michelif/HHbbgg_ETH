@@ -1,6 +1,14 @@
 # Workspaces and datacards production
 
-All that it's needed to create workspace and datacards for combine:<br />
+All that it's needed to create workspace and datacards for combine: <br />
+
+- transformMVAOutput.py <br />
+Computes the cumulative of MVA output distribution for SM signal and uses that to transform the MVA output. It saves it in a new branch called MVAOutputTransformed in
+a new file in the same directory of the input file called Total_preselection_diffNaming_transformedMVA.root <br />
+Example:<br />
+
+python transformMVAOutput.py -i /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20180108_test/Total_preselection_diffNaming.root <br />
+
 - makeWorkspaceHHbbgg.py<br /> 
 
 It creates the workspace and the datacard. It needs a json file with
