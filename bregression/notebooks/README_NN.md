@@ -7,6 +7,7 @@ ssh username@ela.cscs.ch
 ssh daint
 ```
 Copy /users/musella/env.sh
+
 Source Pasqaule's file :
 ```
 source /users/musella/my-env/bin/activate
@@ -25,7 +26,7 @@ Inside bin/ create bin/start_jupyter
 #!/bin/bash 
 source ~/env.sh
 cd ~/jupyter 
-jupyter notebook --port 9900 --no-browser
+jupyter notebook --port 9999 --no-browser
  ```
  Make start_jupyter executable
  ```
@@ -52,7 +53,7 @@ LocalForward 6666 localhost:6666
 User username
 HostName ela.cscs.ch
 ```
-Run cscs to be able to access the jupyter notebook later.
+Run cscs 'ssh cscs' to be able to access the jupyter notebook later.
 
 Now back to cscs:
 Adding basic python config ~/.ipython/profile_default/startup/00-basics.ipy :
