@@ -19,8 +19,10 @@ input_trainings = options.training.split(',')
 # ## Read test data and model
 # load data
 base_dir = '/scratch/snx3000/musella/bregression'
-data = io.read_data(base_dir+'/ttbar_unweighted_full80M_selected_test.hd5', columns = None )
+#data = io.read_data(base_dir+'/ttbar_unweighted_full80M_selected_test.hd5', columns = None )
+data = io.read_data('/users/nchernya//HHbbgg_ETH/root_files/ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5',columns=None)
 
+X_predictions_compare = []
 for idx,name in enumerate(input_trainings):
   # list all model files in the training folder
   #target = '/users/musella/jupyter/bregression/hybrid_cfg'
@@ -75,22 +77,28 @@ for idx,name in enumerate(input_trainings):
       err = y-corr
   
   # ## Characterize the outcome
-
   print(y.mean(),y.std())
-  
-  me = err.mean()
-  std = err.std()
-  mse = np.square(err).mean()
-  mae = np.abs(err).mean()
-  print('test me ', me, ' std ', std, ' norm std ', std/config['y_std'], ' norm mse ', mse/config['y_std']**2, ' norm mae ', mae / config['y_std'])
 
-  _,bins,_ = plt.hist(y[:,0],bins=100,range=[0.5,2],label='target');
-  plt.hist(y_hbb[:,0],bins=bins,alpha=0.5,label='HIG-17-009');
-  plt.hist(y_pred[:,0],bins=bins,alpha=0.5,label='prediction NN');
-  plt.xlabel('$p_T^{true} / p_T^{reco}$')
-  plt.legend(loc = 'upper right')
-  plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/'+input_trainings[idx]+'/Pasquale_pT_true_reco_Hig_17_009.pdf')
-  plt.clf()
+  # Add all results in array to plot and fit to Bukin
+  if idx ==0 : 
+    X_predictions_compare.append(y[:,0]) 	
+    X_predictions_compare.append(y_hbb[:,0]) 	
+  X_predictions_compare.append(y_pred[:,0])
 
+
+
+ # _,bins,_ = plt.hist(y[:,0],bins=100,range=[0.5,2],label='target');
+ # plt.hist(y_hbb[:,0],bins=bins,alpha=0.5,label='HIG-17-009');
+ # plt.hist(y_pred[:,0],bins=bins,alpha=0.5,label='prediction NN');
+ # plt.xlabel('$p_T^{true} / p_T^{reco}$')
+ # plt.legend(loc = 'upper right')
+ # plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/'+input_trainings[idx]+'/Pasquale_pT_true_reco_Hig_17_009.pdf')
+ # plt.clf()
+
+comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
 sys.path.insert(0, '/users/nchernya/HHbbgg_ETH/bregression/python/')
-import plotting_utils
+import plotting_utils as plotting
+style=True
+samplename='ttbar'
+outTag = 'Comparison16_01_2018_forTesting'
+plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,'inclusive',samplename)
