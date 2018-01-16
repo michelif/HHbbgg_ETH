@@ -130,10 +130,10 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     Histo_rel_diff_reg = np.histogram(rel_diff_regressed,bins=n_bins,range=(c_min,c_max))
     
     h_rel_diff = TH1F("hrel_diff", "hrel_diff", n_bins, c_min, c_max)
-    for i in xrange(len(rel_diff)): 
+    for i in range(len(rel_diff)): 
         h_rel_diff.Fill(rel_diff[i])
     h_rel_diff_reg = TH1F("hrel_diff_reg", "hrel_diff_reg", n_bins, c_min, c_max)
-    for i in xrange(len(rel_diff_regressed)): 
+    for i in range(len(rel_diff_regressed)): 
         h_rel_diff_reg.Fill(rel_diff_regressed[i])
     h_rel_diff.SetLineColor(ROOT.kBlue)
     h_rel_diff.SetMarkerColor(ROOT.kBlue)
@@ -162,8 +162,8 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     frame.Draw()
     h_rel_diff.Draw("samePE")
     h_rel_diff_reg.Draw("samePE")
-    print 'Nominal : mean, RMS :',h_rel_diff.GetMean(), h_rel_diff.GetRMS()
-    print 'Regresesd : mean, RMS : ',h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS()
+    print('Nominal : mean, RMS :',h_rel_diff.GetMean(), h_rel_diff.GetRMS())
+    print('Regresesd : mean, RMS : ',h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS())
 
   
 
@@ -360,10 +360,10 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
     for j in range(len(X_region)):
         if isinstance(X_region[j], np.ndarray) : data = X_region[j]
         else : data =((X_region[j]).as_matrix()).ravel()
-        print len(data)
+      #  print len(data)
         h_rel_diff = TH1F("hrel_diff_%s"%h_names[j], "hrel_diff_%s"%h_names[j], n_bins, c_min, c_max)
         h_rel_diff.Sumw2(ROOT.kTRUE)
-        for i in xrange(len(data)): 
+        for i in range(len(data)): 
             h_rel_diff.Fill(data[i])
   #      h_rel_diff.Scale(1./h_rel_diff.Integral())
         h_rel_diff.SetLineColor(colors[j])
@@ -411,7 +411,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         #res.append(sig[num].chi2FitTo(datahist[num]))
         fit_range_min = h_rel_diff.GetMean()-h_rel_diff.GetRMS()/2
         fit_range_max = h_rel_diff.GetMean()+h_rel_diff.GetRMS()/2
-        print 'range of the fit : ', fit_range_min, fit_range_max
+       # print 'range of the fit : ', fit_range_min, fit_range_max
    #     res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE),ROOT.RooFit.Range(fit_range_min,fit_range_max))) # take Mean of each histogram and add 1/2 of the RMS  ? -> try that
         res[num].Print()
         x[num].setRange("integralRange%s"%h, c_min,c_max)  
@@ -453,7 +453,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         func_list[j].Draw("same")
         hist_list[j].Draw("PEsame")
         leg.AddEntry(hist_list[j],names[j]+',Xp=%.2f,sigp=%.2f'%(Xp[j].getVal(),sigp[j].getVal()) ,"PE")
-        print j,' Sigma plus error : ',sigp[j].getVal(), ' +- ',sigp[j].getError()
+        print(j,' Sigma plus error : ',sigp[j].getVal(), ' +- ',sigp[j].getError())
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
   #  c.SaveAs("pt_region.png")
@@ -538,10 +538,10 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
     for j in range(len(X_region)):
         h=h_names[j]
         data =((X_region[j]).as_matrix()).ravel()
-        print len(data)
+      #  print len(data)
         h_rel_diff = TH1F("hrel_diff_%s"%h_names[j], "hrel_diff_%s"%h_names[j], n_bins, c_min, c_max)
         h_rel_diff.Sumw2(True)
-        for i in xrange(len(data)): 
+        for i in range(len(data)): 
             h_rel_diff.Fill(data[i])
         h_rel_diff.Scale(1./h_rel_diff.Integral())
         h_rel_diff.SetLineColor(colors[j])
@@ -628,7 +628,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
         graphs[j].Draw("PEsame")
         func[j].Draw("sameR")
         t = paveText2.AddText("x0 hist/fit : %.2f/%.2f"%(x0_hist[j],x0_CDFfit[j]))
-        print "%.2f"%x0_CDFfit[j]
+        print("%.2f"%x0_CDFfit[j])
         t.SetTextColor(colors[j]);
     leg.Draw('same')
 
@@ -645,7 +645,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
     paveText.Draw("same")
    
     paveText2.Draw("same")
-    print x0_hist, x0_CDFfit
+   # print x0_hist, x0_CDFfit
    
  
     line = ROOT.TLine(x0_hist[0],frame2.GetMinimum() ,x0_hist[0],frame2.GetMaximum())
@@ -844,23 +844,23 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
 
  
 def print_roc_report(fpr,tpr,step=0.05):
-     print "======== ROC report ========"
+     print("======== ROC report ========")
      for i in range(int(1/step)):
-         print i
+         print(i)
          if fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))].size>0:
-             print "True positive rate: "+str(step*i)
-             print "False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))][0])
-     print "============================"
+             print("True positive rate: "+str(step*i))
+             print("False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))][0]))
+     print("============================")
 
 
 
 def print_roc_report(fpr,tpr,step=0.05):
-    print "======== ROC report ========"
+    print("======== ROC report ========")
     for i in range(int(1/step)):
-        print i
+        print(i)
         index = plotting.bisection(tpr,step*i)
-        print "True positive rate: "+str(step*i)
-        print "False positive rate:"+str(fpr[index])
+        print("True positive rate: "+str(step*i))
+        print("False positive rate:"+str(fpr[index]))
         
 
 def bisection(array,value):#be careful, works with sorted arrays
@@ -1017,8 +1017,8 @@ def draw_overflow(h,factor=1):
 def plot_feature_importance(clf,features,end='',path='/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/bregression/output_files/'): 
 	features_importance =  optimization.feature_importances_(clf)
 	features_dict = {features[i]:features_importance[i] for i in range(0,len(features)) }
-	sorted_features_values = sorted( features_dict.values(),reverse=True)
-	sorted_features = [key for key,value in sorted(features_dict.items() ,key=lambda x : x[1], reverse=True)]
+	sorted_features_values = sorted( list(features_dict.values()),reverse=True)
+	sorted_features = [key for key,value in sorted(list(features_dict.items()) ,key=lambda x : x[1], reverse=True)]
 
 	np.save(path+'out_features_values'+end,sorted_features_values)
 	np.save(path+'out_features_names'+end,sorted_features)
@@ -1047,11 +1047,11 @@ def plot_hist(hists,saveName,log=False,labels=None):
 		if labels==None : n, bins, patches = plt.hist(hists[i], 100,color='green', alpha=0.75)
 		else : n, bins, patches = plt.hist(hists[i], 100,range=[0,4],color=colors[i], alpha=0.5,label=labels[i])
 		area = sum(np.diff(bins)*n)
-		print 'num, intergral = ',i,area
+	#	print 'num, intergral = ',i,area
 	plt.xlabel('MPVS')
 	plt.ylabel('Events')
 	mpv = bins[np.where(n == n.max())]
-	print saveName, 'MPV = ', mpv[0]
+#	print saveName, 'MPV = ', mpv[0]
 	if log : plt.yscale('log')
 	plt.grid(True)
 	if labels!=None : plt.legend(loc='upper right')

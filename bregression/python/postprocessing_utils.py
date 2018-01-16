@@ -65,7 +65,7 @@ def stackAddFeaturesReg(df,additionalCut_names,addDictionary,rounding=5):
         dictVar [feat] = i
         i+=1
 
-    for featCounter,value in addDictionary.iteritems():
+    for featCounter,value in addDictionary.items():
         feat= featCounter.replace("noexpand:","")
         vec.append(np.round(value,rounding))
         dictVar [feat] = i
@@ -102,7 +102,7 @@ def cutInvariantMass(vec,varNum,xLow,xUp):
 def saveTreeReg(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTree"):
     from root_numpy import array2root
     i=0
-    for key in dictVar.keys():
+    for key in list(dictVar.keys()):
          if i == 0:
              writeMode='recreate'
              i=1
@@ -129,7 +129,7 @@ def saveTreeReg(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reduced
 def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTree"):
     from root_numpy import array2root
     i=0
-    for key in dictVar.keys():
+    for key in list(dictVar.keys()):
          if i == 0:
              writeMode='recreate'
              i=1
