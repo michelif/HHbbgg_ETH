@@ -28,12 +28,6 @@ base_dir = '/scratch/snx3000/musella/bregression'
 #data = io.read_data(base_dir+'/ttbar_unweighted_full80M_selected_test.hd5', columns = None )
 data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
 
-
-#Regions of pt and eta 
-file_regions = open('/users/nchernya/HHbbgg_ETH/bregression/scripts/regionsPtEta.json')
-regions_summary = json.loads(file_regions.read())
-region_names = regions_summary['pt_regions']+regions_summary['eta_region_names']
-
 for idx,name in enumerate(input_trainings):
     # list all model files in the training folder
     #target = '/users/musella/jupyter/bregression/hybrid_cfg'
@@ -91,25 +85,3 @@ for idx,name in enumerate(input_trainings):
 outfilename=options.out_dir+'applied_'+options.inp_file
 data.to_hdf(outfilename,'w')
 
-
-
-# Add all results in array to plot and fit to Bukin
-for i_r,region in enumerate(regions_summary["pt_regions"]+regions_summary["eta_regions"]):
-    X_predictions_compare = []
-    print(region)
-    data_cut = data.query(region)
-    y = (data_cut['Jet_mcPt']/data_cut['Jet_pt']).values.reshape(-1,1)
-    y_hbb = (data_cut['Jet_mcPt']/data_cut['Jet_pt_reg']).values.reshape(-1,1)
-    X_predictions_compare.append(y[:,0]) 	
-    X_predictions_compare.append(y_hbb[:,0]) 	
-    for idx,name in enumerate(input_trainings):
-        y_pred_cut = (data_cut['Jet_pt_reg_NN_%s'%input_trainings[idx]])
-        X_predictions_compare.append(y[:,0]/y_pred_cut)
-  
-
-    comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
-    style=False 
-    if i_r==0 : style=True
-    samplename='ttbar'
-    outTag = 'Comparison17_01_2018_forTesting' + region_names[i_r]
-    plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,region_names[i_r],samplename)
