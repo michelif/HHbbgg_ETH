@@ -5,11 +5,17 @@ import os
 import bregnn.io as io
 import matplotlib.pyplot as plt
 import sys
+import json
 from optparse import OptionParser, make_option
+sys.path.insert(0, '/users/nchernya/HHbbgg_ETH/bregression/python/')
+import plotting_utils as plotting
 
 
 parser = OptionParser(option_list=[
     make_option("--training",type='string',dest="training",default='mse'),
+    make_option("--inp-dir",type='string',dest="inp_dir",default='/users/nchernya//HHbbgg_ETH/root_files/'),
+    make_option("--inp-file",type='string',dest='inp_file',default='ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5'),
+    make_option("--out-dir",type='string',dest="out_dir",default='/users/nchernya//HHbbgg_ETH/bregression/output_root/'),
 ])
 
 ## parse options
@@ -20,85 +26,90 @@ input_trainings = options.training.split(',')
 # load data
 base_dir = '/scratch/snx3000/musella/bregression'
 #data = io.read_data(base_dir+'/ttbar_unweighted_full80M_selected_test.hd5', columns = None )
-data = io.read_data('/users/nchernya//HHbbgg_ETH/root_files/ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5',columns=None)
+data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
 
-X_predictions_compare = []
+
+#Regions of pt and eta 
+file_regions = open('/users/nchernya/HHbbgg_ETH/bregression/scripts/regionsPtEta.json')
+regions_summary = json.loads(file_regions.read())
+region_names = regions_summary['pt_regions']+regions_summary['eta_region_names']
+
 for idx,name in enumerate(input_trainings):
-  # list all model files in the training folder
-  #target = '/users/musella/jupyter/bregression/hybrid_cfg'
-  target='/users/nchernya/HHbbgg_ETH/bregression/notebooks/'+input_trainings[idx]
-  models = get_ipython().getoutput('ls -t $target/*.hdf5')
-  models
+    # list all model files in the training folder
+    #target = '/users/musella/jupyter/bregression/hybrid_cfg'
+    target='/users/nchernya/HHbbgg_ETH/bregression/notebooks/'+input_trainings[idx]
+    models = get_ipython().getoutput('ls -t $target/*.hdf5')
+    models
+  
+    # read training configuration
+    import json
+    with open('%s/config.json' % target) as fin:
+        config = json.loads(fin.read())
+    config
+  
+    # ## Compute predictions
+    features = config['options']['features'].split(',')
+    X = data[features].values
+    
+    model = keras.models.load_model(models[0],compile=False)
+    y_pred = model.predict(X)
+  
+    # *Note*: the target is typically normalized in the training y = (y-mu)/sigma
+    # ## Convert raw prediction into actual scale and resolution estimation
 
-  # read training configuration
-  import json
-  with open('%s/config.json' % target) as fin:
-      config = json.loads(fin.read())
-  config
+    if y_pred.shape[1] == 1: # with one output we only have a scale correction
+        corr = y_pred
+        res = None
+    elif y_pred.shape[1] == 2: # with two outputs first is mean and second is sigma
+        corr = y_pred[:,0]
+        res = y_pred[:,1]
+    elif y_pred.shape[1] == 3: # assume that 3 outputs are mean + 2 quantile
+        corr = y_pred[:,0]
+        res = 0.5*(y_pred[:,2] - y_pred[:,1])
 
-  # ## Compute predictions
+    # normalize back to energy scale
+    if config['options']['normalize_target']:
+        corr *= config['y_std']
+        corr += config['y_mean']
+    
+        if res is not None:
+            res *= config['y_std']
   
-  features = config['options']['features'].split(',')
+    # errors vector
+    #if y_pred.shape[1] > 1:
+    #    err = y[:,0]-corr
+    #else:
+    #    err = y-corr
+    # ## Characterize the outcome
+    #print(y.mean(),y.std())
 
-  X = data[features].values
-  y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
-  y_hbb = (data['Jet_mcPt']/data['Jet_pt_reg']).values.reshape(-1,1)
-  
-  model = keras.models.load_model(models[0],compile=False)
-  
-  y_pred = model.predict(X)
-  
-  # *Note*: the target is typically normalized in the training y = (y-mu)/sigma
-  # ## Convert raw prediction into actual scale and resolution estimation
+    # Add new prediction to data frame
+    data = data.assign(newNNreg=y_pred[:,0])
+    data = data.rename(columns={'newNNreg':'Jet_pt_reg_NN_%s'%input_trainings[idx]})
 
-  
-  if y_pred.shape[1] == 1: # with one output we only have a scale correction
-      corr = y_pred
-      res = None
-  elif y_pred.shape[1] == 2: # with two outputs first is mean and second is sigma
-      corr = y_pred[:,0]
-      res = y_pred[:,1]
-  elif y_pred.shape[1] == 3: # assume that 3 outputs are mean + 2 quantile
-      corr = y_pred[:,0]
-      res = 0.5*(y_pred[:,2] - y_pred[:,1])
+# save dataframe with added corrections
+outfilename=options.out_dir+'applied_'+options.inp_file
+data.to_hdf(outfilename,'w')
 
-  # normalize back to energy scale
-  if config['options']['normalize_target']:
-      corr *= config['y_std']
-      corr += config['y_mean']
-  
-      if res is not None:
-          res *= config['y_std']
-  
-  # errors vector
-  if y_pred.shape[1] > 1:
-      err = y[:,0]-corr
-  else:
-      err = y-corr
-  
-  # ## Characterize the outcome
-  print(y.mean(),y.std())
 
-  # Add all results in array to plot and fit to Bukin
-  if idx ==0 : 
+
+# Add all results in array to plot and fit to Bukin
+for i_r,region in enumerate(regions_summary["pt_regions"]+regions_summary["eta_regions"]):
+    X_predictions_compare = []
+    print(region)
+    data_cut = data.query(region)
+    y = (data_cut['Jet_mcPt']/data_cut['Jet_pt']).values.reshape(-1,1)
+    y_hbb = (data_cut['Jet_mcPt']/data_cut['Jet_pt_reg']).values.reshape(-1,1)
     X_predictions_compare.append(y[:,0]) 	
     X_predictions_compare.append(y_hbb[:,0]) 	
-  X_predictions_compare.append(y_pred[:,0])
+    for idx,name in enumerate(input_trainings):
+        y_pred_cut = (data_cut['Jet_pt_reg_NN_%s'%input_trainings[idx]])
+        X_predictions_compare.append(y[:,0]/y_pred_cut)
+  
 
-
-
- # _,bins,_ = plt.hist(y[:,0],bins=100,range=[0.5,2],label='target');
- # plt.hist(y_hbb[:,0],bins=bins,alpha=0.5,label='HIG-17-009');
- # plt.hist(y_pred[:,0],bins=bins,alpha=0.5,label='prediction NN');
- # plt.xlabel('$p_T^{true} / p_T^{reco}$')
- # plt.legend(loc = 'upper right')
- # plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/'+input_trainings[idx]+'/Pasquale_pT_true_reco_Hig_17_009.pdf')
- # plt.clf()
-
-comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
-sys.path.insert(0, '/users/nchernya/HHbbgg_ETH/bregression/python/')
-import plotting_utils as plotting
-style=True
-samplename='ttbar'
-outTag = 'Comparison16_01_2018_forTesting'
-plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,'inclusive',samplename)
+    comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
+    style=False 
+    if i_r==0 : style=True
+    samplename='ttbar'
+    outTag = 'Comparison17_01_2018_forTesting' + region_names[i_r]
+    plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,region_names[i_r],samplename)

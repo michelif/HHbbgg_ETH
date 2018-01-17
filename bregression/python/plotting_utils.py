@@ -307,7 +307,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
 def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,title='',titleName=''):  
     if style==True:
         gROOT.SetBatch(True)
-        gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
+        gROOT.ProcessLineSync(".x ~/HHbbgg_ETH/scripts/setTDRStyle.C")
         gROOT.ForceStyle()
         gStyle.SetPadTopMargin(0.06)
         gStyle.SetPadRightMargin(0.04)
@@ -384,6 +384,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
         if ('unweighted' in names[j]) and ('Jet_mcPt>=300' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
         elif ('No regression' in names[j]) and ('Jet_mcPt>=600' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
+        elif ('mse' in names[j]) or ('HybridLoss' in names[j])  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.15))
         else  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,sigp_initial,0.01,0.3))
         xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
         rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
@@ -440,6 +441,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
        sigp[fitnum].writeToStream(fit_result_file,False)
        fit_result_file.write('\n',1)
     fit_result_file.close()
+    outString = outString.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_').replace(' & ','and').replace(' ','')
 
     c.cd()
     frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
@@ -457,7 +459,6 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
   #  c.SaveAs("pt_region.png")
-    outString = outString.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_')
     c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.png')
     c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.pdf')
    # c.SaveAs(utils.IO.plotFolder+"fitCruijff_regions_"+str(outString)+log_name+'.png')
