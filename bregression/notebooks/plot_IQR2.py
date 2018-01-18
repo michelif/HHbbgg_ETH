@@ -51,6 +51,7 @@ y_corr_iqr2_pt =  y_corr_qt_pt[0],y_corr_qt_pt[3]
 
 binc = 0.5*(bins[1:]+bins[:-1])
 
+##Plot raw and corrected mean with their stds on one plot
 plt.plot(binc,y_mean_pt,label='raw (mean)')
 plt.fill_between(binc,y_mean_pt-y_std_pt,y_mean_pt+y_std_pt,alpha=0.4,label='raw (RMS)')
 plt.plot(binc,y_corr_mean_pt,label='corrected (mean)')
@@ -68,6 +69,7 @@ plt.clf()
 
 linestyles = ['-.', '--','-', ':']
 
+## Draw several quantiles on one plot
 plt.plot(binc,y_25_pt,label='raw (0.25)',linestyle=linestyles[0],color='b')
 plt.plot(binc,y_corr_25_pt,label='corrected (0.25)',linestyle=linestyles[2],color='b')
 plt.plot(binc,y_40_pt,label='raw (0.40)',linestyle=linestyles[0],color='g')
@@ -86,3 +88,16 @@ plt.ylabel('$p_T^{true} / p_T^{reco}$')
 plt.legend()
 plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/quantiles_%s.pdf'%options.samplename)
 plt.clf()
+
+##Draw IQR/2 vs resolution estimator
+res_bins, err_qt_res = utils.profile(err,res,bins=30,range=[0,0.3],moments=False) 
+print(err_qt_res.shape)
+err_iqr2 =  0.5*(err_qt_res[2]-err_qt_res[0])
+
+plt.scatter(0.5*(res_bins[1:]+res_bins[:-1]),err_iqr2)
+plt.grid()
+ymin, ymax = (plt.gca()).get_ylim()
+plt.text(0.0,ymax*0.95,'%s'%options.samplename, fontsize=20)
+plt.xlabel('$\sigma(p_T)/p_T$')
+plt.ylabel('IQR / 2')
+plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/IQR_sigma_pt_%s.pdf'%options.samplename)

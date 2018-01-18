@@ -1,10 +1,12 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import training_utils as utils
 import optimization_utils as optimization
 
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 from sklearn.preprocessing import label_binarize
-import matplotlib.pyplot as plt
 import ROOT
 import math
 from array import array
@@ -381,7 +383,8 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         x.append(RooRealVar("x_%s"%h,"x_%s"%h,c_min,c_max))
         datahist.append(RooDataHist("roohist_%s"%h,"roohist_%s"%h,RooArgList(x[num]),datahists[num]))
         #######################Bukin function ################## 
-        Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
+        if ('mse' in names[j]) or ('HybridLoss' in names[j])  : Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,0.96,0.7,1.1))
+        else : Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
         if ('unweighted' in names[j]) and ('Jet_mcPt>=300' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
         elif ('No regression' in names[j]) and ('Jet_mcPt>=600' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
         elif ('mse' in names[j]) or ('HybridLoss' in names[j])  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.15))
@@ -892,14 +895,16 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
     
-def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylimits=None,fit=False,yerrorBars=['0']):
+def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',direc='',ylimits=None,fit=False,yerrorBars=['0']):
    # styles=['r^','bs','go','xk','xm','xy','hc']
-    styles=['r^','bs','go','k*','mh','xy','xc']
+   # styles=['r^','bs','go','k*','mh','xy','xc','rs']
+    styles=['r^','bs','go','k*','rh','bv','cp','ks'] #for NN vs scikit comparison
     ylist = []
     regions = np.array(regions)
     for i in range(len(labels)):
        y_prime = np.asarray([y[k][i] for k in range(len(y))])
        if len(yerrorBars)!=1: ey_prime =np.asarray([yerrorBars[k][i] for k in range(len(yerrorBars))])
+       plt.ioff()
        plt.plot(regions,y_prime,styles[i],markersize=8,label=labels[i]) #10
 
        ylist.append(y_prime) 
@@ -915,14 +920,15 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylim
     x_text0,y_text0 = float(regions[0])-100,float(y_prime[0])-0.02
     if 'p_T' in what[1] : 
         plt.annotate('low stat', xy=(regions[len(regions)-1],y_prime[len(y_prime)-1]), xytext=(x_text,y_text))
-        plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
+     #   plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
             
     axes = plt.gca()
     if 'mean' in what[0] :axes.set_ylim([0.9,1.05])
     if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
     if 'sigma' in what[0] :axes.set_ylim([0.04,0.16])
-    if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.10,0.16])
-    if 'sigma' in what[0] and 'eta' in what[1] and '700' in sample :axes.set_ylim([0.08,0.15])
+   # if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.10,0.16])
+    if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.05,0.16])
+ #   if 'sigma' in what[0] and 'eta' in what[1] and '700' in sample :axes.set_ylim([0.08,0.15])
     if ylimits!=None :  
          axes.set_ylim(ylimits)
          
@@ -943,8 +949,8 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylim
         plt.legend(loc='lower right',numpoints=1)
    # plt.show()
     outString = outString+sample
-    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
-    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(utils.IO.plotFolder+direc+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(utils.IO.plotFolder+direc+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.clf()
 
 

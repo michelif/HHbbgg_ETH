@@ -1,7 +1,6 @@
 import keras.models
 import os
 import bregnn.io as io
-import matplotlib.pyplot as plt
 import sys
 import json
 from optparse import OptionParser, make_option
@@ -12,6 +11,7 @@ parser = OptionParser(option_list=[
     make_option("--training",type='string',dest="training",default='mse'),
     make_option("--inp-file",type='string',dest='inp_file',default='applied_ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5'),
     make_option("--inp-dir",type='string',dest="inp_dir",default='/users/nchernya//HHbbgg_ETH/bregression/output_root/'),
+    make_option("--sample-name",type='string',dest="samplename",default='ttbar'),
 ])
 
 ## parse options
@@ -46,6 +46,6 @@ for i_r,region in enumerate(regions):
     comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
     style=False 
     if i_r==0 : style=True
-    samplename='ttbar'
-    outTag = 'Comparison17_01_2018_forTesting' + region_names[i_r]
+    samplename=options.samplename
+    outTag = 'Comparison18_01_2018_'+samplename + region_names[i_r]
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,region_names[i_r],samplename)
