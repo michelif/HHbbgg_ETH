@@ -72,12 +72,51 @@ for eta_ibin in np.arange(eta_categories.shape[1]-1,dtype=int):
  iqr2_corr_2d.append(err_corr_iqr2)
 
 weights=np.array(np.vstack(iqr2_2d[i] for i in range(binning[1])),dtype='float64')
+weights_corr=np.array(np.vstack(iqr2_corr_2d[i] for i in range(binning[1])),dtype='float64')
 
 bins_pt_2d = 0.5*(bins[1:]+bins[:-1])
 bins_eta_2d = 0.5*(eta_bins[1:]+eta_bins[:-1])
 
 X2d_bins,Y2d_bins=np.meshgrid(bins_eta_2d,bins_pt_2d)
-im = plt.pcolormesh(X2d_bins,Y2d_bins,weights.transpose(), cmap='hot')
-plt.colorbar(im, orientation='horizontal')
-savename= '/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/2d_%s.png'%options.samplename
-plt.savefig(savename)
+im = plt.pcolormesh(X2d_bins,Y2d_bins,weights.transpose(), cmap='viridis')
+plt.xlabel('$\eta$')
+plt.ylabel('$p_T$')
+ymin, ymax = (plt.gca()).get_ylim()
+ymax=300
+axes = plt.gca()
+axes.set_ylim(ranges[0][0],ymax)
+plt.text(-2,ymax*1.1,'IQR/2 Raw', fontsize=15)
+plt.text(-2,ymax*1.04,'%s'%options.samplename, fontsize=15)
+plt.colorbar(im, orientation='vertical')
+savename= '/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/2d_%s'%options.samplename
+plt.savefig(savename+'.png')
+plt.savefig(savename+'.pdf')
+plt.clf()
+
+im = plt.pcolormesh(X2d_bins,Y2d_bins,weights_corr.transpose(), cmap='viridis')
+plt.colorbar(im, orientation='vertical')
+ymin, ymax = (plt.gca()).get_ylim()
+plt.xlabel('$\eta$')
+plt.ylabel('$p_T$')
+ymax=300
+axes = plt.gca()
+axes.set_ylim(ranges[0][0],ymax)
+plt.text(-2,ymax*1.1,'IQR/2 NN corrected', fontsize=15)
+plt.text(-2,ymax*1.05,'%s'%options.samplename, fontsize=15)
+savename= '/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/2d_corr_%s'%options.samplename
+plt.savefig(savename+'.png')
+plt.savefig(savename+'.pdf')
+plt.clf()
+
+hist = plt.hist2d(X_eta.ravel(),X_pt.ravel(),bins = [bins_eta_2d,bins_pt_2d],normed=True,cmap='viridis')
+plt.colorbar(hist[3], orientation='vertical')
+plt.xlabel('$\eta$')
+plt.ylabel('$p_T$')
+ymax=300
+axes = plt.gca()
+axes.set_ylim(ranges[0][0],ymax)
+plt.text(-2,ymax*1.1,'$\eta$ - $p_T$ correlation', fontsize=15)
+plt.text(-2,ymax*1.05,'%s'%options.samplename, fontsize=15)
+savename= '/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/correlation2D_%s'%options.samplename
+plt.savefig(savename+'.png')
+plt.savefig(savename+'.pdf')
