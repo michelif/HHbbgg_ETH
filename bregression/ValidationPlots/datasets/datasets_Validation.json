@@ -1,0 +1,32 @@
+{  
+   "data":"DoubleMuon_preselected.root",
+   "signal":[
+         {
+            "name":"nrSM",
+            "legend":"SM Nonresonant",
+            "color":4,
+            "style":3,
+            "weight":50000,
+            "file":"output_GluGluToHHTo2B2G_node_SM_13TeV-madgraph.root",
+            "xsec" : 0.5,
+            "sfactor" : 1.0
+         }
+   ],
+   "background":{
+	"TT":{  
+         "position":1,
+         "legend":"tt+Jets",
+         "color":"#4aa6db",
+         "files":[  
+            {  
+               "file":"TT_preselected.root",
+               "xsec":809,
+	       "lumi":35870.0,
+               "eventsGenerated":7.02844e+07,
+               "weight":1.0,
+               "sfactor":1.0
+            }
+         ]
+      }
+}	
+}
