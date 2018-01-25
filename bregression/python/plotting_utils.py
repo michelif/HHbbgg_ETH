@@ -1,10 +1,12 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import training_utils as utils
 import optimization_utils as optimization
 
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 from sklearn.preprocessing import label_binarize
-import matplotlib.pyplot as plt
 import ROOT
 import math
 from array import array
@@ -130,10 +132,10 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     Histo_rel_diff_reg = np.histogram(rel_diff_regressed,bins=n_bins,range=(c_min,c_max))
     
     h_rel_diff = TH1F("hrel_diff", "hrel_diff", n_bins, c_min, c_max)
-    for i in xrange(len(rel_diff)): 
+    for i in range(len(rel_diff)): 
         h_rel_diff.Fill(rel_diff[i])
     h_rel_diff_reg = TH1F("hrel_diff_reg", "hrel_diff_reg", n_bins, c_min, c_max)
-    for i in xrange(len(rel_diff_regressed)): 
+    for i in range(len(rel_diff_regressed)): 
         h_rel_diff_reg.Fill(rel_diff_regressed[i])
     h_rel_diff.SetLineColor(ROOT.kBlue)
     h_rel_diff.SetMarkerColor(ROOT.kBlue)
@@ -162,8 +164,8 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     frame.Draw()
     h_rel_diff.Draw("samePE")
     h_rel_diff_reg.Draw("samePE")
-    print 'Nominal : mean, RMS :',h_rel_diff.GetMean(), h_rel_diff.GetRMS()
-    print 'Regresesd : mean, RMS : ',h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS()
+    print('Nominal : mean, RMS :',h_rel_diff.GetMean(), h_rel_diff.GetRMS())
+    print('Regresesd : mean, RMS : ',h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS())
 
   
 
@@ -307,7 +309,7 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
 def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,title='',titleName=''):  
     if style==True:
         gROOT.SetBatch(True)
-        gROOT.ProcessLineSync(".x /mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/scripts/setTDRStyle.C")
+        gROOT.ProcessLineSync(".x ~/HHbbgg_ETH/scripts/setTDRStyle.C")
         gROOT.ForceStyle()
         gStyle.SetPadTopMargin(0.06)
         gStyle.SetPadRightMargin(0.04)
@@ -360,10 +362,10 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
     for j in range(len(X_region)):
         if isinstance(X_region[j], np.ndarray) : data = X_region[j]
         else : data =((X_region[j]).as_matrix()).ravel()
-        print len(data)
+      #  print len(data)
         h_rel_diff = TH1F("hrel_diff_%s"%h_names[j], "hrel_diff_%s"%h_names[j], n_bins, c_min, c_max)
         h_rel_diff.Sumw2(ROOT.kTRUE)
-        for i in xrange(len(data)): 
+        for i in range(len(data)): 
             h_rel_diff.Fill(data[i])
   #      h_rel_diff.Scale(1./h_rel_diff.Integral())
         h_rel_diff.SetLineColor(colors[j])
@@ -381,9 +383,11 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         x.append(RooRealVar("x_%s"%h,"x_%s"%h,c_min,c_max))
         datahist.append(RooDataHist("roohist_%s"%h,"roohist_%s"%h,RooArgList(x[num]),datahists[num]))
         #######################Bukin function ################## 
-        Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
+        if ('mse' in names[j]) or ('HybridLoss' in names[j])  : Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,0.96,0.7,1.1))
+        else : Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
         if ('unweighted' in names[j]) and ('Jet_mcPt>=300' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
         elif ('No regression' in names[j]) and ('Jet_mcPt>=600' in outString)  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.2))
+        elif ('mse' in names[j]) or ('HybridLoss' in names[j])  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,0.06,0.01,0.15))
         else  : sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,sigp_initial,0.01,0.3))
         xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
         rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
@@ -411,7 +415,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         #res.append(sig[num].chi2FitTo(datahist[num]))
         fit_range_min = h_rel_diff.GetMean()-h_rel_diff.GetRMS()/2
         fit_range_max = h_rel_diff.GetMean()+h_rel_diff.GetRMS()/2
-        print 'range of the fit : ', fit_range_min, fit_range_max
+       # print 'range of the fit : ', fit_range_min, fit_range_max
    #     res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE),ROOT.RooFit.Range(fit_range_min,fit_range_max))) # take Mean of each histogram and add 1/2 of the RMS  ? -> try that
         res[num].Print()
         x[num].setRange("integralRange%s"%h, c_min,c_max)  
@@ -440,6 +444,7 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
        sigp[fitnum].writeToStream(fit_result_file,False)
        fit_result_file.write('\n',1)
     fit_result_file.close()
+    outString = outString.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_').replace(' & ','and').replace(' ','')
 
     c.cd()
     frame.GetYaxis().SetRangeUser(1e-06,max(max_list))
@@ -453,11 +458,10 @@ def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,ti
         func_list[j].Draw("same")
         hist_list[j].Draw("PEsame")
         leg.AddEntry(hist_list[j],names[j]+',Xp=%.2f,sigp=%.2f'%(Xp[j].getVal(),sigp[j].getVal()) ,"PE")
-        print j,' Sigma plus error : ',sigp[j].getVal(), ' +- ',sigp[j].getError()
+        print(j,' Sigma plus error : ',sigp[j].getVal(), ' +- ',sigp[j].getError())
     leg.Draw('same')
   #  save_name=utils.IO.plotFolder+"pt_regions_fitBukin_"+str(outString)+'.png'
   #  c.SaveAs("pt_region.png")
-    outString = outString.replace('/','_').replace(':','_').replace('(','_').replace(')','_').replace('+','_').replace('>=','_').replace('<','_').replace('>','_')
     c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.png')
     c.SaveAs(utils.IO.plotFolder+"fitBukin_regions_"+str(outString)+log_name+'.pdf')
    # c.SaveAs(utils.IO.plotFolder+"fitCruijff_regions_"+str(outString)+log_name+'.png')
@@ -538,10 +542,10 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
     for j in range(len(X_region)):
         h=h_names[j]
         data =((X_region[j]).as_matrix()).ravel()
-        print len(data)
+      #  print len(data)
         h_rel_diff = TH1F("hrel_diff_%s"%h_names[j], "hrel_diff_%s"%h_names[j], n_bins, c_min, c_max)
         h_rel_diff.Sumw2(True)
-        for i in xrange(len(data)): 
+        for i in range(len(data)): 
             h_rel_diff.Fill(data[i])
         h_rel_diff.Scale(1./h_rel_diff.Integral())
         h_rel_diff.SetLineColor(colors[j])
@@ -628,7 +632,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
         graphs[j].Draw("PEsame")
         func[j].Draw("sameR")
         t = paveText2.AddText("x0 hist/fit : %.2f/%.2f"%(x0_hist[j],x0_CDFfit[j]))
-        print "%.2f"%x0_CDFfit[j]
+        print("%.2f"%x0_CDFfit[j])
         t.SetTextColor(colors[j]);
     leg.Draw('same')
 
@@ -645,7 +649,7 @@ def fit_quantiles(X_region,names,style=True,n_bins=100,pol='Pol',outString=None)
     paveText.Draw("same")
    
     paveText2.Draw("same")
-    print x0_hist, x0_CDFfit
+   # print x0_hist, x0_CDFfit
    
  
     line = ROOT.TLine(x0_hist[0],frame2.GetMinimum() ,x0_hist[0],frame2.GetMaximum())
@@ -844,23 +848,23 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
 
  
 def print_roc_report(fpr,tpr,step=0.05):
-     print "======== ROC report ========"
+     print("======== ROC report ========")
      for i in range(int(1/step)):
-         print i
+         print(i)
          if fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))].size>0:
-             print "True positive rate: "+str(step*i)
-             print "False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))][0])
-     print "============================"
+             print("True positive rate: "+str(step*i))
+             print("False positive rate:"+str(fpr[np.where((tpr>step*i) & (tpr<step*i+0.005))][0]))
+     print("============================")
 
 
 
 def print_roc_report(fpr,tpr,step=0.05):
-    print "======== ROC report ========"
+    print("======== ROC report ========")
     for i in range(int(1/step)):
-        print i
+        print(i)
         index = plotting.bisection(tpr,step*i)
-        print "True positive rate: "+str(step*i)
-        print "False positive rate:"+str(fpr[index])
+        print("True positive rate: "+str(step*i))
+        print("False positive rate:"+str(fpr[index]))
         
 
 def bisection(array,value):#be careful, works with sorted arrays
@@ -891,15 +895,17 @@ def bisection(array,value):#be careful, works with sorted arrays
     
     
     
-def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylimits=None,fit=False,yerrorBars=['0']):
+def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',direc='',ylimits=None,fit=False,yerrorBars=['0']):
    # styles=['r^','bs','go','xk','xm','xy','hc']
-    styles=['r^','bs','go','k*','mh','xy','xc']
+   # styles=['r^','bs','go','k*','mh','xy','xc','rs']
+    styles=['r^','bs','go','k*','rh','bv','cp','ks'] #for NN vs scikit comparison
     ylist = []
     regions = np.array(regions)
     for i in range(len(labels)):
        y_prime = np.asarray([y[k][i] for k in range(len(y))])
        if len(yerrorBars)!=1: ey_prime =np.asarray([yerrorBars[k][i] for k in range(len(yerrorBars))])
-       plt.plot(regions,y_prime,styles[i],markersize=8,label=labels[i]) #10
+       plt.ioff()
+       plt.plot(regions,y_prime,styles[i],markersize=11,label=labels[i]) #10
 
        ylist.append(y_prime) 
        if len(yerrorBars)!=1:
@@ -914,14 +920,15 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylim
     x_text0,y_text0 = float(regions[0])-100,float(y_prime[0])-0.02
     if 'p_T' in what[1] : 
         plt.annotate('low stat', xy=(regions[len(regions)-1],y_prime[len(y_prime)-1]), xytext=(x_text,y_text))
-        plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
+     #   plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
             
     axes = plt.gca()
     if 'mean' in what[0] :axes.set_ylim([0.9,1.05])
     if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
     if 'sigma' in what[0] :axes.set_ylim([0.04,0.16])
-    if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.10,0.16])
-    if 'sigma' in what[0] and 'eta' in what[1] and '700' in sample :axes.set_ylim([0.08,0.15])
+   # if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.10,0.16])
+    if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.05,0.16])
+ #   if 'sigma' in what[0] and 'eta' in what[1] and '700' in sample :axes.set_ylim([0.08,0.15])
     if ylimits!=None :  
          axes.set_ylim(ylimits)
          
@@ -942,8 +949,8 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',ylim
         plt.legend(loc='lower right',numpoints=1)
    # plt.show()
     outString = outString+sample
-    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
-    plt.savefig(utils.IO.plotFolder+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(utils.IO.plotFolder+direc+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(utils.IO.plotFolder+direc+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.clf()
 
 
@@ -1017,8 +1024,8 @@ def draw_overflow(h,factor=1):
 def plot_feature_importance(clf,features,end='',path='/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/bregression/output_files/'): 
 	features_importance =  optimization.feature_importances_(clf)
 	features_dict = {features[i]:features_importance[i] for i in range(0,len(features)) }
-	sorted_features_values = sorted( features_dict.values(),reverse=True)
-	sorted_features = [key for key,value in sorted(features_dict.items() ,key=lambda x : x[1], reverse=True)]
+	sorted_features_values = sorted( list(features_dict.values()),reverse=True)
+	sorted_features = [key for key,value in sorted(list(features_dict.items()) ,key=lambda x : x[1], reverse=True)]
 
 	np.save(path+'out_features_values'+end,sorted_features_values)
 	np.save(path+'out_features_names'+end,sorted_features)
@@ -1047,11 +1054,11 @@ def plot_hist(hists,saveName,log=False,labels=None):
 		if labels==None : n, bins, patches = plt.hist(hists[i], 100,color='green', alpha=0.75)
 		else : n, bins, patches = plt.hist(hists[i], 100,range=[0,4],color=colors[i], alpha=0.5,label=labels[i])
 		area = sum(np.diff(bins)*n)
-		print 'num, intergral = ',i,area
+	#	print 'num, intergral = ',i,area
 	plt.xlabel('MPVS')
 	plt.ylabel('Events')
 	mpv = bins[np.where(n == n.max())]
-	print saveName, 'MPV = ', mpv[0]
+#	print saveName, 'MPV = ', mpv[0]
 	if log : plt.yscale('log')
 	plt.grid(True)
 	if labels!=None : plt.legend(loc='upper right')

@@ -6,8 +6,9 @@ Connecting to CSCS
 ssh username@ela.cscs.ch
 ssh daint
 ```
-Copy /users/musella/env.sh
-Source Pasqaule's file :
+Copy /users/musella/env.sh in '~ /env.sh'. In the copied file '~' has to be changed into "~musella" in order to be able to source Pasquale's environment. 
+
+Source Pasqaule's environment :
 ```
 source /users/musella/my-env/bin/activate
 ```
@@ -18,14 +19,15 @@ git clone -b ETH_regression git@github.com:chernyavskaya/HHbbgg_ETH.git
 Create jupyter folder and link it notebooks(or python maybe better) to bregression project inside
 ```
 mkdir jupyter
+cd jupyter
 ln -s ../HHbbgg_ETH/bregression/notebooks/ bregression
 ```
-Inside bin/ create bin/start_jupyter 
+Inside bin/ create bin/start_jupyter . Change the port number to something else.
 ```
 #!/bin/bash 
 source ~/env.sh
 cd ~/jupyter 
-jupyter notebook --port 9900 --no-browser
+jupyter notebook --port 9999 --no-browser
  ```
  Make start_jupyter executable
  ```
@@ -33,7 +35,7 @@ jupyter notebook --port 9900 --no-browser
  ```
  
  
- Create .ssh/config
+ Create .ssh/config. The port numbers inside this confid should be the same as in the one above.
  ```
 Host daint*
 LocalForward 9999 localhost:9999
@@ -44,7 +46,7 @@ ControlMaster auto
 ControlPath ~/.ssh/master-%r@%h:%p
 ```
 
-On your own laptop create .ssh/config
+On your own laptop create .ssh/config. The port numbers inside this confid should be the same as in the one above.
 ```
 Host cscs
 LocalForward 9999 localhost:9999
@@ -52,9 +54,15 @@ LocalForward 6666 localhost:6666
 User username
 HostName ela.cscs.ch
 ```
-Run cscs to be able to access the jupyter notebook later.
+To be able to access the jupyter notebook later from the web-interface connect to local host:
+```
+ssh cscs
+```
 
 Now back to cscs:
+```
+mkdir -p ~/.ipython/profile_default/startup/
+```
 Adding basic python config ~/.ipython/profile_default/startup/00-basics.ipy :
 ```
 cat ~/.ipython/profile_default/startup/00-basics.ipy
@@ -90,13 +98,13 @@ start_jupyter
 ```
 Open the notebook in the browser with the printed by jupyter token.
 
-Add config file to run jobs 'my_jobs.sh in the bregression directory(where you run the training)':
+Add config file to run jobs 'my_jobs.sh' in the bregression directory(where you run the training), in this case the directory is '~/jupyter/bregression'
 ```
 cat my_job.sh
 #!/bin/bash -l
 #SBATCH --job-name=job_name
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=pasquale.musella@cern.ch
+#SBATCH --mail-user=username@cern.ch   ## Change the email
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-core=1
@@ -111,13 +119,18 @@ export CRAY_CUDA_MPS=1
 
 source $HOME/env.sh
 
-cd $HOME/jupyter/GanjaPy
-
+cd $HOME/jupyter/bregression
 srun $@
 ```
 
 
 ## Training NN
+
+#### First of all, each time source the environment :
+```
+source env.sh
+```
+
 Training file :
 ./train_ffwd.py --help
 

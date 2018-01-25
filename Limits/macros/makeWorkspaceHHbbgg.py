@@ -147,10 +147,13 @@ def main(options,args):
         for ivar,var in enumerate(varnames):
             cut  = ROOT.TCut( cut.GetTitle() + " && ( %s > %g )" % (var,bounds[icat+1][ivar]) )
             prev = prev.GetTitle() + " || ( %s <= %g )" % (var,bounds[icat+1][ivar])
+            print "-----------cut------------------"
+            print cut
 
         cuts.append( ("cut%d"%icat,cut) )
         cats.append( ("cat%d"%icat,cat) )
             
+
         catvar += "+%d * (cat%d) " % ( icat, icat )
 
     catvar = ROOT.TCut(catvar)
@@ -200,21 +203,32 @@ def main(options,args):
             allcats.append(cname)
     print allcats
     
+    subCatCuts = {} 
+    if "subCategoryCuts" in summary[options.ncat]:
+        subCategoryCuts = summary[options.ncat]["subCategoryCuts"]
+ 
+        print "subcategory cuts", subCategoryCuts
+        for icat,cat in enumerate(subCategoryCuts):
+#            subCategoryCuts[cat] = ROOT.TCut("%s > %g && %s < %g " % (subCategoryCuts[cat][0],subCategoryCuts[cat][1],subCategoryCuts[cat][0],subCategoryCuts[cat][2]))   
+            subCategoryCuts[cat] =  ROOT.TCut("%s >( %s * %s + %s * %s + %s * %s) && %s <( %s * %s + %s * %s + %s * %s)" % (subCategoryCuts[cat][0],subCategoryCuts[cat][1],subCategoryCuts[cat][2],subCategoryCuts[cat][3],subCategoryCuts[cat][4],subCategoryCuts[cat][5],subCategoryCuts[cat][6],subCategoryCuts[cat][0],subCategoryCuts[cat][7],subCategoryCuts[cat][8],subCategoryCuts[cat][9],subCategoryCuts[cat][10],subCategoryCuts[cat][11],subCategoryCuts[cat][12]))
+
+
     procs = []
     first = True
+
     for name,tree in trees.iteritems():
         for an,ad in cuts+cats:
             tree.SetAlias(an,ad.GetTitle())
         tree.SetAlias("cat",catvar.GetTitle())
-        
         if not "bkg" in name:
             procs.append(name)
-
+        iCat = 0
         for tname, tsel in todos:
             mname = name
             if tname != "": mname += "_%s" % tname
 #            sel = ROOT.TCut("_weight") * selection
             sel = ROOT.TCut("weight") * selection
+
             if tsel != "":
                 sel *= ROOT.TCut(tsel)            
             model = ROOT.TH2F("model_%s" % mname, "model_%s" % mname, nbins, obsmin, obsmax, ncat, 0, ncat )
@@ -223,9 +237,12 @@ def main(options,args):
 #                tree.Draw("cat:%s>>model_renorm_%s" % (obsname,mname), sel * ROOT.TCut("_weight >= %g" % options.maxw), "goff")
                 tree.Draw("cat:%s>>model_renorm_%s" % (obsname,mname), sel * ROOT.TCut("weight >= %g" % options.maxw), "goff")
                 sel *= ROOT.TCut("_weight < %g" % options.maxw)
+            if "subCategoryCuts" in summary[options.ncat]:
+
+                sel *= subCategoryCuts[allcats[iCat]]
+                iCat += 1
+
             tree.Draw("cat:%s>>model_%s" % (obsname,mname), sel, "goff")
-            print "sellll------"
-            print sel
             models[mname] = (model,renorm)
             objs.append( (model,renorm) )
             ## model.Draw()
@@ -275,7 +292,18 @@ def main(options,args):
 
 #                pdfNorm.append(pdf.expectedEvents(ROOT.RooArgSet(mgg)))
                 catName=("%s_cat%d" % (name, icat)).replace("bkg_","")
-                pdfNorm[catName]=pdf.expectedEvents(ROOT.RooArgSet(mgg))
+                pdfNorm[catName]=pdf.expectedEvents(ROOT.RooArgSet(mgg)) # the fit is done on the blinded region but expected events is in 100-180, checked with the code below
+#                if options.reweight == True:
+#                    if catName == 'subcat0_cat0':
+#                        print "dajeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+#                        print pdfNorm[catName],pdf.getNormIntegral(ROOT.RooArgSet(mgg))
+#                        hist = pdf.createHistogram("prova",mgg)
+#                        c1 = ROOT.TCanvas()
+#                        hist.Draw()
+#                        c1.SaveAs("dummy.png")
+#                        print "int total", hist.Integral(hist.FindBin(100),hist.FindBin(180),"width")
+#                        print "int blinded", hist.Integral(hist.FindBin(100),hist.FindBin(115),"width")+hist.Integral(hist.FindBin(135),hist.FindBin(180),"width")
+
 
     ws.writeToFile(options.out)
 
@@ -294,7 +322,8 @@ kmax * number of nuisance parameters
 #        datacard.write(pdfName[icat].replace("cat0","$CHANNEL")+"\n")
 
     for icat in range(0,len(allcats)):
-        datacard.write("shapes bkg %s" % allcats[icat] )
+#        datacard.write("shapes bkg %s" % allcats[icat] )
+        datacard.write("shapes bkg %s" % (pdfName[icat].split('_bkg_')[-1]).replace('_pdf',''))
         datacard.write(" %s cms_hgg:" % str(os.getcwd()+str("/")+options.out))
         datacard.write(pdfName[icat]+"\n")
 
@@ -355,7 +384,7 @@ kmax * number of nuisance parameters
             if "node" in procs[proc]:
                 continue
             datacard.write(" -1".ljust(5) )
-        datacard.write(("%d" % pdfNorm[allcats[icat]]).ljust(5) )
+        datacard.write(("%f" % pdfNorm[allcats[icat]]).ljust(5) )
     datacard.write("\n")
 
     datacard.write("----------------------------------------------------------------------------------------------------------------------------------\n\n")
@@ -399,6 +428,7 @@ if __name__ == "__main__":
                         default="",
                         help="number of categories",
                         ),
+
             ]
                           )
 

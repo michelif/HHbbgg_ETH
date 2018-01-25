@@ -190,7 +190,7 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
     x_sig=np.asarray(x)[np.where(np.asarray(y)==signalClassOutput)]
     x_tot=np.concatenate((x_bkg,x_sig))
 
-    if weights != None:
+    if weights.all() != None:
         w_bkg = np.asarray(weights)[np.where(np.asarray(y)==backgroundClassOutput)]
         w_sig=np.asarray(weights)[np.where(np.asarray(y)==signalClassOutput)]
         w_tot=np.concatenate((w_bkg,w_sig))
@@ -201,7 +201,7 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
     
     decisions = clf.predict_proba(x_tot)[:,clf.n_classes_-1]
     # Compute ROC curve and area under the curve
-    if weights == None:
+    if weights.all() == None:
         fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput)
     else:
         fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput,sample_weight=w_tot.ravel())

@@ -124,7 +124,7 @@ def set_signals(treeName,branch_names,shuffle):
         utils.IO.signal_df.append(rpd.read_root(utils.IO.signalName[i],"bbggSelectionTree", columns = branch_names))
         define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i])
         if shuffle:
-            utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
+            utils.IO.signal_df[i]['random_index'] = np.random.permutation(list(range(utils.IO.signal_df[i].index.size)))
             utils.IO.signal_df[i].sort_values(by='random_index',inplace=True)
             
 #         adjust_and_compress(utils.IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
@@ -136,7 +136,7 @@ def set_backgrounds(treeName,branch_names,shuffle):
         utils.IO.background_df.append(rpd.read_root(utils.IO.backgroundName[i],"bbggSelectionTree", columns = branch_names))
         define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i])
         if shuffle:
-            utils.IO.background_df[i]['random_index'] = np.random.permutation(range(utils.IO.background_df[i].index.size))
+            utils.IO.background_df[i]['random_index'] = np.random.permutation(list(range(utils.IO.background_df[i].index.size)))
             utils.IO.background_df[i].sort_values(by='random_index',inplace=True)
 
 #         adjust_and_compress(utils.IO.background_df[i]).to_hdf('/tmp/micheli/background.hd5','bkg',compression=9,complib='bzip2',mode='a')

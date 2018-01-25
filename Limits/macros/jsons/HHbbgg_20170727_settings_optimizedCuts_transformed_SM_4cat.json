@@ -1,0 +1,33 @@
+{
+    "file" : "/mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/outfiles/20170828_optimizedCuts_noDR_minDRGJet/Total_preselection_diffNaming_transformedMVA.root",
+    "observable": [
+        "Mgg", 
+        100.000, 
+        180.000
+    ], 
+    "subcategories": [
+	 [
+            "subcat0",
+            "MX >294. && MX<=360."
+        ],
+	 [
+            "subcat1",
+            "MX >360. && MX<=439."
+        ],
+	 [
+            "subcat2",
+            "MX >439."
+        ],
+	 [
+            "subcat3",
+            "MX >250. && MX<294"
+        ]
+
+], 
+	"addBSMNodes":1,
+	"variables": [
+	"MVAOutputTransformed"
+	],
+     	"selections": []
+}
+

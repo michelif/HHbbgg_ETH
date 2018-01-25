@@ -1,0 +1,31 @@
+
+----------------------------------------------------------------------------------------------------------------------------------
+imax * number of bins
+jmax * number of processes minus 1
+kmax * number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes data_obs * /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:bkg_$CHANNEL
+shapes bkg subcat0_cat0 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat0_cat0_pdf
+shapes bkg subcat0_cat1 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat0_cat1_pdf
+shapes bkg subcat0_cat2 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb2_bkg_subcat0_cat2_pdf
+shapes bkg subcat1_cat0 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat1_cat0_pdf
+shapes bkg subcat1_cat1 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat1_cat1_pdf
+shapes bkg subcat1_cat2 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat1_cat2_pdf
+shapes bkg subcat2_cat0 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat2_cat0_pdf
+shapes bkg subcat2_cat1 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat2_cat1_pdf
+shapes bkg subcat2_cat2 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb2_bkg_subcat2_cat2_pdf
+shapes bkg subcat3_cat0 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat3_cat0_pdf
+shapes bkg subcat3_cat1 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb1_bkg_subcat3_cat1_pdf
+shapes bkg subcat3_cat2 /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:cheb2_bkg_subcat3_cat2_pdf
+shapes higgs *   /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:higgs_$CHANNEL
+shapes sig *   /mnt/t3nfs01/data01/shome/micheli/HHbbgg_ETH_devel/Limits/macros/HHbbgg_20170727_optimizedCuts_transformed_SM_4cat.root cms_hgg:sig_$CHANNEL
+----------------------------------------------------------------------------------------------------------------------------------
+bin                  subcat0_cat0 subcat1_cat0 subcat2_cat0 subcat3_cat0 subcat0_cat1 subcat1_cat1 subcat2_cat1 subcat3_cat1 subcat0_cat2 subcat1_cat2 subcat2_cat2 subcat3_cat2
+observation          -1   -1   -1   -1   -1   -1   -1   -1   -1   -1   -1   -1  
+----------------------------------------------------------------------------------------------------------------------------------
+bin                  subcat0_cat0 subcat0_cat0 subcat0_cat0 subcat1_cat0 subcat1_cat0 subcat1_cat0 subcat2_cat0 subcat2_cat0 subcat2_cat0 subcat3_cat0 subcat3_cat0 subcat3_cat0 subcat0_cat1 subcat0_cat1 subcat0_cat1 subcat1_cat1 subcat1_cat1 subcat1_cat1 subcat2_cat1 subcat2_cat1 subcat2_cat1 subcat3_cat1 subcat3_cat1 subcat3_cat1 subcat0_cat2 subcat0_cat2 subcat0_cat2 subcat1_cat2 subcat1_cat2 subcat1_cat2 subcat2_cat2 subcat2_cat2 subcat2_cat2 subcat3_cat2 subcat3_cat2 subcat3_cat2
+process              higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg  higgs sig  bkg 
+process              4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1    4    -10  1   
+rate                 -1   -1  5.884488 -1   -1  4.570817 -1   -1  4.031738 -1   -1  2.323552 -1   -1  13.624076 -1   -1  10.456420 -1   -1  20.287118 -1   -1  19.803612 -1   -1  77.950838 -1   -1  57.320791 -1   -1  93.906444 -1   -1  68.560582
+----------------------------------------------------------------------------------------------------------------------------------
+
