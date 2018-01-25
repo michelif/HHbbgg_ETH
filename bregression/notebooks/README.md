@@ -85,7 +85,8 @@ Plot money plots using Bukin Fits. (there is a possibility to compare with sciki
 ipython chooseTheBestNN.py ggHHbbgg_sm DiHiggs_sm
 ```
 
-#### Plot quantiles
+#### Plot quantiles vs pt and eta, IQR/2 vs sigma/pt, IQR/2 vs eta and pt
 ```
 ipython plot_IQR2.py -- --sample-name ZHbbll --inp-file applied_res_ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.hd5
+ipython plot_IQR2.py -- --sample-name ggHHbbgg_res700  --inp-file applied_res_ggHHbbgg_res700_RegressionPerJet_heppy_energyRings3_forTraining_Large0.hd5
 ```

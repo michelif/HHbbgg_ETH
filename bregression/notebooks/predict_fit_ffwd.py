@@ -69,19 +69,14 @@ for idx,name in enumerate(input_trainings):
         if res is not None:
             res *= config['y_std']
   
-    # errors vector
-    #if y_pred.shape[1] > 1:
-    #    err = y[:,0]-corr
-    #else:
-    #    err = y-corr
-    # ## Characterize the outcome
-    #print(y.mean(),y.std())
-
     # Add new prediction to data frame
     data = data.assign(newNNreg=y_pred[:,0])
     data = data.rename(columns={'newNNreg':'Jet_pt_reg_NN_%s'%input_trainings[idx]})
+    if res is not None :
+        data = data.assign(newNNreg_res=res)
+        data = data.rename(columns={'newNNreg_res':'Jet_resolution_NN_%s'%input_trainings[idx]})
 
 # save dataframe with added corrections
-outfilename=options.out_dir+'applied_'+options.inp_file
+outfilename=options.out_dir+'applied_res_'+options.inp_file
 data.to_hdf(outfilename,'w')
 

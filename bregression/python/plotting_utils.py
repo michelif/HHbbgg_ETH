@@ -905,7 +905,7 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',dire
        y_prime = np.asarray([y[k][i] for k in range(len(y))])
        if len(yerrorBars)!=1: ey_prime =np.asarray([yerrorBars[k][i] for k in range(len(yerrorBars))])
        plt.ioff()
-       plt.plot(regions,y_prime,styles[i],markersize=8,label=labels[i]) #10
+       plt.plot(regions,y_prime,styles[i],markersize=11,label=labels[i]) #10
 
        ylist.append(y_prime) 
        if len(yerrorBars)!=1:

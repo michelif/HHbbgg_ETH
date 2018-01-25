@@ -32,6 +32,7 @@ region_names = regions_summary['pt_regions']+regions_summary['eta_region_names']
 y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
 X_pt = (data['Jet_pt']).values.reshape(-1,1)
 X_eta = (data['Jet_eta']).values.reshape(-1,1)
+X_rho = (data['rho']).values.reshape(-1,1)
 res = (data['Jet_resolution_NN_%s'%input_trainings[0]])
 y_pred = (data['Jet_pt_reg_NN_%s'%input_trainings[0]]) #bad name because it is actually a correction
 y_hbb = (data['Jet_mcPt']/data['Jet_pt_reg']).values.reshape(-1,1)
@@ -41,12 +42,13 @@ err = y[:,0]-y_pred
 
 linestyles = ['-.', '--','-', ':']
 
-whats = ['p_T','\eta']
-ranges = [[30,400],[-2.5,2.5]]
-binning =[50,10] #[50,20]
-for i in range(0,2):
+whats = ['p_T','\eta','rho']
+ranges = [[30,400],[-2.5,2.5],[0,50]]
+binning =[50,10,20] #[50,20]
+for i in range(2,3):
  if i==0 : X = X_pt
- else : X = X_eta
+ elif i==1 : X = X_eta
+ elif i==2 : X = X_rho
  print(i,X)
  
  bins=binning[i]

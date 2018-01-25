@@ -172,4 +172,4 @@ def get_mean_width(file_pt):
             data_pt.append(float(words[0]))
             data_er.append(float(words[2]))
     open_pt.close() 
-    return data_pt[:len(data_pt)/2], data_pt[len(data_pt)/2:],data_er[:len(data_er)/2], data_er[len(data_er)/2:]
+    return data_pt[:int(len(data_pt)/2)], data_pt[int(len(data_pt)/2):],data_er[:int(len(data_er)/2)], data_er[int(len(data_er)/2):]
