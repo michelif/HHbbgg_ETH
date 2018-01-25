@@ -1,0 +1,2 @@
+name=DoubleMuon  site=root://eoscms.cern.ch/     dir=/store//group/phys_higgs/vbfHbb/V25/DoubleMuon/
+name=TT site=root://eoscms.cern.ch:1094/   dir=/store//group/phys_higgs/vbfHbb/V25/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/VHBB_HEPPY_V25_newReg_energyRing_upd_Efloat/
