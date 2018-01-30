@@ -15,6 +15,21 @@ from sklearn.model_selection import train_test_split
 from optparse import OptionParser, make_option
 
 ##
+raw_features = ['Jet_pt',
+                    'Jet_eta',
+                    'rho',
+                    'Jet_mt',
+                    'Jet_leadTrackPt',
+                    'Jet_leptonPtRel',
+                    'Jet_leptonDeltaR',
+                    'Jet_neHEF',
+                    'Jet_neEmEF',
+                    'Jet_vtxPt',
+                    'Jet_vtxMass',
+                    'Jet_vtx3dL',
+                    'Jet_vtxNtrk',
+                    'Jet_vtx3deL',
+                    'Jet_numDaughters_pt03']
 default_features = ['Jet_pt',
                     'Jet_eta',
                     'rho',
@@ -29,27 +44,48 @@ default_features = ['Jet_pt',
                     'Jet_vtx3dL',
                     'Jet_vtxNtrk',
                     'Jet_vtx3deL',
-                    'Jet_energyRing_dR0_em_Jet_e',
-                    'Jet_energyRing_dR1_em_Jet_e',
-                    'Jet_energyRing_dR2_em_Jet_e',
-                    'Jet_energyRing_dR3_em_Jet_e',
-                    'Jet_energyRing_dR4_em_Jet_e',
-                    'Jet_energyRing_dR0_neut_Jet_e',
-                    'Jet_energyRing_dR1_neut_Jet_e',
-                    'Jet_energyRing_dR2_neut_Jet_e',
-                    'Jet_energyRing_dR3_neut_Jet_e',
-                    'Jet_energyRing_dR4_neut_Jet_e',
-                    'Jet_energyRing_dR0_ch_Jet_e',
-                    'Jet_energyRing_dR1_ch_Jet_e',
-                    'Jet_energyRing_dR2_ch_Jet_e',
-                    'Jet_energyRing_dR3_ch_Jet_e',
-                    'Jet_energyRing_dR4_ch_Jet_e',
-                    'Jet_energyRing_dR0_mu_Jet_e',
-                    'Jet_energyRing_dR1_mu_Jet_e',
-                    'Jet_energyRing_dR2_mu_Jet_e',
-                    'Jet_energyRing_dR3_mu_Jet_e',
-                    'Jet_energyRing_dR4_mu_Jet_e',
+                    'Jet_energyRing_dR0_em_Jet_rawEnergy',
+                    'Jet_energyRing_dR1_em_Jet_rawEnergy',
+                    'Jet_energyRing_dR2_em_Jet_rawEnergy',
+                    'Jet_energyRing_dR3_em_Jet_rawEnergy',
+                    'Jet_energyRing_dR4_em_Jet_rawEnergy',
+                    'Jet_energyRing_dR0_neut_Jet_rawEnergy',
+                    'Jet_energyRing_dR1_neut_Jet_rawEnergy',
+                    'Jet_energyRing_dR2_neut_Jet_rawEnergy',
+                    'Jet_energyRing_dR3_neut_Jet_rawEnergy',
+                    'Jet_energyRing_dR4_neut_Jet_rawEnergy',
+                    'Jet_energyRing_dR0_ch_Jet_rawEnergy',
+                    'Jet_energyRing_dR1_ch_Jet_rawEnergy',
+                    'Jet_energyRing_dR2_ch_Jet_rawEnergy',
+                    'Jet_energyRing_dR3_ch_Jet_rawEnergy',
+                    'Jet_energyRing_dR4_ch_Jet_rawEnergy',
+                    'Jet_energyRing_dR0_mu_Jet_rawEnergy',
+                    'Jet_energyRing_dR1_mu_Jet_rawEnergy',
+                    'Jet_energyRing_dR2_mu_Jet_rawEnergy',
+                    'Jet_energyRing_dR3_mu_Jet_rawEnergy',
+                    'Jet_energyRing_dR4_mu_Jet_rawEnergy',
                     'Jet_numDaughters_pt03']
+rings=[
+                    'Jet_energyRing_dR0_em',
+                    'Jet_energyRing_dR1_em',
+                    'Jet_energyRing_dR2_em',
+                    'Jet_energyRing_dR3_em',
+                    'Jet_energyRing_dR4_em',
+                    'Jet_energyRing_dR0_neut',
+                    'Jet_energyRing_dR1_neut',
+                    'Jet_energyRing_dR2_neut',
+                    'Jet_energyRing_dR3_neut',
+                    'Jet_energyRing_dR4_neut',
+                    'Jet_energyRing_dR0_ch',
+                    'Jet_energyRing_dR1_ch',
+                    'Jet_energyRing_dR2_ch',
+                    'Jet_energyRing_dR3_ch',
+                    'Jet_energyRing_dR4_ch',
+                    'Jet_energyRing_dR0_mu',
+                    'Jet_energyRing_dR1_mu',
+                    'Jet_energyRing_dR2_mu',
+                    'Jet_energyRing_dR3_mu',
+                    'Jet_energyRing_dR4_mu']
 
 
 ## command_line options
@@ -88,9 +124,14 @@ if options.hparams is not None:
         hparams = json.loads(hf.read())        
     
 ## read data
-columns = features + ['Jet_mcPt']
+columns = raw_features + rings + ['Jet_mcPt'] + ['Jet_rawEnergy'] + ['Jet_e']
 data = io.read_data(inp_file, columns = columns)
 
+for ring in rings:
+    data['%s_Jet_rawEnergy'%ring]=data['%s'%ring]/data['Jet_rawEnergy']
+
+data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
+data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
 X = data[features].values
 y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
 
@@ -117,7 +158,9 @@ def get_kwargs(fn,**kwargs):
             kwargs[par] = hparams.pop(par)
     return kwargs
 
-init_kwargs = get_kwargs(ffwd.FFWDRegression.__init__,monitor_dir=options.out_dir)
+loss_params=dict()
+if options.loss == 'QuantileLoss' : loss_params=dict(taus=[0.4,0.25,0.75])
+init_kwargs = get_kwargs(ffwd.FFWDRegression.__init__,monitor_dir=options.out_dir,loss_params=loss_params)
 fit_kwargs = get_kwargs(ffwd.FFWDRegression.fit,batch_size=options.batch_size,epochs=options.epochs)
 
 print(init_kwargs)

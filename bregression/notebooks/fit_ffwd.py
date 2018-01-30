@@ -35,17 +35,18 @@ for i_r,region in enumerate(regions):
     X_predictions_compare = []
     data_cut = data.query(region)
     y = (data_cut['Jet_mcPt']/data_cut['Jet_pt']).values.reshape(-1,1)
-    y_hbb = (data_cut['Jet_mcPt']/data_cut['Jet_pt_reg']).values.reshape(-1,1)
+  #  y_hbb = (data_cut['Jet_mcPt']/data_cut['Jet_pt_reg']).values.reshape(-1,1)
     X_predictions_compare.append(y[:,0]) 	
-    X_predictions_compare.append(y_hbb[:,0]) 	
+  #  X_predictions_compare.append(y_hbb[:,0]) 	
     for idx,name in enumerate(input_trainings):
         y_pred_cut = (data_cut['Jet_pt_reg_NN_%s'%input_trainings[idx]])
         X_predictions_compare.append(y[:,0]/y_pred_cut)
   
 
-    comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
+  #  comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
+    comparison_tags = ['No regression'] + input_trainings
     style=False 
     if i_r==0 : style=True
     samplename=options.samplename
-    outTag = 'Comparison18_01_2018_'+samplename + region_names[i_r]
+    outTag = 'Comparison29_01_2018Raw_'+samplename + region_names[i_r]
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,region_names[i_r],samplename)

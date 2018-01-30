@@ -43,6 +43,8 @@ for idx,name in enumerate(input_trainings):
   
     # ## Compute predictions
     features = config['options']['features'].split(',')
+    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
     X = data[features].values
     
     model = keras.models.load_model(models[0],compile=False)
@@ -77,6 +79,6 @@ for idx,name in enumerate(input_trainings):
         data = data.rename(columns={'newNNreg_res':'Jet_resolution_NN_%s'%input_trainings[idx]})
 
 # save dataframe with added corrections
-outfilename=options.out_dir+'applied_res_'+options.inp_file
+outfilename=options.out_dir+'applied_res_HybridRaw_'+options.inp_file
 data.to_hdf(outfilename,'w')
 

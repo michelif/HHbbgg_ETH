@@ -45,7 +45,7 @@ linestyles = ['-.', '--','-', ':']
 whats = ['p_T','\eta','rho']
 ranges = [[30,400],[-2.5,2.5],[0,50]]
 binning =[50,10,20] #[50,20]
-for i in range(2,3):
+for i in range(0,3):
  if i==0 : X = X_pt
  elif i==1 : X = X_eta
  elif i==2 : X = X_rho
@@ -87,8 +87,8 @@ for i in range(2,3):
  plt.xlabel('$%s$'%whats[i])
  plt.ylabel('$p_T^{true} / p_T^{reco}$')
  plt.legend()
-# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/mean_median_%s_%s.pdf'%(whats[i].replace('\\',''),options.samplename))
-# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/mean_median_%s_%s.png'%(whats[i].replace('\\',''),options.samplename))
+# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/mean_median_%s_%s.pdf'%(input_trainings[0],options.samplename,whats[i].replace('\\',''),options.samplename))
+# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/mean_median_%s_%s.png'%(input_trainings[0],options.samplename,whats[i].replace('\\',''),options.samplename))
  plt.clf()
  
  
@@ -118,14 +118,14 @@ for i in range(2,3):
  plt.xlabel('$%s$'%whats[i])
  plt.ylabel('$p_T^{true} / p_T^{reco}$')
  plt.legend(loc='upper right')
-# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/quantiles_col_%s_%s.pdf'%(whats[i].replace('\\',''),options.samplename))
-# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/quantiles_col_%s_%s.png'%(whats[i].replace('\\',''),options.samplename))
+ plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/quantiles_col_%s_%s_%s.pdf'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename))
+ plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/quantiles_col_%s_%s_%s.png'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename))
  plt.clf()
  
   ## Draw profile of sigma (0.72-0.25)/2 vs eta and pt
  plt.scatter(binc,err_iqr2,color='red',marker='^',label='No Regression')
  plt.scatter(binc,err_hbb_iqr2,color='blue',marker='s',label='HIG-17-009')
- plt.scatter(binc,err_corr_iqr2,color='green',marker='o',label='NN HybridLoss')
+ plt.scatter(binc,err_corr_iqr2,color='green',marker='o',label='NN %s'%input_trainings[0])
  plt.grid(alpha=0.2,linestyle='--',markevery=2)
  axes = plt.gca()
  if (i==0) : axes.set_ylim(0.02,0.20)
@@ -137,8 +137,8 @@ for i in range(2,3):
  lgd = plt.legend(loc="lower center",numpoints=1,ncol=2,bbox_to_anchor=(0.0,-0.202,1.,-.202),borderaxespad=0.,mode='expand')
  plt.xlabel('$%s$'%whats[i])
  plt.ylabel('IQR / 2')
- plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/IQR_20bins_%s_%s.pdf'%(whats[i].replace('\\',''),options.samplename),bbox_extra_artists=(lgd,), bbox_inches='tight')
- plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/IQR_20bins_%s_%s.png'%(whats[i].replace('\\',''),options.samplename),bbox_extra_artists=(lgd,), bbox_inches='tight')
+ plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_20bins_%s_%s_%s.pdf'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename),bbox_extra_artists=(lgd,), bbox_inches='tight')
+ plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_20bins_%s_%s_%s.png'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename),bbox_extra_artists=(lgd,), bbox_inches='tight')
  plt.clf()
 
 
@@ -155,5 +155,5 @@ ymin, ymax = axes.get_ylim()
 plt.text(0.0,ymax*0.95,'%s'%options.samplename, fontsize=20)
 plt.xlabel('$\sigma(p_T)/p_T$')
 plt.ylabel('IQR / 2')
-#plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/IQR_sigma_pt_%s.pdf'%options.samplename)
-#plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/HybridLoss/IQR_sigma_pt_%s.png'%options.samplename)
+plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_sigma_pt_%s_%s.pdf'%(input_trainings[0],options.samplename,input_trainings[0],options.samplename))
+plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_sigma_pt_%s_%s.png'%(input_trainings[0],options.samplename,input_trainings[0],options.samplename))
