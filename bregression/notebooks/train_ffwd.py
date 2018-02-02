@@ -180,7 +180,7 @@ if options.x_val==True:
             **fit_kwargs)
 else :
     X_train,X_valid,y_train,y_valid = train_test_split(X,y,test_size=options.valid_frac,random_state=options.seed)
-    reg.fit(X_train,y_train,
+    reg.fit(X_train,y_train,kfold=1,  ### here if you want to save hdf file after each better epoch, put -1
         validation_data=(X_valid,y_valid),
         **fit_kwargs)
 
