@@ -60,7 +60,7 @@ print(features)
 ## command_line options
 parser = OptionParser(option_list=[
     make_option("--inp-dir",type='string',dest="inp_dir",default=os.environ['SCRATCH']+'/bregression'),
-    make_option("--out-dir",type='string',dest="out_dir",default='.'),
+    make_option("--out-dir",type='string',dest="out_dir",default=os.environ['SCRATCH']+'/bregression/NN_output/'),
     make_option("--inp-file",type='string',dest='inp_file',default='ttbar_unweighted_full80M_selected_train.hd5'),
     make_option("--features",type='string',dest='features',default=''),
     make_option("--normalize-target",action="store_true",dest="normalize_target",default=True),
@@ -72,6 +72,7 @@ parser = OptionParser(option_list=[
     make_option("--hparams",type='string',dest='hparams',default=None),
     make_option("--seed",type='int',dest='seed',default=98543),
     make_option("--x-val",action="store_true",dest='x_val',default=False),
+    make_option("--nkfolds",type='int',dest='nkfolds',default=5),
 ])
 
 ## parse options
@@ -169,7 +170,7 @@ with open(options.out_dir+'/config.json','w+') as fo:
 if options.x_val==True:
     kf = KFold(n_splits=int(1./options.valid_frac),shuffle=True,random_state=options.seed) 
     kf_idx = iter(kf.split(X)) 
-    for kfold in range(5):
+    for kfold in range(options.nkfolds):
         # split data
         train_idx,valid_idx = next(kf_idx)
         X_train, X_valid = X[train_idx], X[valid_idx]
