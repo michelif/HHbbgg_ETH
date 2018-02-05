@@ -13,7 +13,8 @@ import matplotlib.offsetbox as offsetbox
 
 
 parser = OptionParser(option_list=[
-    make_option("--training",type='string',dest="training",default='HybridLossRaw'),
+    make_option("--training",type='string',dest="training",default='2018-02-03_17_57_53_job'),
+    make_option("--njobs",type='int',dest="njobs",default=0),
     make_option("--inp-dir",type='string',dest="inp_dir",default=os.environ['SCRATCH']+'/bregression/NN_output/'),
     make_option("--inp-file",type='string',dest='inp_file',default='metrics'),
     make_option("--out-dir",type='string',dest="out_dir",default='/users/nchernya//HHbbgg_ETH/bregression/plots/NN_epochs/'),
@@ -23,7 +24,7 @@ parser = OptionParser(option_list=[
 colors=['r','b','g','k','c','y']
 ## parse options
 (options, args) = parser.parse_args()
-input_trainings = options.training.split(',')
+input_trainings = [ (options.training+'%i'%i+'/') for i in range(0,options.njobs)]
 input_metrics = options.metrics.split(',')
 
 nxval=5
