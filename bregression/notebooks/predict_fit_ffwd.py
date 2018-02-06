@@ -6,6 +6,7 @@ import bregnn.io as io
 import matplotlib.pyplot as plt
 import sys
 import json
+import datetime
 from optparse import OptionParser, make_option
 sys.path.insert(0, '/users/nchernya/HHbbgg_ETH/bregression/python/')
 import plotting_utils as plotting
@@ -14,6 +15,7 @@ import plotting_utils as plotting
 parser = OptionParser(option_list=[
     make_option("--training",type='string',dest="training",default='mse'),
     make_option("--inp-dir",type='string',dest="inp_dir",default='/users/nchernya//HHbbgg_ETH/root_files/'),
+    make_option("--target-dir",type='string',dest="target_dir",default='/scratch/snx3000/nchernya/bregression/NN_output/'),
     make_option("--inp-file",type='string',dest='inp_file',default='ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5'),
     make_option("--out-dir",type='string',dest="out_dir",default='/users/nchernya//HHbbgg_ETH/bregression/output_root/'),
 ])
@@ -24,14 +26,14 @@ input_trainings = options.training.split(',')
 
 # ## Read test data and model
 # load data
-base_dir = '/scratch/snx3000/musella/bregression'
-#data = io.read_data(base_dir+'/ttbar_unweighted_full80M_selected_test.hd5', columns = None )
 data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
+data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
+data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
 
 for idx,name in enumerate(input_trainings):
     # list all model files in the training folder
-    #target = '/users/musella/jupyter/bregression/hybrid_cfg'
-    target='/users/nchernya/HHbbgg_ETH/bregression/notebooks/'+input_trainings[idx]
+#    target='/users/nchernya/HHbbgg_ETH/bregression/notebooks/'+input_trainings[idx]
+    target=options.target_dir+input_trainings[idx]
     models = get_ipython().getoutput('ls -t $target/*.hdf5')
     models
   
@@ -43,8 +45,6 @@ for idx,name in enumerate(input_trainings):
   
     # ## Compute predictions
     features = config['options']['features'].split(',')
-    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
-    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
     X = data[features].values
     
     model = keras.models.load_model(models[0],compile=False)
@@ -79,6 +79,8 @@ for idx,name in enumerate(input_trainings):
         data = data.rename(columns={'newNNreg_res':'Jet_resolution_NN_%s'%input_trainings[idx]})
 
 # save dataframe with added corrections
-outfilename=options.out_dir+'applied_res_HybridRaw_'+options.inp_file
+now = datetime.datetime.now()
+now = str(now).split(' ')[0] 
+outfilename=options.out_dir+'applied_res_%s_'%str(now)+options.inp_file
 data.to_hdf(outfilename,'w')
 

@@ -923,12 +923,12 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',dire
      #   plt.annotate('all pT', xy=(regions[0],y_prime[0]), xytext=(x_text0,y_text0))
             
     axes = plt.gca()
-    if 'mean' in what[0] :axes.set_ylim([0.9,1.05])
-    if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
-    if 'sigma' in what[0] :axes.set_ylim([0.04,0.16])
-   # if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.10,0.16])
-    if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.05,0.16])
- #   if 'sigma' in what[0] and 'eta' in what[1] and '700' in sample :axes.set_ylim([0.08,0.15])
+ #   if 'mean' in what[0] :axes.set_ylim([0.9,1.05])
+ #   if 'FWHM' in what[0] :axes.set_ylim([-0.1,0.45])
+ #   if 'sigma' in what[0] :axes.set_ylim([0.04,0.16])
+ #   if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.05,0.16])
+    if 'mean' in what[0] :axes.set_ylim([0.9,1.15])
+    if 'sigma' in what[0] :axes.set_ylim([0.04,0.20])
     if ylimits!=None :  
          axes.set_ylim(ylimits)
          

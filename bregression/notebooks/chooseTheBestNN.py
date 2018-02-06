@@ -10,6 +10,7 @@ import plotting_utils as plotting
 import optimization_utils as optimization
 import postprocessing_utils as postprocessing
 import math
+import datetime
 
 testfile = sys.argv[1]
 testfile2 = sys.argv[2]
@@ -18,10 +19,13 @@ path = '/users/nchernya//HHbbgg_ETH/bregression/fitResults/'
 pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<60),(Jet_mcPt>=60 & Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<150),(Jet_mcPt>=150 & Jet_mcPt<200),(Jet_mcPt>=200 & Jet_mcPt<250),(Jet_mcPt>=250 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
 eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
 #labels_old=['x HIG-16-044','x no Regression','x MSE','x high pT']
-labels_old=['BDT scikit']
+#labels_old=['BDT scikit']
+labels_old=None
 saveTag_old='FinalHighPt_eta'
-labels=['No Regression','HIG-17-009','NN HybridLoss']
-saveTag='Comparison18_01_2018_'
+#labels=['No Regression','HIG-17-009','NN HybridLoss']
+#labels=['No Regression','id 31','id 28','id 37','id 23','id 40']
+labels=['No Regression','NN id 23']
+saveTag='Comparison_NN2_2018-02-06_'
 which = saveTag+testfile
 which_old = saveTag_old+testfile2
 sample = testfile
@@ -42,10 +46,11 @@ fwhm_all_pt=[]
 for i_r,region in enumerate(pt_regions_names+eta_regions_names):
 	file_name = path+'fitResultRegions_Bukin'+which+region+'.txt'
 	mean,fwhm,emean,efwhm = postprocessing.get_mean_width(file_name)
-	file_name_old = path+'FinalHighPt_EtaBins_scikit/fitResultRegions_Bukin'+which_old+region+'.txt'
-	mean_old,fwhm_old,emean_old,efwhm_old = postprocessing.get_mean_width(file_name_old)
-	mean = mean+mean_old 	
-	fwhm = fwhm+fwhm_old	
+	if labels_old!=None:
+		file_name_old = path+'FinalHighPt_EtaBins_scikit/fitResultRegions_Bukin'+which_old+region+'.txt'
+		mean_old,fwhm_old,emean_old,efwhm_old = postprocessing.get_mean_width(file_name_old)
+		mean = mean+mean_old 	
+		fwhm = fwhm+fwhm_old	
 	if i_r<num_pt : 
 		mean_all_pt.append(mean)
 		fwhm_all_pt.append(fwhm)
@@ -57,10 +62,17 @@ print('pt = ',mean_all_pt)
 print('eta = ',mean_all_eta)
 
 #direc='money_plots_NN_18_01_2018/%s/'%testfile
-direc='money_plots_NN_18_01_2018/comparison_scikit/%s/'%testfile
-outString='NN_scikit_'+saveTag
+#direc='money_plots_NN_18_01_2018/comparison_scikit/%s/'%testfile
+now = str(datetime.datetime.now()).split(' ')[0]
+direc='money_plots_NN_%s_only2/'%(now)
+#if not os.path.exists(direc):
+#	os.mkdir(direc)
+direc+='/'+testfile+'/'
+#if not os.path.exists(direc):
+#	os.mkdir(direc)
+outString='optimizedNN'+saveTag
 
-labels=labels+labels_old
+if labels_old!=None: labels=labels+labels_old
 print(labels)
 what=['mean Xp','p_T']
 plotting.plot_mean_fwhm(mean_all_pt,pt_region,what,outString,labels,sample,direc)

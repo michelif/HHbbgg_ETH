@@ -18,5 +18,6 @@ for i in range(options.njobs):
     out_dir = output_dir+'_job'+str(i)
     json = json_dir+'hparameters_%i.json'%i
    # submit_job='sbatch my_job.sh -J  jobid%i  train_ffwd.py --out-dir %s --hparams %s'%(i,out_dir,json)
-    submit_job='sbatch my_job.sh -J  jobid%i  train_ffwd.py --out-dir %s --hparams %s --x-val True --epochs 40'%(i,out_dir,json)
+   # submit_job='sbatch my_job.sh -J  jobid%i  train_ffwd.py --out-dir %s --hparams %s --x-val True --epochs 40'%(i,out_dir,json)
+    submit_job='sbatch my_job.sh -J  jobid%i  train_ffwd.py --out-dir %s --hparams %s --epochs 40'%(i,out_dir,json)
     print(submit_job)

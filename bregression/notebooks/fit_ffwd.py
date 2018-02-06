@@ -6,6 +6,7 @@ import json
 from optparse import OptionParser, make_option
 sys.path.insert(0, '/users/nchernya/HHbbgg_ETH/bregression/python/')
 import plotting_utils as plotting
+import datetime
 
 parser = OptionParser(option_list=[
     make_option("--training",type='string',dest="training",default='mse'),
@@ -20,9 +21,11 @@ input_trainings = options.training.split(',')
 
 # ## Read test data and model
 # load data
-base_dir = '/scratch/snx3000/musella/bregression'
 data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
 data.describe()
+
+now  =datetime.datetime.now()
+now = str(now).split(' ')[0]
 
 #Regions of pt and eta 
 file_regions = open('/users/nchernya/HHbbgg_ETH/bregression/scripts/regionsPtEta.json')
@@ -48,5 +51,5 @@ for i_r,region in enumerate(regions):
     style=False 
     if i_r==0 : style=True
     samplename=options.samplename
-    outTag = 'Comparison29_01_2018Raw_'+samplename + region_names[i_r]
+    outTag = 'Comparison_NN2_%s_'%now+samplename + region_names[i_r]
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,region_names[i_r],samplename)
