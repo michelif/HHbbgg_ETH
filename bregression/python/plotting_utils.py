@@ -912,6 +912,7 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',dire
           plt.errorbar(regions, y_prime, yerr=ey_prime,linestyle='None', marker=styles[i][1],ecolor=styles[i][0],color=styles[i][0])
 
  #   plt.rc('text', usetex=True)
+    if 'p_T' in what[1] : what[1]+=' [GeV]'
     plt.xlabel(what[1])
     plt.ylabel(what[0])
  #   plt.legend(loc="lower right",numpoints=1)
@@ -929,6 +930,8 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',dire
  #   if 'sigma' in what[0] and 'eta' in what[1] :axes.set_ylim([0.05,0.16])
     if 'mean' in what[0] :axes.set_ylim([0.9,1.15])
     if 'sigma' in what[0] :axes.set_ylim([0.04,0.20])
+    if 'sigma$/Xp' in what[0] :axes.set_ylim([0.025,0.20])
+    if 'sigma$/Xp' in what[0] and 'eta' in what[1] :axes.set_ylim([0.1,0.17])
     if ylimits!=None :  
          axes.set_ylim(ylimits)
          
@@ -949,8 +952,11 @@ def plot_mean_fwhm(y,regions,what,outString=None,labels=['1','2'],sample='',dire
         plt.legend(loc='lower right',numpoints=1)
    # plt.show()
     outString = outString+sample
-    plt.savefig(utils.IO.plotFolder+direc+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
-    plt.savefig(utils.IO.plotFolder+direc+what[0].replace(' ','_')+"_"+what[1]+"_"+str(outString)+".pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')
+    what[0]=what[0].replace(' ','_').replace('$','').replace('\\','').replace('/','')
+    what[1]=what[1].replace(' ','_').replace('$','').replace('\\','').replace('/','')
+    savename=utils.IO.plotFolder+direc+what[0]+"_"+what[1]+"_"+str(outString)
+    plt.savefig(savename+".png",bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(savename+".pdf",bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.clf()
 
 

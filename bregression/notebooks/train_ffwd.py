@@ -97,14 +97,14 @@ if options.hparams is not None:
           hparams.update(pars)    # if inside several files we change the same parameter, it will overwrite for the one in the last file    
     
 ## read data
-columns = raw_features + rings + ['Jet_mcPt'] + ['Jet_rawEnergy'] + ['Jet_e']
+columns = raw_features + rings + ['Jet_mcPt'] + ['Jet_rawEnergy'] + ['Jet_e'] + ['Jet_corr']
 data = io.read_data(inp_file, columns = columns)
 
 #Get rid of JEC and JER and bring back to raw
 for ring in rings:
     data['%s_Jet_rawEnergy'%ring]=data['%s'%ring]/data['Jet_rawEnergy']
-data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
-data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
+data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
+data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
 
 X = data[features].values
 y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
@@ -180,7 +180,7 @@ if options.x_val==True:
             **fit_kwargs)
 else :
     X_train,X_valid,y_train,y_valid = train_test_split(X,y,test_size=options.valid_frac,random_state=options.seed)
-    reg.fit(X_train,y_train,kfold=1,  ### here if you want to save hdf file after each better epoch, put -1
+    reg.fit(X_train,y_train,kfold=-1,  ### here if you want to save hdf file after each better epoch, put -1
         validation_data=(X_valid,y_valid),
         **fit_kwargs)
 

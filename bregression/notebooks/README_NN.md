@@ -163,4 +163,16 @@ The log file is writen in the same directory unless it is changed by giving the 
 tail -f slurm-5610450.out
 ```
 After the job is done (or during the job) all the hdf5 files and metrics.csv and config.json with all hyper parameters of the NN are written to the output directory specified in the command option
- 
+
+
+#### To prepare a json file with hyperparameters and architecture  
+Prepare a grid of parameters of interest in the script 'prepare_NN_setup.py'
+```
+python prepare_NN_setup.py
+```
+Print command to submit jobs
+```
+python submit_jobs.py --njobs 1 --jdir 2018-02-03_17_55_01
+```
+This will print the command that runs the jobs on GPUs. Copy and paste the output to run the jobs. Script can be modified very easily to submit jobs directly, I just prefer to have a look before I submit
+

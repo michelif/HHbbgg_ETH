@@ -41,10 +41,10 @@ class FFWDRegression(BaseEstimator):
                  non_neg=False,
                  dropout=0.2, # 0.5 0.2
                  batch_norm=True,activations="lrelu",
-                 layers=[1024]*5+[512,256,128], # 1024 / 2048
+                 layers=[1024]*1+[512,256,128], # 1024 / 2048
                  do_bn0=True,
                  const_output_biases=None, 
-                 optimizer="Adam", optimizer_params=dict(lr=1.e-3), # mse: 1e-3/5e-4
+                 optimizer="Adam", optimizer_params=dict(lr=1.e-03), # mse: 1e-3/5e-4
                  loss="RegularizedGaussNll",
                  loss_params=dict(),# dict(reg_sigma=3.e-2),
                  monitor_dir=".",
@@ -156,18 +156,21 @@ class FFWDRegression(BaseEstimator):
         return self.model
 
     # ----------------------------------------------------------------------------------------------
-    def get_callbacks(self,has_valid=False,monitor='loss',save_best_only=True):
+    def get_callbacks(self,has_valid=False,monitor='loss',save_best_only=True,kfold=-1):
         if has_valid:
             monitor = 'val_'+monitor
         monitor_dir = self.monitor_dir
-        csv = CSVLogger("%s/metrics.csv" % monitor_dir)
-        checkpoint = ModelCheckpoint("%s/model-{epoch:02d}.hdf5" % monitor_dir,
-                                     monitor=monitor,save_best_only=save_best_only,
-                                     save_weights_only=False)
-        return [csv,checkpoint]
+        csv = CSVLogger("%s/metrics_kfold%i.csv" % (monitor_dir,kfold))
+        #save checkpoint only if it is a proper training, not cross-validation
+        if kfold==-1 : 
+            checkpoint = ModelCheckpoint("%s/model-{epoch:02d}.hdf5" % monitor_dir,
+                                         monitor=monitor,save_best_only=save_best_only,
+                                         save_weights_only=False)
+            return [csv,checkpoint]
+        else : return [csv]
     
     # ----------------------------------------------------------------------------------------------
-    def fit(self,X,y,**kwargs):
+    def fit(self,X,y,kfold=-1,**kwargs):
 
         model = self(True)
         
@@ -186,7 +189,7 @@ class FFWDRegression(BaseEstimator):
         if not 'callbacks' in kwargs:
             save_best_only=kwargs.pop('save_best_only',self.save_best_only)
             kwargs['callbacks'] = self.get_callbacks(has_valid=has_valid,
-                                                     save_best_only=save_best_only)
+                                                     save_best_only=save_best_only,kfold=kfold)
             
         return model.fit(X_train,y_train,**kwargs)
     
