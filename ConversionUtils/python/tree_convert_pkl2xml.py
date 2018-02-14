@@ -229,7 +229,7 @@ class BDT(object):
             varstring += '<Variable VarIndex="{0}" Expression="{1}" Label="{1}" Title="{1}" Unit="" Internal="{4}" Type="F" Min="{2:.64E}" Max="{3:.64E}"/>\n'.format(
                 i, self.feature_names[i].replace("noexpand:",""), 0, 0, self.feature_names[i].replace("noexpand:","").replace("(","_").replace(")","_").replace("/","_D_")
             )
-        print "vaaaaar", varstring
+#        print "vaaaaar", varstring
 
         if self.kind == "regression":
             class_string = ""
@@ -392,13 +392,22 @@ class BDTxgboost(BDT):
         else:
             kind = "regression"
         print model.objective, kind
+        print model
 
         trees = []
 
         treeindex=0
-        for tree_dump in model.booster().get_dump():
+        
+        
+#        do this to check attributes
+#        from pprint import pprint
+#        pprint(vars(model))
+
+#        for tree_dump in model.booster().get_dump(): #in some versions it doesn't work 
+        for tree_dump in model._Booster.get_dump(): 
             treeindex+=1
-            if not treeindex % self.model.n_classes_ == 0: continue #if you train 1500 trees on 3 classes you have 4500 trees in the model, in the order  (class_0,tree_0), (class_1_tree_0), we get here only the trees for signal (which is last class)
+            if kind == "multiclass":
+                if not treeindex % self.model.n_classes_ == 0: continue #if you train 1500 trees on 3 classes you have 4500 trees in the model, in the order  (class_0,tree_0), (class_1_tree_0), we get here only the trees for signal (which is last class)
             tree = xgbtree_to_nodetree(tree_dump)
             trees += [tree]
 
