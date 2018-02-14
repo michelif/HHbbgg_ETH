@@ -159,8 +159,9 @@ def get_total_test_sample(x_sig,x_bkg,splitting=0.5):
 
 
 def set_signals(treeName,branch_names,shuffle):
+    print "using tree:"+treeName
     for i in range(utils.IO.nSig):
-        utils.IO.signal_df.append(rpd.read_root(utils.IO.signalName[i],"bbggSelectionTree", columns = branch_names))
+        utils.IO.signal_df.append(rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names))
         define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i])
         if shuffle:
             utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
@@ -172,7 +173,7 @@ def set_signals(treeName,branch_names,shuffle):
 
 def set_backgrounds(treeName,branch_names,shuffle):
     for i in range(utils.IO.nBkg):
-        utils.IO.background_df.append(rpd.read_root(utils.IO.backgroundName[i],"bbggSelectionTree", columns = branch_names))
+        utils.IO.background_df.append(rpd.read_root(utils.IO.backgroundName[i],treeName, columns = branch_names))
         define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i])
         if shuffle:
             utils.IO.background_df[i]['random_index'] = np.random.permutation(range(utils.IO.background_df[i].index.size))
@@ -183,9 +184,9 @@ def set_backgrounds(treeName,branch_names,shuffle):
 
 
 def set_data(treeName,branch_names):
-    utils.IO.data_df.append(rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = branch_names))
+    utils.IO.data_df.append(rpd.read_root(utils.IO.dataName[0],treeName, columns = branch_names))
     utils.IO.data_df[0]['proc'] =  ( np.ones_like(utils.IO.data_df[0].index)*utils.IO.dataProc[0] ).astype(np.int8)
-    input_df=rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = ['isSignal'])
+    input_df=rpd.read_root(utils.IO.dataName[0],treeName, columns = ['isSignal'])
     w = (np.ones_like(utils.IO.data_df[0].index)).astype(np.int8)
     utils.IO.data_df[0]['weight'] = np.multiply(w,input_df['isSignal'])
 
@@ -204,6 +205,7 @@ def set_data(treeName,branch_names):
 
 def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
     #signals will have positive process number while bkg negative ones
+    print "using tree:"+treeName
     set_signals(treeName,branch_names,shuffle)
     set_backgrounds(treeName,branch_names,shuffle)
 
