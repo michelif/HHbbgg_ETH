@@ -7,17 +7,27 @@ import json
 from optparse import OptionParser, make_option
 sys.path.insert(0, '/users/nchernya/HHbbgg_ETH/bregression/python/')
 import plotting_utils as plotting
+import datetime
 
 parser = OptionParser(option_list=[
     make_option("--training",type='string',dest="training",default='HybridLoss'),
     make_option("--inp-file",type='string',dest='inp_file',default='applied_res_ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5'),
-    make_option("--inp-dir",type='string',dest="inp_dir",default='/users/nchernya//HHbbgg_ETH/bregression/output_root/'),
+    make_option("--inp-dir",type='string',dest="inp_dir",default='/scratch/snx3000/nchernya/bregression/output_root/'),
     make_option("--sample-name",type='string',dest="samplename",default='ttbar'),
 ])
 
 ## parse options
 (options, args) = parser.parse_args()
 input_trainings = options.training.split(',')
+
+now = str(datetime.datetime.now()).split(' ')[0]
+scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/%s/'%now
+dirs=['',input_trainings[0],options.samplename]
+for i in range(len(dirs)):
+  scratch_plots=scratch_plots+'/'+dirs[i]+'/'
+  if not os.path.exists(scratch_plots):
+    os.mkdir(scratch_plots)
+ 
 
 # ## Read test data and model
 # load data
@@ -73,6 +83,10 @@ for i in range(0,3):
  
  binc = 0.5*(bins[1:]+bins[:-1])
  
+####Calculate the improvement on IQR/2 ###
+ iqr2_improvement = 2*(np.array(err_iqr2)-np.array(err_corr_iqr2))/(np.array(err_iqr2)+np.array(err_corr_iqr2))
+
+
  ##Plot raw and corrected mean with their stds on one plot
  plt.plot(binc,y_mean_pt,label='raw (mean)')
  plt.fill_between(binc,y_mean_pt-y_std_pt,y_mean_pt+y_std_pt,alpha=0.4,label='raw (RMS)')
@@ -87,8 +101,9 @@ for i in range(0,3):
  plt.xlabel('$%s$'%whats[i])
  plt.ylabel('$p_T^{true} / p_T^{reco}$')
  plt.legend()
-# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/mean_median_%s_%s.pdf'%(input_trainings[0],options.samplename,whats[i].replace('\\',''),options.samplename))
-# plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/mean_median_%s_%s.png'%(input_trainings[0],options.samplename,whats[i].replace('\\',''),options.samplename))
+ savename='/mean_median_%s_%s'%(whats[i].replace('\\',''),options.samplename)
+# plt.savefig(scratch_plots+savename+'.png')
+# plt.savefig(scratch_plots+savename+'.pdf')
  plt.clf()
  
  
@@ -118,13 +133,14 @@ for i in range(0,3):
  plt.xlabel('$%s$'%whats[i])
  plt.ylabel('$p_T^{true} / p_T^{reco}$')
  plt.legend(loc='upper right')
- plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/quantiles_col_%s_%s_%s.pdf'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename))
- plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/quantiles_col_%s_%s_%s.png'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename))
+ savename='/quantiles_col_%s_%s_%s'%(input_trainings[0],whats[i].replace('\\',''),options.samplename)
+ plt.savefig(scratch_plots+savename+'.png')
+ plt.savefig(scratch_plots+savename+'.pdf')
  plt.clf()
  
   ## Draw profile of sigma (0.72-0.25)/2 vs eta and pt
  plt.scatter(binc,err_iqr2,color='red',marker='^',label='No Regression')
- plt.scatter(binc,err_hbb_iqr2,color='blue',marker='s',label='HIG-17-009')
+# plt.scatter(binc,err_hbb_iqr2,color='blue',marker='s',label='HIG-17-009')
  plt.scatter(binc,err_corr_iqr2,color='green',marker='o',label='NN %s'%input_trainings[0])
  plt.grid(alpha=0.2,linestyle='--',markevery=2)
  axes = plt.gca()
@@ -137,9 +153,30 @@ for i in range(0,3):
  lgd = plt.legend(loc="lower center",numpoints=1,ncol=2,bbox_to_anchor=(0.0,-0.202,1.,-.202),borderaxespad=0.,mode='expand')
  plt.xlabel('$%s$'%whats[i])
  plt.ylabel('IQR / 2')
- plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_20bins_%s_%s_%s.pdf'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename),bbox_extra_artists=(lgd,), bbox_inches='tight')
- plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_20bins_%s_%s_%s.png'%(input_trainings[0],options.samplename,input_trainings[0],whats[i].replace('\\',''),options.samplename),bbox_extra_artists=(lgd,), bbox_inches='tight')
+ savename='/IQR_20bins_%s_%s_%s'%(input_trainings[0],whats[i].replace('\\',''),options.samplename)
+ plt.savefig(scratch_plots+savename+'.pdf',bbox_extra_artists=(lgd,), bbox_inches='tight')
+ plt.savefig(scratch_plots+savename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
  plt.clf()
+
+### Draw improveemnt on sigma####
+ plt.scatter(binc,iqr2_improvement,color='red',marker='o')
+ plt.grid(alpha=0.2,linestyle='--',markevery=2)
+ axes = plt.gca()
+ axes.set_ylim(0.0,0.40)
+ axes.set_xlim(ranges[i][0],ranges[i][1])
+ ymin, ymax = axes.get_ylim()
+ plt.text(xmin+abs(xmin)*0.05,ymax*0.95,'%s'%options.samplename, fontsize=20)
+ plt.title('NN vs No regression')
+ plt.xlabel('$%s$'%whats[i])
+ plt.ylabel('IQR/2 rel. improvement')
+ savename='/IQR_improvement_%s_%s_%s'%(input_trainings[0],whats[i].replace('\\',''),options.samplename)
+ plt.savefig(scratch_plots+savename+'.pdf',bbox_extra_artists=(lgd,), bbox_inches='tight')
+ plt.savefig(scratch_plots+savename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
+ plt.clf()
+
+
+
+
 
 
 
@@ -155,5 +192,6 @@ ymin, ymax = axes.get_ylim()
 plt.text(0.0,ymax*0.95,'%s'%options.samplename, fontsize=20)
 plt.xlabel('$\sigma(p_T)/p_T$')
 plt.ylabel('IQR / 2')
-plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_sigma_pt_%s_%s.pdf'%(input_trainings[0],options.samplename,input_trainings[0],options.samplename))
-plt.savefig('/users/nchernya//HHbbgg_ETH/bregression/plots/%s/%s/IQR_sigma_pt_%s_%s.png'%(input_trainings[0],options.samplename,input_trainings[0],options.samplename))
+savename='/IQR_sigma_pt_%s_%s'%(input_trainings[0],options.samplename)
+plt.savefig(scratch_plots+savename+'.pdf')
+plt.savefig(scratch_plots+savename+'.png')

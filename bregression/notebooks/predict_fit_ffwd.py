@@ -13,11 +13,11 @@ import plotting_utils as plotting
 
 
 parser = OptionParser(option_list=[
-    make_option("--training",type='string',dest="training",default='mse'),
+    make_option("--training",type='string',dest="training",default='HybridLoss'),
     make_option("--inp-dir",type='string',dest="inp_dir",default='/users/nchernya//HHbbgg_ETH/root_files/'),
     make_option("--target-dir",type='string',dest="target_dir",default='/scratch/snx3000/nchernya/bregression/NN_output/'),
     make_option("--inp-file",type='string',dest='inp_file',default='ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5'),
-    make_option("--out-dir",type='string',dest="out_dir",default='/users/nchernya//HHbbgg_ETH/bregression/output_root/'),
+    make_option("--out-dir",type='string',dest="out_dir",default='/scratch/snx3000/nchernya/bregression/output_root/'),
 ])
 
 ## parse options
@@ -27,13 +27,14 @@ input_trainings = options.training.split(',')
 # ## Read test data and model
 # load data
 data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
-data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
-data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
+data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
+data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
 
 for idx,name in enumerate(input_trainings):
     # list all model files in the training folder
 #    target='/users/nchernya/HHbbgg_ETH/bregression/notebooks/'+input_trainings[idx]
-    target=options.target_dir+input_trainings[idx]
+  #  target=options.target_dir+input_trainings[idx]
+    target=options.target_dir
     models = get_ipython().getoutput('ls -t $target/*.hdf5')
     models
   

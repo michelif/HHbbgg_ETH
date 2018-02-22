@@ -97,14 +97,14 @@ if options.hparams is not None:
           hparams.update(pars)    # if inside several files we change the same parameter, it will overwrite for the one in the last file    
     
 ## read data
-columns = raw_features + rings + ['Jet_mcPt'] + ['Jet_rawEnergy'] + ['Jet_e'] + ['Jet_corr']
+columns = raw_features + rings + ['Jet_mcPt'] + ['Jet_rawEnergy'] + ['Jet_e'] + ['Jet_corr_JEC'] + ['Jet_corr_JER']
 data = io.read_data(inp_file, columns = columns)
 
 #Get rid of JEC and JER and bring back to raw
 for ring in rings:
     data['%s_Jet_rawEnergy'%ring]=data['%s'%ring]/data['Jet_rawEnergy']
-data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
-data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
+data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
+data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
 
 X = data[features].values
 y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)

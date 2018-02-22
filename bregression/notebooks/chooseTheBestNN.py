@@ -1,4 +1,3 @@
-
 import os
 #import sys; sys.path.append("~/HHbbgg_ETH_devel/bregression/python") # to load packages
 import sys
@@ -18,12 +17,13 @@ testfile2 = sys.argv[2]
 path = '/users/nchernya//HHbbgg_ETH/bregression/fitResults/'
 pt_regions_names = '(Jet_mcPt>0),(Jet_mcPt<60),(Jet_mcPt>=60 & Jet_mcPt<100),(Jet_mcPt>=100 & Jet_mcPt<150),(Jet_mcPt>=150 & Jet_mcPt<200),(Jet_mcPt>=200 & Jet_mcPt<250),(Jet_mcPt>=250 & Jet_mcPt<300),(Jet_mcPt>=300 & Jet_mcPt<400),(Jet_mcPt>=400 & Jet_mcPt<600),(Jet_mcPt>=600)'.split(",")
 eta_regions_names = '|Jet_eta|<0.5,|Jet_eta|>=0.5 & |Jet_eta|<1.0,|Jet_eta|>=1.0 & |Jet_eta|<1.5,|Jet_eta|>=1.5 & |Jet_eta|<2.0,|Jet_eta|>=2.0'.split(",")
-labels_old=['HIG-16-044 JECR','no Regression JECR']
+#labels_old=['HIG-16-044 JECR','no Regression JECR']
 #labels_old=['BDT scikit']
+labels_old=None
 #saveTag_old='FinalHighPt_eta'
 saveTag_old='CatnoregMSEquant'
 labels=['No Regression','NN id 23']
-saveTag='Comparison_NN2_2018-02-06_'
+saveTag='Comparison_NN_2018-02-14_'
 which = saveTag+testfile
 which_old = saveTag_old+testfile2
 sample = testfile
@@ -100,7 +100,7 @@ for region in pt_eta:
      data = pd.DataFrame(d, columns=(columns))
      data.to_csv('%s/data_%s_%s.json'%(direc,sigmamu[x],region))
 
-outString='optimizedNN_oldJECR'+saveTag
+outString='optimizedNN_'+saveTag
 
 direc=direc.split('/bregression/plots/')[1]
 print(direc)

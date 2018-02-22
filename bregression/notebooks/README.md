@@ -73,6 +73,7 @@ compareScale.py
 #### Evaluate NN on different files
 ```
 ipython -i predict_fit_ffwd.py -- --training mse,HybridLoss --inp-file ggHHbbgg_sm_RegressionPerJet_heppy_energyRings3_forTraining_Large0.hd5
+ipython -i predict_fit_ffwd.py -- --inp-file ttbar_RegressionPerJet_heppy_energyRingsFloat78_forTesting.hd5 --inp-dir /scratch/snx3000/nchernya/bregression/for_test/ --target-dir /scratch/snx3000/nchernya/bregression/NN_output//2018-02-13_13_25_54_job23/
 
 ```
 ####

@@ -9,9 +9,9 @@ import plotting_utils as plotting
 import datetime
 
 parser = OptionParser(option_list=[
-    make_option("--training",type='string',dest="training",default='mse'),
+    make_option("--training",type='string',dest="training",default='HybridLoss'),
     make_option("--inp-file",type='string',dest='inp_file',default='applied_ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5'),
-    make_option("--inp-dir",type='string',dest="inp_dir",default='/users/nchernya//HHbbgg_ETH/bregression/output_root/'),
+    make_option("--inp-dir",type='string',dest="inp_dir",default='/scratch/snx3000/nchernya/bregression/output_root/'),
     make_option("--sample-name",type='string',dest="samplename",default='ttbar'),
 ])
 
@@ -47,9 +47,9 @@ for i_r,region in enumerate(regions):
   
 
   #  comparison_tags = ['No regression'] + ['HIG-17-009'] + input_trainings
-    comparison_tags = ['No regression'] + input_trainings
+    comparison_tags = ['No regression, JEC'] + input_trainings
     style=False 
     if i_r==0 : style=True
     samplename=options.samplename
-    outTag = 'Comparison_NN2_%s_'%now+samplename + region_names[i_r]
+    outTag = 'Comparison_NN_%s_'%now+samplename + region_names[i_r]
     plotting.plot_regions(X_predictions_compare,comparison_tags,style,50,outTag,False,region_names[i_r],samplename)
