@@ -154,7 +154,9 @@ class FFWDRegression(BaseEstimator):
             optimizer = getattr(keras.optimizers,self.optimizer)(**self.optimizer_params)
 
             self.model.compile(optimizer=optimizer,loss=loss,metrics=[losses.mse0,losses.mae0,
-                                                                      losses.r2_score0])
+                                                                      losses.r2_score0,losses.mse50,
+                                                                      losses.mae50,losses.mse100,
+                                                                      losses.mae100,losses.mae200,losses.mse200])
         return self.model
 
     # ----------------------------------------------------------------------------------------------
@@ -269,7 +271,7 @@ class Generator:
     def compute_stats(self):
         all_dfs_y = []
         for df in self.dfs:
-            y_df = df[self.target]
+            y_df = df[self.target].values[:,0]
             all_dfs_y.append(np.array(y_df))
         all_y = np.hstack((all_dfs_y))
         mean = np.median(all_y)

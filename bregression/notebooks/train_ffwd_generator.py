@@ -100,27 +100,25 @@ if options.hparams is not None:
 columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] # + ['Jet_corr_JER']
 data_valid = (io.read_data(inp_file_valid, columns = None))
 df_list = [(io.read_data(inf,columns = None)) for inf in inp_files]
-for data in df_list:
+for data in df_list+[data_valid]:
     data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
     data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
     data['Jet_mcPt_Jet_pt']=data['Jet_mcPt']/data['Jet_pt']
-data_valid['Jet_pt']=data_valid['Jet_pt']*data_valid['Jet_rawEnergy']/data_valid['Jet_e']*data_valid['Jet_corr_JEC']
-data_valid['Jet_mt']=data_valid['Jet_mt']*data_valid['Jet_rawEnergy']/data_valid['Jet_e']*data_valid['Jet_corr_JEC']
 
 X_shape = (data_valid[features].values).shape[1:]
-y_valid = (data_valid['Jet_mcPt']/data_valid['Jet_pt']).values.reshape(-1,1)
+y_valid = (data_valid[['Jet_mcPt_Jet_pt','Jet_pt']])#.values#.reshape(-1,1)
 X_valid = data_valid[features].values
 
 
-mygen = ffwd.Generator(df_list,options.batch_size,features,'Jet_mcPt_Jet_pt')
+mygen = ffwd.Generator(df_list,options.batch_size,features,['Jet_mcPt_Jet_pt','Jet_pt'])
 mygen_call = mygen()
 
 y_mean,y_std = mygen.compute_stats()
 print(y_mean,y_std)
 # normalize target in validation, for training it is done in the class
 if options.normalize_target:
-    y_valid -= y_mean
-    y_valid /= y_std
+    y_valid['Jet_mcPt_Jet_pt'] -= y_mean
+    y_valid['Jet_mcPt_Jet_pt'] /= y_std
     for data in df_list:
         data['Jet_mcPt_Jet_pt']-=y_mean
         data['Jet_mcPt_Jet_pt']/=y_std
