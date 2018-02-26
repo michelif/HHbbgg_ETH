@@ -67,7 +67,7 @@ parser = OptionParser(option_list=[
     make_option("--normalize-target",action="store_true",dest="normalize_target",default=True),
     make_option("--no-normalize-target",action="store_false",dest="normalize_target"),
     make_option("--loss",type='string',dest="loss",default="HybridLoss"),
-    make_option("--valid-frac",type='float',dest='valid_frac',default=0.10),
+#    make_option("--valid-frac",type='float',dest='valid_frac',default=0.10),
     make_option("--batch-size",type='int',dest='batch_size',default=1024),
     make_option("--epochs",type='int',dest='epochs',default=20),
     make_option("--hparams",type='string',dest='hparams',default=None),
@@ -97,16 +97,15 @@ if options.hparams is not None:
           hparams.update(pars)    # if inside several files we change the same parameter, it will overwrite for the one in the last file    
     
 ## read data
-columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] + ['Jet_corr_JER']
-data_valid = io.read_data(inp_file_valid, columns = None)
-df_list = [io.read_data(inf,columns = None) for inf in inp_files]
+columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] # + ['Jet_corr_JER']
+data_valid = (io.read_data(inp_file_valid, columns = None))
+df_list = [(io.read_data(inf,columns = None)) for inf in inp_files]
 for data in df_list:
-  #  data['Jet_pt']=data['Jet_pt']/data['Jet_corr_JER']
-  #  data['Jet_mt']=data['Jet_mt']/data['Jet_corr_JER']
+    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
+    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
     data['Jet_mcPt_Jet_pt']=data['Jet_mcPt']/data['Jet_pt']
-    data=data.query('Jet_mcPt_Jet_pt < 10')
-#data_valid['Jet_pt']=data_valid['Jet_pt']/data_valid['Jet_corr_JER']
-#data_valid['Jet_mt']=data_valid['Jet_mt']/data_valid['Jet_corr_JER']
+data_valid['Jet_pt']=data_valid['Jet_pt']*data_valid['Jet_rawEnergy']/data_valid['Jet_e']*data_valid['Jet_corr_JEC']
+data_valid['Jet_mt']=data_valid['Jet_mt']*data_valid['Jet_rawEnergy']/data_valid['Jet_e']*data_valid['Jet_corr_JEC']
 
 X_shape = (data_valid[features].values).shape[1:]
 y_valid = (data_valid['Jet_mcPt']/data_valid['Jet_pt']).values.reshape(-1,1)

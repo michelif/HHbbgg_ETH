@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.random import shuffle
 
 from keras.layers import Input, Dense, Add, Multiply
 from keras.layers import Reshape, UpSampling1D, Flatten, concatenate, Cropping1D
@@ -232,8 +233,14 @@ class Generator:
         
     def __call__(self):
       batch_size = self.batch_size
+      shuffle(self.dfs)
       while True:  #infinite loop for generator
         for df in self.dfs:
+            #shuffle dataframe
+            idx = np.random.permutation(len(df)) 
+            df.set_index(idx,inplace=True)
+            df.sort_index(inplace=True)
+
             X_df = df[self.features]
             y_df = df[self.target]
 
