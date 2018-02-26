@@ -14,9 +14,9 @@ import random
 
 # ---------------------------------------------------------------------------------------------------
 class IO:
-    ldata = os.path.expanduser("~/HHbbgg_ETH_devel/root_files/")
+    ldata = os.path.expanduser("~/HHbbgg_ETH_devel/root_files/") ### instead of HHbbgg_ETH_devel ->HHbbgg_EHT
     xdata = "~/HHbbgg_ETH_devel/bregression/output_files/"
-    plotFolder = os.path.expanduser("~/HHbbgg_ETH_devel/bregression/plots/")
+    plotFolder = os.path.expanduser("~/HHbbgg_ETH/bregression/plots/")
     plotStyle = os.path.expanduser("~/HHbbgg_ETH_devel/scripts/")
     signalName = []
     backgroundName = []

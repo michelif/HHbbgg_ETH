@@ -1,0 +1,2 @@
+name=DoubleMuon  site=root://t3dcachedb.psi.ch:1094/     dir=/pnfs/psi.ch/cms/trivcat//store/user/nchernya/HHbbgg/b_regression/heppy/v25_skim/DoubleMuon/
+name=TT site=root://t3dcachedb.psi.ch:1094/   dir=/pnfs/psi.ch/cms/trivcat//store/user/nchernya/HHbbgg/b_regression/heppy/v25_skim/TT/
