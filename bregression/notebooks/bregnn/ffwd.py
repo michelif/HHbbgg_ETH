@@ -41,10 +41,11 @@ class FFWDRegression(BaseEstimator):
                  non_neg=False,
                  dropout=0.2, # 0.5 0.2
                  batch_norm=True,activations="lrelu",
-                 layers=[1024]*5+[512,256,128], # 1024 / 2048
+                # layers=[1024]*1+[512,256,128], # 1024 / 2048
+                 layers=[128], # 1024 / 2048
                  do_bn0=True,
                  const_output_biases=None, 
-                 optimizer="Adam", optimizer_params=dict(lr=1.e-3), # mse: 1e-3/5e-4
+                 optimizer="Adam", optimizer_params=dict(lr=1.e-03), # mse: 1e-3/5e-4
                  loss="RegularizedGaussNll",
                  loss_params=dict(),# dict(reg_sigma=3.e-2),
                  monitor_dir=".",
@@ -156,18 +157,21 @@ class FFWDRegression(BaseEstimator):
         return self.model
 
     # ----------------------------------------------------------------------------------------------
-    def get_callbacks(self,has_valid=False,monitor='loss',save_best_only=True):
+    def get_callbacks(self,has_valid=False,monitor='loss',save_best_only=True,kfold=-1):
         if has_valid:
             monitor = 'val_'+monitor
         monitor_dir = self.monitor_dir
-        csv = CSVLogger("%s/metrics.csv" % monitor_dir)
-        checkpoint = ModelCheckpoint("%s/model-{epoch:02d}.hdf5" % monitor_dir,
-                                     monitor=monitor,save_best_only=save_best_only,
-                                     save_weights_only=False)
-        return [csv,checkpoint]
+        csv = CSVLogger("%s/metrics_kfold%i.csv" % (monitor_dir,kfold))
+        #save checkpoint only if it is a proper training, not cross-validation
+        if kfold==-1 : 
+            checkpoint = ModelCheckpoint("%s/model-{epoch:02d}.hdf5" % monitor_dir,
+                                         monitor=monitor,save_best_only=save_best_only,
+                                         save_weights_only=False)
+            return [csv,checkpoint]
+        else : return [csv]
     
     # ----------------------------------------------------------------------------------------------
-    def fit(self,X,y,**kwargs):
+    def fit(self,X,y,kfold=-1,**kwargs):
 
         model = self(True)
         
@@ -186,9 +190,22 @@ class FFWDRegression(BaseEstimator):
         if not 'callbacks' in kwargs:
             save_best_only=kwargs.pop('save_best_only',self.save_best_only)
             kwargs['callbacks'] = self.get_callbacks(has_valid=has_valid,
-                                                     save_best_only=save_best_only)
+                                                     save_best_only=save_best_only,kfold=kfold)
             
         return model.fit(X_train,y_train,**kwargs)
+    # ----------------------------------------------------------------------------------------------
+    def fit_generator(self,generator,kfold=-1,**kwargs):
+
+        model = self(True)
+        
+        has_valid = kwargs.get('validation_data',None) is not None
+            
+        if not 'callbacks' in kwargs:
+            save_best_only=kwargs.pop('save_best_only',self.save_best_only)
+            kwargs['callbacks'] = self.get_callbacks(has_valid=has_valid,
+                                                     save_best_only=save_best_only,kfold=kfold)
+            
+        return model.fit_generator(generator,**kwargs)
     
     # ----------------------------------------------------------------------------------------------
     def predict(self,X,p0=True,**kwargs):
@@ -202,3 +219,54 @@ class FFWDRegression(BaseEstimator):
     def score(self,X,y,**kwargs):
         return -self.model.evaluate(X,y,**kwargs)
     
+# --------------------------------------------------------------------------------------------------
+class Generator:
+    
+    def __init__(self,dfs,batch_size,features,target):
+        self.dfs = dfs
+        self.features = features
+        self.target = target
+        self.batch_size =  batch_size
+        self.steps = sum([ (df[self.target].shape[0] // self.batch_size)+
+                          (1 if df[self.target].shape[0] % self.batch_size > 0 else  0) for df in dfs] )
+        
+    def __call__(self):
+      batch_size = self.batch_size
+      while True:  #infinite loop for generator
+        for df in self.dfs:
+            X_df = df[self.features]
+            y_df = df[self.target]
+
+            nb = X_df.shape[0] // batch_size
+            last_batch = X_df.shape[0] % batch_size
+
+            for ib in range(nb):
+                yield X_df[ib*batch_size:(ib+1)*batch_size], y_df[ib*batch_size:(ib+1)*batch_size]
+            if last_batch > 0:
+                yield X_df[-last_batch:], y_df[-last_batch:]
+
+    def compute_mean_std(self):
+        y_sum=0
+        y_sum2=0
+        N=0
+        for df in self.dfs:
+            y_df = df[self.target]
+            y_sum += y_df.sum()
+            y_sum2 += (np.square(y_df)).sum()
+            N += df[self.target].shape[0]
+        mean = y_sum/N	
+        mean2 = y_sum2/N 
+        std = np.sqrt(mean2-mean**2)
+        return mean,std 
+    
+    def compute_stats(self):
+        all_dfs_y = []
+        for df in self.dfs:
+            y_df = df[self.target]
+            all_dfs_y.append(np.array(y_df))
+        all_y = np.hstack((all_dfs_y))
+        mean = np.median(all_y)
+        std = np.std(all_y)
+        return mean,std
+        
+        

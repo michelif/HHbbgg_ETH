@@ -66,3 +66,28 @@ RegressionProfile.py
 CaterinaComparison.py
 compareScale.py
 ```
+
+
+## Plotting results of NN
+
+#### Evaluate NN on different files
+```
+ipython -i predict_fit_ffwd.py -- --training mse,HybridLoss --inp-file ggHHbbgg_sm_RegressionPerJet_heppy_energyRings3_forTraining_Large0.hd5
+ipython -i predict_fit_ffwd.py -- --inp-file ttbar_RegressionPerJet_heppy_energyRingsFloat78_forTesting.hd5 --inp-dir /scratch/snx3000/nchernya/bregression/for_test/ --target-dir /scratch/snx3000/nchernya/bregression/NN_output//2018-02-13_13_25_54_job23/
+
+```
+####
+Fit evaluated regression with Bukin 
+```
+python fit_ffwd.py --training mse,HybridLoss --sample-name ggHHbbgg_sm --inp-file applied_ggHHbbgg_sm_RegressionPerJet_heppy_energyRings3_forTraining_Large0.hd5
+```
+Plot money plots using Bukin Fits. (there is a possibility to compare with scikit, first parameter new name of file and second for old scikit naming convention -> better rewrite at some point)
+```
+ipython chooseTheBestNN.py ggHHbbgg_sm DiHiggs_sm
+```
+
+#### Plot quantiles vs pt and eta, IQR/2 vs sigma/pt, IQR/2 vs eta and pt
+```
+ipython plot_IQR2.py -- --sample-name ZHbbll --inp-file applied_res_ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.hd5
+ipython plot_IQR2.py -- --sample-name ggHHbbgg_res700  --inp-file applied_res_ggHHbbgg_res700_RegressionPerJet_heppy_energyRings3_forTraining_Large0.hd5
+```
