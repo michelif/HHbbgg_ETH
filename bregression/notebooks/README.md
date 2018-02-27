@@ -91,3 +91,8 @@ ipython chooseTheBestNN.py ggHHbbgg_sm DiHiggs_sm
 ipython plot_IQR2.py -- --sample-name ZHbbll --inp-file applied_res_ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.hd5
 ipython plot_IQR2.py -- --sample-name ggHHbbgg_res700  --inp-file applied_res_ggHHbbgg_res700_RegressionPerJet_heppy_energyRings3_forTraining_Large0.hd5
 ```
+
+### Plot comparison between two different trainings (for example training without JER,JER and on top of JEC)
+```
+ipython plot_comparisonReg.py -- --sample-name ttbar --inp-file applied_res_2018-02-06_ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5,applied_res_2018-02-13_ttbar_RegressionPerJet_heppy_energyRingsFloat78_forTesting.hd5 --training 2018-02-06_12_22_19_job23,HybridLoss --labels raw,onJEC
+```

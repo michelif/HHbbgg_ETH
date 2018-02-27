@@ -54,7 +54,7 @@ class HybridLoss(object):
         self.n_params = self.huber.n_params + self.quantiles.n_params
         
     def __call__(self,y_true,y_pred):
-        return self.huber(y_true,y_pred) + self.quantiles(y_true,y_pred[:,1:])
+        return self.huber(y_true,y_pred) + self.quantiles(y_true[:,0:1],y_pred[:,1:])
     
     
 # ---------------------------------------------------------------------------------------------------
