@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --job-name=job_name
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=nadezda.chernyavskaya@cern.ch
+#SBATCH --mail-user=micheli@cern.ch
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-core=1
