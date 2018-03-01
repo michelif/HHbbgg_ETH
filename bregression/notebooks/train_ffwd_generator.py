@@ -55,7 +55,6 @@ rings=[
 features=raw_features
 for ring in rings:
     features.append('%s_Jet_rawEnergy'%ring)
-print(features)
 
 ## command_line options
 parser = OptionParser(option_list=[
@@ -85,6 +84,8 @@ if options.features == '':
 else:
     features = options.features.split(',')
 
+print(features)
+
 inp_file_valid = options.inp_dir+'/'+options.inp_file_valid
 inp_files=options.inp_files.split(',')
 inp_files = [options.inp_dir+'/'+c.strip() for c in inp_files] 
@@ -101,9 +102,9 @@ columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] # + ['Jet_corr_JER']
 data_valid = (io.read_data(inp_file_valid, columns = None))
 df_list = [(io.read_data(inf,columns = None)) for inf in inp_files]
 for data in df_list+[data_valid]:
-    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
-    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
-    data['Jet_mcPt_Jet_pt']=data['Jet_mcPt']/data['Jet_pt']
+    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mcPt_Jet_pt']=data['Jet_mcPt']/(data['Jet_pt']*data['Jet_corr_JEC'])
 
 X_shape = (data_valid[features].values).shape[1:]
 y_valid = (data_valid[['Jet_mcPt_Jet_pt','Jet_pt']])#.values#.reshape(-1,1)

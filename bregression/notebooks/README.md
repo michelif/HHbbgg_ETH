@@ -95,4 +95,17 @@ ipython plot_IQR2.py -- --sample-name ggHHbbgg_res700  --inp-file applied_res_gg
 ### Plot comparison between two different trainings (for example training without JER,JER and on top of JEC)
 ```
 ipython plot_comparisonReg.py -- --sample-name ttbar --inp-file applied_res_2018-02-06_ttbar_RegressionPerJet_heppy_energyRings3_forTesting.hd5,applied_res_2018-02-13_ttbar_RegressionPerJet_heppy_energyRingsFloat78_forTesting.hd5 --training 2018-02-06_12_22_19_job23,HybridLoss --labels raw,onJEC
+
+ipython plot_comparisonReg.py -- --training 2018-02-13_13_25_54_job23,2018-02-27_job40_2,2018-02-27_job23 --inp-file applied_res_2018-02-28_ttbar_full_RegressionPerJet_heppy_energyRings_testing.hd5,applied_res_2018-02-28_ttbar_full_RegressionPerJet_heppy_energyRings_testing.hd5,applied_res_2018-02-28_ttbar_full_RegressionPerJet_heppy_energyRings_testing.hd5 --sample-name ttbar --labels 5M_job23,100M_job40v2,100M_job23
 ```
+Binned in eta bins:
+```
+ipython plot_comparisonReg.py -- --sample-name ZHbbll --inp-file  applied_res_2018-02-06_ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.hd5,applied_res_2018-02-13_ZHbbll_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll3.hd5 --training 2018-02-06_12_22_19_job23,HybridLoss --labels raw,onJEC --where '(Jet_eta<1.75&Jet_eta>1.)|(-Jet_eta<1.75&-Jet_eta>1.0)'
+```
+
+### Plot comparsion of training/validation for different jobs (one job only, change of learning rate, dropout or just diffenrent jobs)
+plot_epoch.py,plot_xvalepoch_learningrate.py,plot_xvalepoch_dropout.py,best_score_jobs.py and just for different jobs : best_score_compare.py
+```
+ipython best_score_compare.py -- --training 2018-02-27_job40_2,2018-02-27_job23 --inp-dir /scratch/snx3000/nchernya/bregression/NN_output/ --metrics loss,mae0,mae100,mae200,mae50,mse0,mse100,mse200,mse50,r2_score0 --out-dir /users/nchernya/HHbbgg_ETH/bregression/plots/NN_epochs/2018-02-27/
+```
+

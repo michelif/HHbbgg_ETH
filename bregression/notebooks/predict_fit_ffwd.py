@@ -27,14 +27,18 @@ input_trainings = options.training.split(',')
 # ## Read test data and model
 # load data
 data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
-data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
-data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
+if 'Jet_corr' in data.columns:
+    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
+    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
+if 'Jet_corr_JEC' in data.columns:
+    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
+    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
 
 for idx,name in enumerate(input_trainings):
     # list all model files in the training folder
 #    target='/users/nchernya/HHbbgg_ETH/bregression/notebooks/'+input_trainings[idx]
-  #  target=options.target_dir+input_trainings[idx]
-    target=options.target_dir
+    target=options.target_dir+input_trainings[idx]
+  #  target=options.target_dir
     models = get_ipython().getoutput('ls -t $target/*.hdf5')
     models
   

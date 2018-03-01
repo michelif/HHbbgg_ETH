@@ -85,6 +85,7 @@ for i in range(0,3):
  
 ####Calculate the improvement on IQR/2 ###
  iqr2_improvement = 2*(np.array(err_iqr2)-np.array(err_corr_iqr2))/(np.array(err_iqr2)+np.array(err_corr_iqr2))
+ iqr2_rel_improvement = 2*(np.array(err_iqr2/y_40_pt)-np.array(err_corr_iqr2/y_corr_40_pt))/(np.array(err_iqr2/y_40_pt)+np.array(err_corr_iqr2/y_corr_40_pt))
 
 
  ##Plot raw and corrected mean with their stds on one plot
@@ -162,13 +163,13 @@ for i in range(0,3):
  plt.scatter(binc,iqr2_improvement,color='red',marker='o')
  plt.grid(alpha=0.2,linestyle='--',markevery=2)
  axes = plt.gca()
- axes.set_ylim(0.0,0.40)
+ axes.set_ylim(0.0,0.50)
  axes.set_xlim(ranges[i][0],ranges[i][1])
  ymin, ymax = axes.get_ylim()
  plt.text(xmin+abs(xmin)*0.05,ymax*0.95,'%s'%options.samplename, fontsize=20)
  plt.title('NN vs No regression')
  plt.xlabel('$%s$'%whats[i])
- plt.ylabel('IQR/2 rel. improvement')
+ plt.ylabel('IQR/2 rel. improvement $\sigma$')
  savename='/IQR_improvement_%s_%s_%s'%(input_trainings[0],whats[i].replace('\\',''),options.samplename)
  plt.savefig(scratch_plots+savename+'.pdf',bbox_extra_artists=(lgd,), bbox_inches='tight')
  plt.savefig(scratch_plots+savename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -176,6 +177,21 @@ for i in range(0,3):
 
 
 
+### Draw improveemnt on sigma over mu ####
+ plt.scatter(binc,iqr2_rel_improvement,color='red',marker='o')
+ plt.grid(alpha=0.2,linestyle='--',markevery=2)
+ axes = plt.gca()
+ axes.set_ylim(0.00,0.25)
+ axes.set_xlim(ranges[i][0],ranges[i][1])
+ ymin, ymax = axes.get_ylim()
+ plt.text(xmin+abs(xmin)*0.05,ymax*0.95,'%s'%options.samplename, fontsize=20)
+ plt.title('NN vs No regression')
+ plt.xlabel('$%s$'%whats[i])
+ plt.ylabel('IQR/2 rel. improvement $\sigma/\mu$')
+ savename='/IQR_improvement_sigma_mu_%s_%s_%s'%(input_trainings[0],whats[i].replace('\\',''),options.samplename)
+ plt.savefig(scratch_plots+savename+'.pdf',bbox_extra_artists=(lgd,), bbox_inches='tight')
+ plt.savefig(scratch_plots+savename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
+ plt.clf()
 
 
 

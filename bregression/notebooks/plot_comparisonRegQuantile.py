@@ -8,7 +8,6 @@ from optparse import OptionParser, make_option
 sys.path.insert(0, '/users/nchernya/HHbbgg_ETH/bregression/python/')
 import plotting_utils as plotting
 import datetime
-import math
 
 parser = OptionParser(option_list=[
     make_option("--training",type='string',dest="training",default='HybridLoss'),
@@ -16,7 +15,6 @@ parser = OptionParser(option_list=[
     make_option("--inp-dir",type='string',dest="inp_dir",default='/scratch/snx3000/nchernya/bregression/output_root/'),
     make_option("--sample-name",type='string',dest="samplename",default='ttbar'),
     make_option("--labels",type='string',dest="labels",default=''),
-    make_option("--where",type='string',dest="where",default=''),
 ])
 
 ## parse options
@@ -25,31 +23,28 @@ input_trainings = options.training.split(',')
 input_files = options.inp_file.split(',')
 
 now = str(datetime.datetime.now()).split(' ')[0]
-#scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/%s/'%now
-scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/2018-02-26/'
+scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/%s/'%now
 dirs=['',input_trainings[0],options.samplename]
 for i in range(len(dirs)):
   scratch_plots=scratch_plots+'/'+dirs[i]+'/'
   if not os.path.exists(scratch_plots):
     os.mkdir(scratch_plots)
 
-print(options.where)
+
 whats = ['p_T','\eta','rho']
 ranges = [[30,400],[-2.5,2.5],[0,50]]
 binning =[50,10,20] #[50,20]
 linestyles = ['-.', '--','-', ':']
-colors=['green','red','blue','black']
-markers=['s','o','^','*']
+colors=['green','red']
+markers=['s','o']
 labels=options.labels.split(',')
 bins_same = []
 
 for i in range(0,3):
- sigma_mu_array = []
  for ifile in range(len(input_files)):
     # ## Read test data and model
   # load data
     data = io.read_data('%s%s'%(options.inp_dir,input_files[ifile]),columns=None)
-    if options.where!='' : data = data.query(options.where)
     data.describe()
 
     #Regions of pt and eta 
@@ -89,7 +84,7 @@ for i in range(0,3):
     y_corr_iqr2_pt =  y_corr_qt_pt[0],y_corr_qt_pt[3]
     err_corr_iqr2 =  0.5*(y_corr_qt_pt[3]-y_corr_qt_pt[0])
     sigma_mu_corr = np.array(err_corr_iqr2)/np.array(y_corr_40_pt)
-    sigma_mu_array.append(sigma_mu_corr)
+
 
     _, y_hbb_mean_pt, y_hbb_std_pt, y_hbb_qt_pt = utils.profile(y_hbb,X,bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
     y_hbb_25_pt,y_hbb_40_pt,y_hbb_75_pt = y_hbb_qt_pt[0],y_hbb_qt_pt[1],y_hbb_qt_pt[3]
@@ -103,12 +98,10 @@ for i in range(0,3):
  
     ## Draw profile of sigma (0.72-0.25)/2 vs eta and pt
    # if (ifile==0) :  plt.scatter(binc,sigma_mu_hbb,color='blue',marker='s',label='HIG-17-009')
-    plt.scatter(binc,sigma_mu_corr,color=colors[ifile],marker=markers[ifile],label='NN %s'%labels[ifile])
+    plt.scatter(binc,y_corr_40_pt,color=colors[ifile],marker=markers[ifile],label='NN %s'%labels[ifile])
  plt.grid(alpha=0.2,linestyle='--',markevery=2)
  axes = plt.gca()
- if (i==0) : axes.set_ylim(0.02,0.20)
- if (i==1) : axes.set_ylim(0.06,0.15)
- if (i==2) : axes.set_ylim(0.08,0.11)
+ if (i==0) : axes.set_ylim(0.9,1.1)
  axes.set_xlim(ranges[i][0],ranges[i][1])
  if (i==0) : axes.set_xlim(0,ranges[i][1])
  ymin, ymax = (plt.gca()).get_ylim()
@@ -116,15 +109,8 @@ for i in range(0,3):
  plt.text(xmin+abs(xmin)*0.05,ymax*0.95,'%s'%options.samplename, fontsize=20)
  lgd = plt.legend(loc="lower center",numpoints=1,ncol=2,bbox_to_anchor=(0.0,-0.202,1.,-.202),borderaxespad=0.,mode='expand')
  plt.xlabel('$%s$'%whats[i])
- plt.ylabel('[IQR/2]/quantile 0.4')
- where = (options.where).replace(' ','').replace('<','_').replace('>','_').replace('(','').replace(')','')
- savename='/IQR_compare_%s_%s%s'%(whats[i].replace('\\',''),options.samplename,where)
+ plt.ylabel('quantile 0.4')
+ savename='/IQR_quantile_04_compare_%s_%s'%(whats[i].replace('\\',''),options.samplename)
  plt.savefig(scratch_plots+savename+'.pdf',bbox_extra_artists=(lgd,), bbox_inches='tight')
  plt.savefig(scratch_plots+savename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
  plt.clf()
-
- difference = 2*(np.array(sigma_mu_array[0])-np.array(sigma_mu_array[1]))/(np.array(sigma_mu_array[0])+np.array(sigma_mu_array[1]))
- difference = [round(a,4) for a in difference]
- data_csv = pd.DataFrame(np.array(difference).reshape(1,binc.shape[0]), columns=(binc))
- savename='/data_IQR_compare_%s_%s%s.json'%(whats[i].replace('\\',''),options.samplename,where)
- data_csv.to_csv(scratch_plots+savename)
