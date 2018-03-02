@@ -27,12 +27,8 @@ input_trainings = options.training.split(',')
 # ## Read test data and model
 # load data
 data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
-if 'Jet_corr' in data.columns:
-    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
-    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr']
-if 'Jet_corr_JEC' in data.columns:
-    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
-    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
+data['Jet_pt_raw'] = data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
+data['Jet_mt_raw'] = data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
 
 for idx,name in enumerate(input_trainings):
     # list all model files in the training folder
@@ -50,6 +46,8 @@ for idx,name in enumerate(input_trainings):
   
     # ## Compute predictions
     features = config['options']['features'].split(',')
+    for i,f in enumerate(features): 
+        if f == 'Jet_pt' or f == 'Jet_mt'  : features[i] = features[i]+'_raw'
     X = data[features].values
     
     model = keras.models.load_model(models[0],compile=False)

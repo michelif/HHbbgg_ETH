@@ -98,12 +98,14 @@ if options.hparams is not None:
           hparams.update(pars)    # if inside several files we change the same parameter, it will overwrite for the one in the last file    
     
 ## read data
-columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] # + ['Jet_corr_JER']
+#columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] # + ['Jet_corr_JER']
 data_valid = (io.read_data(inp_file_valid, columns = None))
 df_list = [(io.read_data(inf,columns = None)) for inf in inp_files]
 for data in df_list+[data_valid]:
     data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
     data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mass']=data['Jet_mass']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_leptonPtRelInv']=data['Jet_leptonPtRelInv']*data['Jet_rawEnergy']/data['Jet_e']
     data['Jet_mcPt_Jet_pt']=data['Jet_mcPt']/(data['Jet_pt']*data['Jet_corr_JEC'])
 
 X_shape = (data_valid[features].values).shape[1:]

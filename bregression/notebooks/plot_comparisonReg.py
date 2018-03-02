@@ -25,8 +25,8 @@ input_trainings = options.training.split(',')
 input_files = options.inp_file.split(',')
 
 now = str(datetime.datetime.now()).split(' ')[0]
-#scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/%s/'%now
-scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/2018-02-26/'
+scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/%s/'%now
+#scratch_plots ='/scratch/snx3000/nchernya/bregression/plots/quantiles/2018-02-26/'
 dirs=['',input_trainings[0],options.samplename]
 for i in range(len(dirs)):
   scratch_plots=scratch_plots+'/'+dirs[i]+'/'
@@ -38,13 +38,14 @@ whats = ['p_T','\eta','rho']
 ranges = [[30,400],[-2.5,2.5],[0,50]]
 binning =[50,10,20] #[50,20]
 linestyles = ['-.', '--','-', ':']
-colors=['green','red','blue','black']
-markers=['s','o','^','*']
+colors=['green','red','blue','cyan']
+markers=['s','o','^','h']
 labels=options.labels.split(',')
 bins_same = []
 
 for i in range(0,3):
  sigma_mu_array = []
+ sigma_array = []
  for ifile in range(len(input_files)):
     # ## Read test data and model
   # load data
@@ -57,16 +58,15 @@ for i in range(0,3):
     regions_summary = json.loads(file_regions.read())
     region_names = regions_summary['pt_regions']+regions_summary['eta_region_names']
 
-    y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
-    X_pt = (data['Jet_pt']).values.reshape(-1,1)
+ #   y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
+    y = (data['Jet_mcPt']/(data['Jet_pt_raw']*data['Jet_corr_JEC'])).values.reshape(-1,1)
+    X_pt = (data['Jet_pt_raw']).values.reshape(-1,1)
     X_eta = (data['Jet_eta']).values.reshape(-1,1)
     X_rho = (data['rho']).values.reshape(-1,1)
     res = (data['Jet_resolution_NN_%s'%input_trainings[ifile]])
     y_pred = (data['Jet_pt_reg_NN_%s'%input_trainings[ifile]]) #bad name because it is actually a correction
     y_hbb = (data['Jet_mcPt']/data['Jet_pt_reg']).values.reshape(-1,1)
     y_corr = (y[:,0]/y_pred).values.reshape(-1,1)
-   # errors vector
-    err = y[:,0]-y_pred
 
 
     if i==0 : X = X_pt
@@ -90,25 +90,27 @@ for i in range(0,3):
     err_corr_iqr2 =  0.5*(y_corr_qt_pt[3]-y_corr_qt_pt[0])
     sigma_mu_corr = np.array(err_corr_iqr2)/np.array(y_corr_40_pt)
     sigma_mu_array.append(sigma_mu_corr)
+    sigma_array.append(err_corr_iqr2)
 
-    _, y_hbb_mean_pt, y_hbb_std_pt, y_hbb_qt_pt = utils.profile(y_hbb,X,bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
-    y_hbb_25_pt,y_hbb_40_pt,y_hbb_75_pt = y_hbb_qt_pt[0],y_hbb_qt_pt[1],y_hbb_qt_pt[3]
-    y_hbb_iqr2_pt =  y_hbb_qt_pt[0],y_hbb_qt_pt[3]
-    err_hbb_iqr2 =  0.5*(y_hbb_qt_pt[3]-y_hbb_qt_pt[0])
-    sigma_mu_hbb = np.array(err_hbb_iqr2)/np.array(y_hbb_40_pt)
+    _, y_mean_pt, y_std_pt, y_qt_pt = utils.profile(y,X,bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
+    y_25_pt,y_40_pt,y_75_pt = y_qt_pt[0],y_qt_pt[1],y_qt_pt[3]
+    y_iqr2_pt =  y_qt_pt[0],y_qt_pt[3]
+    err_jec_iqr2 =  0.5*(y_qt_pt[3]-y_qt_pt[0])
+    sigma_mu_jec = np.array(err_jec_iqr2)/np.array(y_40_pt)
+    sigma_jec = np.array(err_jec_iqr2)
  
     binc = 0.5*(bins[1:]+bins[:-1])
 
-    print(binc.shape,bins.shape,sigma_mu_hbb.shape,err_corr_iqr2.shape,y_corr_median_pt.shape) 
+  #  print(binc.shape,bins.shape,sigma_mu_jec.shape,err_corr_iqr2.shape,y_corr_median_pt.shape) 
  
     ## Draw profile of sigma (0.72-0.25)/2 vs eta and pt
-   # if (ifile==0) :  plt.scatter(binc,sigma_mu_hbb,color='blue',marker='s',label='HIG-17-009')
+    if (ifile==0) :  plt.scatter(binc,sigma_mu_jec,color='black',marker='*',label='JEC only')
     plt.scatter(binc,sigma_mu_corr,color=colors[ifile],marker=markers[ifile],label='NN %s'%labels[ifile])
  plt.grid(alpha=0.2,linestyle='--',markevery=2)
  axes = plt.gca()
  if (i==0) : axes.set_ylim(0.02,0.20)
  if (i==1) : axes.set_ylim(0.06,0.15)
- if (i==2) : axes.set_ylim(0.08,0.11)
+ if (i==2) : axes.set_ylim(0.08,0.15)
  axes.set_xlim(ranges[i][0],ranges[i][1])
  if (i==0) : axes.set_xlim(0,ranges[i][1])
  ymin, ymax = (plt.gca()).get_ylim()
@@ -123,8 +125,21 @@ for i in range(0,3):
  plt.savefig(scratch_plots+savename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
  plt.clf()
 
- difference = 2*(np.array(sigma_mu_array[0])-np.array(sigma_mu_array[1]))/(np.array(sigma_mu_array[0])+np.array(sigma_mu_array[1]))
- difference = [round(a,4) for a in difference]
- data_csv = pd.DataFrame(np.array(difference).reshape(1,binc.shape[0]), columns=(binc))
- savename='/data_IQR_compare_%s_%s%s.json'%(whats[i].replace('\\',''),options.samplename,where)
+# difference = 2*(np.array(sigma_mu_array[0])-np.array(sigma_mu_array[1]))/(np.array(sigma_mu_array[0])+np.array(sigma_mu_array[1]))
+# difference = [round(a,4) for a in difference]
+# data_csv = pd.DataFrame(np.array(difference).reshape(1,binc.shape[0]), columns=(binc))
+ data_csv = pd.DataFrame({whats[i].replace('\\',''):binc})
+ data_csv['onlyJEC'] = sigma_mu_jec
+ data_csv['sigma_onlyJEC'] = sigma_jec
+ for ifile in range(len(input_files)):
+     data_csv['%s'%labels[ifile]] = sigma_mu_array[ifile]
+     data_csv['sigma_%s'%labels[ifile]] = sigma_array[ifile]
+     data_csv['delta_%s_JEC'%labels[ifile]] = 2*(np.array(sigma_mu_array[ifile])-np.array(sigma_mu_jec))/(np.array(sigma_mu_array[ifile])+np.array(sigma_mu_jec))
+     data_csv['delta_%s_JEC_rel'%labels[ifile]] = (np.array(sigma_mu_array[ifile])-np.array(sigma_mu_jec))/(np.array(sigma_mu_jec))
+     data_csv['delta_sigma_%s_JEC'%labels[ifile]] = 2*(np.array(sigma_array[ifile])-np.array(sigma_jec))/(np.array(sigma_array[ifile])+np.array(sigma_jec))
+     for jfile in range(ifile+1,len(input_files)):
+         data_csv['delta_%s_%s'%(labels[ifile],labels[jfile])] = 2*(np.array(sigma_mu_array[ifile])-np.array(sigma_mu_array[jfile]))/(np.array(sigma_mu_array[ifile])+np.array(sigma_mu_array[jfile]))
+         data_csv['delta_sigma_%s_%s'%(labels[ifile],labels[jfile])] = 2*(np.array(sigma_array[ifile])-np.array(sigma_array[jfile]))/(np.array(sigma_array[ifile])+np.array(sigma_array[jfile]))
+              
+ savename='/data_IQR_compare_%s_%s%s.csv'%(whats[i].replace('\\',''),options.samplename,where)
  data_csv.to_csv(scratch_plots+savename)
