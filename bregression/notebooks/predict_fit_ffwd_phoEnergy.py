@@ -44,7 +44,6 @@ for idx,name in enumerate(input_trainings):
     # list all model files in the training folder
 #    target='/users/nchernya/HHbbgg_ETH/bregression/notebooks/'+input_trainings[idx]
   #  target=options.target_dir+input_trainings[idx]
-    print
     target=options.target_dir
     models = get_ipython().getoutput('ls -t $target/*.hdf5')
     print("models")
@@ -61,15 +60,10 @@ for idx,name in enumerate(input_trainings):
     print(features)
     X = data[features].values
     
-    print("accessing x")
-    print(X)
-
 
     model = keras.models.load_model(models[0],compile=False)
     y_pred = model.predict(X)
   
-    print("prediction")
-    print(y_pred)
 
     # *Note*: the target is typically normalized in the training y = (y-mu)/sigma
     # ## Convert raw prediction into actual scale and resolution estimation
