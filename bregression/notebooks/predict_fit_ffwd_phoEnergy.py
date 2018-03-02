@@ -26,7 +26,7 @@ input_trainings = options.training.split(',')
 
 # ## Read test data and model
 # load data
-data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None,stop=200)
+data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
 data['full5x5_e5x5']=data['full5x5_e5x5']/data['scRawEnergy']
 data['full5x5_eMax']=data['full5x5_eMax']/data['full5x5_e5x5']
 data['full5x5_e2nd']=data['full5x5_e2nd']/data['full5x5_e5x5']

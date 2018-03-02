@@ -83,7 +83,8 @@ if options.hparams is not None:
 #columns = features + ['genPt']
 columns = features + ['genEnergy']
 #data = io.read_data(inp_file, columns = columns,data_columns=['NtupID'],where='NtupID<3000')
-data = io.read_data(inp_file, columns = columns,data_columns=['NtupID'],stop=1500000)
+#data = io.read_data(inp_file, columns = columns,data_columns=['NtupID'],stop=1500000)
+data = io.read_data(inp_file, columns = columns)
 data.describe()
 #data = io.read_data(inp_file, columns = columns)
 #data = io.read_data(inp_file, columns = columns,where=['data_column[NtupID][:].values.reshape(-1)<300'])
