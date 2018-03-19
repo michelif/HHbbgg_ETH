@@ -27,8 +27,9 @@ input_trainings = options.training.split(',')
 # ## Read test data and model
 # load data
 data = io.read_data('%s%s'%(options.inp_dir,options.inp_file),columns=None)
-data['Jet_pt_raw'] = data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
-data['Jet_mt_raw'] = data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
+if not ('Jet_pt_raw' in data.columns):
+    data['Jet_pt_raw'] = data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mt_raw'] = data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
 
 for idx,name in enumerate(input_trainings):
     # list all model files in the training folder

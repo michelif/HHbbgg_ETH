@@ -35,17 +35,22 @@ for i in range(len(dirs)):
 
 print(options.where)
 whats = ['p_T','\eta','rho']
-ranges = [[30,400],[-2.5,2.5],[0,50]]
-binning =[50,10,20] #[50,20]
-linestyles = ['-.', '--','-', ':']
-colors=['green','red','blue','cyan']
-markers=['s','o','^','h']
+#ranges = [[30,400],[-2.5,2.5],[0,50]]
+#binning =[50,10,20] #[50,20]
+#ranges = [[30,400],[0,2.5],[0,50]]
+#binning =[10,10,10] #[50,20]
+ranges = [[0,500],[0,2.5],[0,50]]
+binning =[7,10,1] #[50,20]
+linestyles = ['-.', '--','-', ':','-']
+colors=['green','red','blue','cyan','magenta','blueviolet','orange','lime','brown','blue','blue']
+markers=['s','o','^','h','>','<','s','o','o','o','o']
 labels=options.labels.split(',')
 bins_same = []
 
-for i in range(0,3):
+for i in range(0,1):
  sigma_mu_array = []
  sigma_array = []
+ mu_array = []
  for ifile in range(len(input_files)):
     # ## Read test data and model
   # load data
@@ -61,7 +66,7 @@ for i in range(0,3):
  #   y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
     y = (data['Jet_mcPt']/(data['Jet_pt_raw']*data['Jet_corr_JEC'])).values.reshape(-1,1)
     X_pt = (data['Jet_pt_raw']).values.reshape(-1,1)
-    X_eta = (data['Jet_eta']).values.reshape(-1,1)
+    X_eta = (abs(data['Jet_eta'])).values.reshape(-1,1)
     X_rho = (data['rho']).values.reshape(-1,1)
     res = (data['Jet_resolution_NN_%s'%input_trainings[ifile]])
     y_pred = (data['Jet_pt_reg_NN_%s'%input_trainings[ifile]]) #bad name because it is actually a correction
@@ -75,11 +80,13 @@ for i in range(0,3):
     print(i,X)
  
     if (ifile==0) : bins=binning[i]
-    if ('ggHHbbgg' in options.samplename) and ('p_T' in whats[i]) : bins=int(binning[i]/2.)
-    if ('ZHbbll' in options.samplename) and ('eta' in whats[i]) : ranges[i]=[-2.45,2.45]
+   # if ('ggHHbbgg' in options.samplename) and ('p_T' in whats[i]) : bins=int(binning[i]/2.)
  
-    if ifile==0 : 
-       bins, y_corr_mean_pt, y_corr_std_pt, y_corr_qt_pt = utils.profile(y_corr,X,range=ranges[i],bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
+    if ifile==0 :
+       bins = np.array([0,20,40,60,80,100,150,200,250,300,400,500]) #ttbar
+     #  bins = np.array([0,20,40,60,80,100,150,200]) #ZHbbll
+       _, y_corr_mean_pt, y_corr_std_pt, y_corr_qt_pt = utils.profile(y_corr,X,bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
+    #   bins, y_corr_mean_pt, y_corr_std_pt, y_corr_qt_pt = utils.profile(y_corr,X,range=ranges[i],bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
        bins_same.append(bins)
     else :  
        bins = bins_same[i]
@@ -91,6 +98,7 @@ for i in range(0,3):
     sigma_mu_corr = np.array(err_corr_iqr2)/np.array(y_corr_40_pt)
     sigma_mu_array.append(sigma_mu_corr)
     sigma_array.append(err_corr_iqr2)
+    mu_array.append(y_corr_40_pt)
 
     _, y_mean_pt, y_std_pt, y_qt_pt = utils.profile(y,X,bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
     y_25_pt,y_40_pt,y_75_pt = y_qt_pt[0],y_qt_pt[1],y_qt_pt[3]
@@ -98,6 +106,7 @@ for i in range(0,3):
     err_jec_iqr2 =  0.5*(y_qt_pt[3]-y_qt_pt[0])
     sigma_mu_jec = np.array(err_jec_iqr2)/np.array(y_40_pt)
     sigma_jec = np.array(err_jec_iqr2)
+    mu_jec = np.array(y_40_pt)
  
     binc = 0.5*(bins[1:]+bins[:-1])
 
@@ -134,9 +143,11 @@ for i in range(0,3):
  for ifile in range(len(input_files)):
      data_csv['%s'%labels[ifile]] = sigma_mu_array[ifile]
      data_csv['sigma_%s'%labels[ifile]] = sigma_array[ifile]
-     data_csv['delta_%s_JEC'%labels[ifile]] = 2*(np.array(sigma_mu_array[ifile])-np.array(sigma_mu_jec))/(np.array(sigma_mu_array[ifile])+np.array(sigma_mu_jec))
+     data_csv['mu_%s'%labels[ifile]] = mu_array[ifile]
+   #  data_csv['delta_%s_JEC'%labels[ifile]] = 2*(np.array(sigma_mu_array[ifile])-np.array(sigma_mu_jec))/(np.array(sigma_mu_array[ifile])+np.array(sigma_mu_jec))
      data_csv['delta_%s_JEC_rel'%labels[ifile]] = (np.array(sigma_mu_array[ifile])-np.array(sigma_mu_jec))/(np.array(sigma_mu_jec))
-     data_csv['delta_sigma_%s_JEC'%labels[ifile]] = 2*(np.array(sigma_array[ifile])-np.array(sigma_jec))/(np.array(sigma_array[ifile])+np.array(sigma_jec))
+     data_csv['delta_sigma_%s_JEC_rel'%labels[ifile]] = (np.array(sigma_array[ifile])-np.array(sigma_jec))/(np.array(sigma_jec))
+     data_csv['delta_mu_%s_JEC_rel'%labels[ifile]] = (np.array(mu_array[ifile])-np.array(mu_jec))/(np.array(mu_jec))
      for jfile in range(ifile+1,len(input_files)):
          data_csv['delta_%s_%s'%(labels[ifile],labels[jfile])] = 2*(np.array(sigma_mu_array[ifile])-np.array(sigma_mu_array[jfile]))/(np.array(sigma_mu_array[ifile])+np.array(sigma_mu_array[jfile]))
          data_csv['delta_sigma_%s_%s'%(labels[ifile],labels[jfile])] = 2*(np.array(sigma_array[ifile])-np.array(sigma_array[jfile]))/(np.array(sigma_array[ifile])+np.array(sigma_array[jfile]))

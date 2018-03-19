@@ -39,8 +39,9 @@ file_regions = open('/users/nchernya/HHbbgg_ETH/bregression/scripts/regionsPtEta
 regions_summary = json.loads(file_regions.read())
 region_names = regions_summary['pt_regions']+regions_summary['eta_region_names']
 
-y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
-X_pt = (data['Jet_pt']).values.reshape(-1,1)
+#y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
+y = (data['Jet_mcPt']/(data['Jet_pt_raw']*data['Jet_corr_JEC'])).values.reshape(-1,1)
+X_pt = (data['Jet_pt_raw']).values.reshape(-1,1)
 X_eta = (data['Jet_eta']).values.reshape(-1,1)
 X_rho = (data['rho']).values.reshape(-1,1)
 res = (data['Jet_resolution_NN_%s'%input_trainings[0]])
@@ -193,21 +194,30 @@ for i in range(0,3):
  plt.savefig(scratch_plots+savename+'.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
  plt.clf()
 
+##########################################################
+pt_bins=["(Jet_mcPt>0)", "(Jet_mcPt<30)","(Jet_mcPt>=30 & Jet_mcPt<60)", "(Jet_mcPt>=60 & Jet_mcPt<100)", "(Jet_mcPt>=100 & Jet_mcPt<150)", "(Jet_mcPt>=150 & Jet_mcPt<200)"]
+for pt_bin in pt_bins:
+    data_bin = data.query(pt_bin)
+    y_bin = (data_bin['Jet_mcPt']/(data_bin['Jet_pt_raw']*data_bin['Jet_corr_JEC'])).values.reshape(-1,1)
+    res_bin = (data_bin['Jet_resolution_NN_%s'%input_trainings[0]])
+    y_pred_bin = (data_bin['Jet_pt_reg_NN_%s'%input_trainings[0]]) #bad name because it is actually a correction
+    # errors vector
+    err_bin = y_bin[:,0]-y_pred_bin
 
+    ##Draw IQR/2 vs resolution estimator
+    res_bins, err_qt_res = utils.profile(err_bin,res_bin,bins=30,range=[0,0.3],moments=False) 
+    err_iqr2 =  0.5*(err_qt_res[2]-err_qt_res[0])
 
-
-##Draw IQR/2 vs resolution estimator
-res_bins, err_qt_res = utils.profile(err,res,bins=30,range=[0,0.3],moments=False) 
-print(err_qt_res.shape)
-err_iqr2 =  0.5*(err_qt_res[2]-err_qt_res[0])
-
-plt.scatter(0.5*(res_bins[1:]+res_bins[:-1]),err_iqr2)
-plt.grid(alpha=0.5,linestyle='--',markevery=2)
-axes = plt.gca()
-ymin, ymax = axes.get_ylim()
-plt.text(0.0,ymax*0.95,'%s'%options.samplename, fontsize=20)
-plt.xlabel('$\sigma(p_T)/p_T$')
-plt.ylabel('IQR / 2')
-savename='/IQR_sigma_pt_%s_%s'%(input_trainings[0],options.samplename)
-plt.savefig(scratch_plots+savename+'.pdf')
-plt.savefig(scratch_plots+savename+'.png')
+    plt.scatter(0.5*(res_bins[1:]+res_bins[:-1]),err_iqr2)
+    plt.grid(alpha=0.5,linestyle='--',markevery=2)
+    axes = plt.gca()
+    ymin, ymax = axes.get_ylim()
+    xmin, xmax = (plt.gca()).get_xlim()
+    plt.text(xmin+abs(xmin)*0.05,ymax*0.80,'%s'%pt_bin, fontsize=20)
+    plt.text(xmin+abs(xmin)*0.05,ymax*0.95,'%s'%options.samplename, fontsize=20)
+    plt.xlabel('$\sigma(p_T)/p_T$')
+    plt.ylabel('error vector IQR / 2')
+    savename='/IQR_sigma_pt_%s_%s_%s'%(input_trainings[0],options.samplename,pt_bin)
+    plt.savefig(scratch_plots+savename+'.pdf')
+    plt.savefig(scratch_plots+savename+'.png')
+    plt.clf()
