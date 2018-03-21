@@ -56,7 +56,7 @@ linestyles = ['-.', '--','-', ':']
 whats = ['p_T','\eta','rho']
 ranges = [[30,400],[-2.5,2.5],[0,50]]
 binning =[50,10,20] #[50,20]
-for i in range(0,3):
+for i in range(0,0):
  if i==0 : X = X_pt
  elif i==1 : X = X_eta
  elif i==2 : X = X_rho
@@ -195,7 +195,13 @@ for i in range(0,3):
  plt.clf()
 
 ##########################################################
-pt_bins=["(Jet_mcPt>0)", "(Jet_mcPt<30)","(Jet_mcPt>=30 & Jet_mcPt<60)", "(Jet_mcPt>=60 & Jet_mcPt<100)", "(Jet_mcPt>=100 & Jet_mcPt<150)", "(Jet_mcPt>=150 & Jet_mcPt<200)"]
+##Draw IQR/2 vs resolution estimator
+res_bins_incl, err_qt_res_incl = utils.profile(err,res,bins=30,range=[0,0.3],moments=False) 
+err_iqr2_incl =  0.5*(err_qt_res_incl[2]-err_qt_res_incl[0])
+#pt_bins=["(Jet_mcPt>=20 & Jet_mcPt<30)","(Jet_mcPt>=30 & Jet_mcPt<60)", "(Jet_mcPt>=60 & Jet_mcPt<100)", "(Jet_mcPt>=100 & Jet_mcPt<150)", "(Jet_mcPt>=150 & Jet_mcPt<200)"]
+pt_bins=["(Jet_mcPt>=20 & Jet_mcPt<30)","(Jet_mcPt>=30 & Jet_mcPt<50)", "(Jet_mcPt>=50 & Jet_mcPt<70) ","(Jet_mcPt>=70 & Jet_mcPt<100)", "(Jet_mcPt>=100 & Jet_mcPt<120)","(Jet_mcPt>=120 & Jet_mcPt<150)", "(Jet_mcPt>=150 & Jet_mcPt<200)"]
+pt_boundaries = [20,30,35,40,50,60,70,80,90,100,110,120,130,140,150,170,200]
+pt_bins = ["Jet_mcPt>=%s & Jet_mcPt<%s"%(pt_boundaries[a],pt_boundaries[a+1]) for a in range(0,len(pt_boundaries)-1)]
 for pt_bin in pt_bins:
     data_bin = data.query(pt_bin)
     y_bin = (data_bin['Jet_mcPt']/(data_bin['Jet_pt_raw']*data_bin['Jet_corr_JEC'])).values.reshape(-1,1)
@@ -208,15 +214,20 @@ for pt_bin in pt_bins:
     res_bins, err_qt_res = utils.profile(err_bin,res_bin,bins=30,range=[0,0.3],moments=False) 
     err_iqr2 =  0.5*(err_qt_res[2]-err_qt_res[0])
 
-    plt.scatter(0.5*(res_bins[1:]+res_bins[:-1]),err_iqr2)
+    plt.scatter(0.5*(res_bins_incl[1:]+res_bins_incl[:-1]),err_iqr2_incl,color='blue',label='inclusive')
+    plt.scatter(0.5*(res_bins[1:]+res_bins[:-1]),err_iqr2,color='red',label='%s'%pt_bin)
+    plt.fill_between(res_bins_incl[1:]+res_bins_incl[:-1],0.8*np.array(res_bins_incl[1:]+res_bins_incl[:-1]),1.2*np.array(res_bins_incl[1:]+res_bins_incl[:-1]),alpha=0.3,label='20% band',color='green')
     plt.grid(alpha=0.5,linestyle='--',markevery=2)
     axes = plt.gca()
+    axes.set_ylim(0,0.30)
+    axes.set_xlim(0,0.30)
     ymin, ymax = axes.get_ylim()
     xmin, xmax = (plt.gca()).get_xlim()
-    plt.text(xmin+abs(xmin)*0.05,ymax*0.80,'%s'%pt_bin, fontsize=20)
-    plt.text(xmin+abs(xmin)*0.05,ymax*0.95,'%s'%options.samplename, fontsize=20)
+#    plt.text(xmin+abs(xmin)*0.05,ymax*0.80,'%s'%pt_bin, fontsize=20)
+    plt.text(xmin+abs(xmin)*0.1,ymax*0.75,'%s'%options.samplename, fontsize=20)
     plt.xlabel('$\sigma(p_T)/p_T$')
     plt.ylabel('error vector IQR / 2')
+    plt.legend()
     savename='/IQR_sigma_pt_%s_%s_%s'%(input_trainings[0],options.samplename,pt_bin)
     plt.savefig(scratch_plots+savename+'.pdf')
     plt.savefig(scratch_plots+savename+'.png')

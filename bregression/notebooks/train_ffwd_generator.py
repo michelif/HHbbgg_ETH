@@ -96,17 +96,29 @@ if options.hparams is not None:
        with open(fname) as hf:
           pars = json.loads(hf.read())
           hparams.update(pars)    # if inside several files we change the same parameter, it will overwrite for the one in the last file    
+
+## read json with unweighting information
+with open('/scratch/snx3000/nchernya/bregression/unweighting_data.json' ) as fin_unweight:
+     unweight_info = json.loads(fin_unweight.read())
+unweight_bins = unweight_info['bins']
+unweight_values = unweight_info['values']
+
+
     
 ## read data
 #columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] # + ['Jet_corr_JER']
 data_valid = (io.read_data(inp_file_valid, columns = None))
 df_list = [(io.read_data(inf,columns = None)) for inf in inp_files]
 for data in df_list+[data_valid]:
+    data['rdn'] = np.random.uniform(0,1,data.shape[0])
+    data['unweight_value'] = [unweight_values[k-1] for k in np.digitize(data['Jet_pt'], unweight_bins)]
+    data.drop(data[data.rdn > data.unweight_value].index, inplace=True) # if random number is greater then unweighting function, drop event
     data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
     data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
     data['Jet_mass']=data['Jet_mass']*data['Jet_rawEnergy']/data['Jet_e']
     data['Jet_leptonPtRelInv']=data['Jet_leptonPtRelInv']*data['Jet_rawEnergy']/data['Jet_e']
     data['Jet_mcPt_Jet_pt']=data['Jet_mcPt']/(data['Jet_pt']*data['Jet_corr_JEC'])
+
 
 X_shape = (data_valid[features].values).shape[1:]
 y_valid = (data_valid[['Jet_mcPt_Jet_pt','Jet_pt']])#.values#.reshape(-1,1)
