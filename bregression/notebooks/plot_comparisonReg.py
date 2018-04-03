@@ -40,14 +40,14 @@ whats = ['p_T','\eta','rho']
 #ranges = [[30,400],[0,2.5],[0,50]]
 #binning =[10,10,10] #[50,20]
 ranges = [[0,500],[0,2.5],[0,50]]
-binning =[7,10,1] #[50,20]
+binning =[7,10,20] #[50,20]
 linestyles = ['-.', '--','-', ':','-']
 colors=['green','red','blue','cyan','magenta','blueviolet','orange','lime','brown','blue','blue']
 markers=['s','o','^','h','>','<','s','o','o','o','o']
 labels=options.labels.split(',')
 bins_same = []
 
-for i in range(0,1):
+for i in range(0,3):
  sigma_mu_array = []
  sigma_array = []
  mu_array = []
@@ -70,7 +70,7 @@ for i in range(0,1):
     X_rho = (data['rho']).values.reshape(-1,1)
     res = (data['Jet_resolution_NN_%s'%input_trainings[ifile]])
     y_pred = (data['Jet_pt_reg_NN_%s'%input_trainings[ifile]]) #bad name because it is actually a correction
-    y_hbb = (data['Jet_mcPt']/data['Jet_pt_reg']).values.reshape(-1,1)
+  #  y_hbb = (data['Jet_mcPt']/data['Jet_pt_reg']).values.reshape(-1,1)
     y_corr = (y[:,0]/y_pred).values.reshape(-1,1)
 
 
@@ -79,12 +79,12 @@ for i in range(0,1):
     elif i==2 : X = X_rho
     print(i,X)
  
-    if (ifile==0) : bins=binning[i]
-   # if ('ggHHbbgg' in options.samplename) and ('p_T' in whats[i]) : bins=int(binning[i]/2.)
+    if (ifile==0) : bins=np.linspace(ranges[i][0],ranges[i][1],binning[i])
+    if ifile==0 and i==0 :  bins = np.array([0,20,40,60,80,100,150,200,250,300,400,500]) #ttbar
+   # if ifile==0 and i==0 :  bins = np.array([0,20,40,60,80,100,150,200,250,300]) #ttbar
+   # if ifile==0 and i==0 :   bins = np.array([0,20,40,60,80,100,150,200]) #ZHbbll
  
     if ifile==0 :
-       bins = np.array([0,20,40,60,80,100,150,200,250,300,400,500]) #ttbar
-     #  bins = np.array([0,20,40,60,80,100,150,200]) #ZHbbll
        _, y_corr_mean_pt, y_corr_std_pt, y_corr_qt_pt = utils.profile(y_corr,X,bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
     #   bins, y_corr_mean_pt, y_corr_std_pt, y_corr_qt_pt = utils.profile(y_corr,X,range=ranges[i],bins=bins,quantiles=np.array([0.25,0.4,0.5,0.75])) 
        bins_same.append(bins)

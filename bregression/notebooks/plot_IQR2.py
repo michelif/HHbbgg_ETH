@@ -56,7 +56,7 @@ linestyles = ['-.', '--','-', ':']
 whats = ['p_T','\eta','rho']
 ranges = [[30,400],[-2.5,2.5],[0,50]]
 binning =[50,10,20] #[50,20]
-for i in range(0,0):
+for i in range(0,3):
  if i==0 : X = X_pt
  elif i==1 : X = X_eta
  elif i==2 : X = X_rho
