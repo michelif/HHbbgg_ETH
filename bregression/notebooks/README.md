@@ -67,6 +67,8 @@ CaterinaComparison.py
 compareScale.py
 ```
 
+## Convert root files to hdf leaving only needed branches
+
 
 ## Plotting results of NN
 
