@@ -61,23 +61,23 @@ for i in range(1,hist.GetNbinsX()+1):
 
 hist_ratio.Draw("same")
 
-c.SaveAs("../plots/fit_exp_pt_final.png")
+c.SaveAs("../plots/unweighting.png")
 
 
 
 #branch_names = 'Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,rho,nPVs,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_numDaughters_pt03,noexpand:Jet_energyRing_dR0_em/Jet_e,noexpand:Jet_energyRing_dR1_em/Jet_e,noexpand:Jet_energyRing_dR2_em/Jet_e,noexpand:Jet_energyRing_dR3_em/Jet_e,noexpand:Jet_energyRing_dR4_em/Jet_e,noexpand:Jet_energyRing_dR0_neut/Jet_e,noexpand:Jet_energyRing_dR1_neut/Jet_e,noexpand:Jet_energyRing_dR2_neut/Jet_e,noexpand:Jet_energyRing_dR3_neut/Jet_e,noexpand:Jet_energyRing_dR4_neut/Jet_e,noexpand:Jet_energyRing_dR0_ch/Jet_e,noexpand:Jet_energyRing_dR1_ch/Jet_e,noexpand:Jet_energyRing_dR2_ch/Jet_e,noexpand:Jet_energyRing_dR3_ch/Jet_e,noexpand:Jet_energyRing_dR4_ch/Jet_e,noexpand:Jet_energyRing_dR0_mu/Jet_e,noexpand:Jet_energyRing_dR1_mu/Jet_e,noexpand:Jet_energyRing_dR2_mu/Jet_e,noexpand:Jet_energyRing_dR3_mu/Jet_e,noexpand:Jet_energyRing_dR4_mu/Jet_e'.split(",")
-branch_names = 'noexpand:Jet_mcPt/Jet_pt,Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") #same as Caterina
-branch_names = [c.strip() for c in branch_names]
-data_frame = (rpd.read_root(name,"tree", columns = branch_names)) .query(cuts)
-data_frame['weight'] = ( np.ones_like(data_frame.index)).astype(np.float32)
-data_frame['weight'] = [func_w.Eval(row['Jet_pt'])/hist.GetBinContent(hist.FindBin(row['Jet_pt'])) for i, row in data_frame.iterrows()]
-X_weights = data_frame['weight']	
-for j in range(len(branch_names)):
-#for j in range(0,1):
-	if j == 0:
-		X_features = data_frame[[branch_names[j].replace('noexpand:','')]]	
-	else:
-		X_features = np.concatenate([X_features,data_frame[[branch_names[j].replace('noexpand:','')]]],axis=1)
-
-log_names='noexpand:Jet_mcPt/Jet_pt,Jet_pt,Jet_mcPt,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR'.split(",")
-plotting.plot_input_variables_reg(X_features,branch_names,log_names,30,'weightedPt',X_weights)
+#branch_names = 'noexpand:Jet_mcPt/Jet_pt,Jet_pt,Jet_eta,Jet_mcFlavour,Jet_mcPt,rho,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonDeltaR,Jet_neHEF,Jet_neEmEF,Jet_vtxPt,Jet_vtxMass,Jet_vtx3dL,Jet_vtxNtrk,Jet_vtx3deL,Jet_energyRing_dR0_em_Jet_e,Jet_energyRing_dR1_em_Jet_e,Jet_energyRing_dR2_em_Jet_e,Jet_energyRing_dR3_em_Jet_e,Jet_energyRing_dR4_em_Jet_e,Jet_energyRing_dR0_neut_Jet_e,Jet_energyRing_dR1_neut_Jet_e,Jet_energyRing_dR2_neut_Jet_e,Jet_energyRing_dR3_neut_Jet_e,Jet_energyRing_dR4_neut_Jet_e,Jet_energyRing_dR0_ch_Jet_e,Jet_energyRing_dR1_ch_Jet_e,Jet_energyRing_dR2_ch_Jet_e,Jet_energyRing_dR3_ch_Jet_e,Jet_energyRing_dR4_ch_Jet_e,Jet_energyRing_dR0_mu_Jet_e,Jet_energyRing_dR1_mu_Jet_e,Jet_energyRing_dR2_mu_Jet_e,Jet_energyRing_dR3_mu_Jet_e,Jet_energyRing_dR4_mu_Jet_e,Jet_numDaughters_pt03'.split(",") #same as Caterina
+#branch_names = [c.strip() for c in branch_names]
+#data_frame = (rpd.read_root(name,"tree", columns = branch_names)) .query(cuts)
+#data_frame['weight'] = ( np.ones_like(data_frame.index)).astype(np.float32)
+#data_frame['weight'] = [func_w.Eval(row['Jet_pt'])/hist.GetBinContent(hist.FindBin(row['Jet_pt'])) for i, row in data_frame.iterrows()]
+#X_weights = data_frame['weight']	
+#for j in range(len(branch_names)):
+##for j in range(0,1):
+#	if j == 0:
+#		X_features = data_frame[[branch_names[j].replace('noexpand:','')]]	
+#	else:
+#		X_features = np.concatenate([X_features,data_frame[[branch_names[j].replace('noexpand:','')]]],axis=1)
+#
+#log_names='noexpand:Jet_mcPt/Jet_pt,Jet_pt,Jet_mcPt,Jet_mt,Jet_leadTrackPt,Jet_leptonPtRel,Jet_leptonPt,Jet_leptonDeltaR'.split(",")
+#plotting.plot_input_variables_reg(X_features,branch_names,log_names,30,'weightedPt',X_weights)

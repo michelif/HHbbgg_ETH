@@ -10,7 +10,8 @@ def main(options,args):
     ROOT.gStyle.SetOptStat(0)
         
     fin = ROOT.TFile.Open(options.file)
-    tree = fin.Get("reducedTree_sig")
+   # tree = fin.Get("reducedTree_sig")
+    tree = fin.Get("bbggSelectionTree")
 
 
     for nameTagPos,s in enumerate(options.file.split("/")):
@@ -26,11 +27,12 @@ def main(options,args):
 
     fout = ROOT.TFile.Open("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/cumulativeTransformation_"+name+".root","recreate")
 
-    nbins = 10000
-    xlow = 0.
+    nbins = 40000
+    xlow = -1.
     xup = 1.
     histoMVA = ROOT.TH1F("histoMVA","histoMVA",nbins,xlow,xup)
-    tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
+ #   tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
+    tree.Draw("HHTagger2017>>histoMVA")
 #    histoMVA.FillRandom("gaus",1000000)
 
     cumulativeHisto = histoMVA.GetCumulative()
@@ -39,11 +41,11 @@ def main(options,args):
     cumulativeGraph.SetTitle("cumulativeGraph")
     cumulativeGraph.SetName("cumulativeGraph")
 
-    evalCumulatives = ROOT.TH1F("eval","eval",nbins/10,0,1)
+    evalCumulatives = ROOT.TH1F("eval","eval",nbins,0,1)
 
     x , y = array( 'd' ), array( 'd' )
     step = (xup-xlow)/nbins
-    for i in range(1,10000):
+    for i in range(1,nbins):
 #        xvalue = ROOT.gRandom.Gaus()
         xvalue = ROOT.TH1.GetRandom(histoMVA)
         evalCumulatives.Fill(cumulativeGraph.Eval(xvalue))
@@ -114,7 +116,7 @@ def main(options,args):
         
         for i,event in enumerate(copyTree):
             if i>tree.GetEntries():break
-            mva = event.MVAOutput
+            mva = event.HHTagger2017
             transfMVA[0] = cumulativeGraph.Eval(mva)
             transfBranch.Fill()
     

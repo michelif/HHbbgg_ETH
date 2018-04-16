@@ -14,11 +14,11 @@ cmsenv
 export MYBATCHDIR=/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/submit_jobs/
 cd $MYBATCHDIR
 
-./test_root $1 $2 $3 $TMPDIR/$4 
+./a_root $1 $2 $3 $TMPDIR/$4 
 
-xrdfs t3se01.psi.ch rm  /store/user/nchernya/HHbbgg/b_regression/ttbar_unweighted/${4}_RegressionPerJet_heppy_energyRings3_forTraining_Large${3}_unweighted.root
+xrdfs t3se01.psi.ch rm  /store/user/nchernya/HHbbgg/b_regression/ZHbbll/${4}_RegressionPerJet_heppy_energyRings_forTraining_${3}_full.root
 
-xrdcp -f $TMPDIR/${4}_RegressionPerJet_heppy_energyRings3_forTraining_Large${3}_unweighted.root  root://t3dcachedb.psi.ch:1094//pnfs/psi.ch/cms/trivcat//store/user/nchernya/HHbbgg/b_regression/ttbar_unweighted/
+xrdcp -f $TMPDIR/${4}_RegressionPerJet_heppy_energyRings_forTraining_${3}_full.root  root://t3dcachedb.psi.ch:1094//pnfs/psi.ch/cms/trivcat//store/user/nchernya/HHbbgg/b_regression/ZHbbll/
 
 #$ -o /mnt/t3nfs01/data01/shome/nchernya/batch_logs/
 #$ -e /mnt/t3nfs01/data01/shome/nchernya/batch_logs/
