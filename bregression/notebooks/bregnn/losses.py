@@ -54,7 +54,7 @@ class HybridLoss(object):
         self.n_params = self.huber.n_params + self.quantiles.n_params
         
     def __call__(self,y_true,y_pred):
-        return self.huber(y_true,y_pred) + self.quantiles(y_true,y_pred[:,1:])
+        return self.huber(y_true,y_pred) + self.quantiles(y_true[:,0:1],y_pred[:,1:])
     
     
 # ---------------------------------------------------------------------------------------------------
@@ -77,8 +77,35 @@ def mae0(y_true,y_pred):
 def r2_score0(y_true,y_pred):
     return 1. - K.sum( K.square(y_true[:,0] - y_pred[:,0]) ) / K.sum( K.square(y_true[:,0] - K.mean(y_true[:,0]) ) )
 
+# ---------------------------------------------------------------------------------------------------
+def mse50(y_true,y_pred):
+    where = K.cast(K.greater(y_true[:,1],50.),K.floatx())
+    return K.sum( K.square( where*(y_true[:,0] - y_pred[:,0])) ) / (K.sum(where)+K.epsilon())
 
+# ---------------------------------------------------------------------------------------------------
+def mae50(y_true,y_pred):
+    where = K.cast(K.greater(y_true[:,1],50.),K.floatx())
+    return K.sum( K.abs(where*(y_true[:,0] - y_pred[:,0])) )/ (K.sum(where)+K.epsilon())
+
+# ---------------------------------------------------------------------------------------------------
+def mse100(y_true,y_pred):
+    where = K.cast(K.greater(y_true[:,1],100.),K.floatx())
+    return K.sum( K.square( where*(y_true[:,0] - y_pred[:,0])) )/ (K.sum(where)+K.epsilon())
+
+# ---------------------------------------------------------------------------------------------------
+def mae100(y_true,y_pred):
+    where = K.cast(K.greater(y_true[:,1],100.),K.floatx())
+    return K.sum( K.abs(where*(y_true[:,0] - y_pred[:,0])) )/ (K.sum(where)+K.epsilon())
     
+# ---------------------------------------------------------------------------------------------------
+def mse200(y_true,y_pred):
+    where = K.cast(K.greater(y_true[:,1],200.),K.floatx())
+    return K.sum( K.square( where*(y_true[:,0] - y_pred[:,0])) )/ (K.sum(where)+K.epsilon())
+
+# ---------------------------------------------------------------------------------------------------
+def mae200(y_true,y_pred):
+    where = K.cast(K.greater(y_true[:,1],200.),K.floatx())
+    return K.sum( K.square( where*(y_true[:,0] - y_pred[:,0])) )/ (K.sum(where)+K.epsilon())
 # ---------------------------------------------------------------------------------------------------
 ## keras.losses.gauss_nll = gauss_nll
 ## keras.utils.generic_utils.get_custom_objects().update(

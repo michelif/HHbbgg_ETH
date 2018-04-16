@@ -55,18 +55,18 @@ rings=[
 features=raw_features
 for ring in rings:
     features.append('%s_Jet_rawEnergy'%ring)
-print(features)
 
 ## command_line options
 parser = OptionParser(option_list=[
     make_option("--inp-dir",type='string',dest="inp_dir",default=os.environ['SCRATCH']+'/bregression'),
     make_option("--out-dir",type='string',dest="out_dir",default=os.environ['SCRATCH']+'/bregression/NN_output/'),
-    make_option("--inp-file",type='string',dest='inp_file',default='ttbar_unweighted_full80M_selected_train.hd5'),
+    make_option("--inp-files",type='string',dest='inp_files',default='ttbar_unweighted_full80M_selected_train.hd5'),
+    make_option("--inp-file-valid",type='string',dest='inp_file_valid',default='ttbar_unweighted_full80M_selected_train.hd5'),
     make_option("--features",type='string',dest='features',default=''),
     make_option("--normalize-target",action="store_true",dest="normalize_target",default=True),
     make_option("--no-normalize-target",action="store_false",dest="normalize_target"),
     make_option("--loss",type='string',dest="loss",default="HybridLoss"),
-    make_option("--valid-frac",type='float',dest='valid_frac',default=0.10),
+#    make_option("--valid-frac",type='float',dest='valid_frac',default=0.10),
     make_option("--batch-size",type='int',dest='batch_size',default=1024),
     make_option("--epochs",type='int',dest='epochs',default=20),
     make_option("--hparams",type='string',dest='hparams',default=None),
@@ -84,10 +84,11 @@ if options.features == '':
 else:
     features = options.features.split(',')
 
-if os.path.exists(options.inp_file):
-    inp_file = options.inp_file
-else:
-    inp_file = options.inp_dir+'/'+options.inp_file
+print(features)
+
+inp_file_valid = options.inp_dir+'/'+options.inp_file_valid
+inp_files=options.inp_files.split(',')
+inp_files = [options.inp_dir+'/'+c.strip() for c in inp_files] 
 
 hparams = {}
 if options.hparams is not None:
@@ -95,29 +96,50 @@ if options.hparams is not None:
        with open(fname) as hf:
           pars = json.loads(hf.read())
           hparams.update(pars)    # if inside several files we change the same parameter, it will overwrite for the one in the last file    
+
+## read json with unweighting information
+#with open('/scratch/snx3000/nchernya/bregression/unweighting_data.json' ) as fin_unweight:
+#     unweight_info = json.loads(fin_unweight.read())
+#unweight_bins = unweight_info['bins']
+#unweight_values = unweight_info['values']
+
+
     
 ## read data
-columns = raw_features + rings + ['Jet_mcPt'] + ['Jet_rawEnergy'] + ['Jet_e'] + ['Jet_corr_JEC'] + ['Jet_corr_JER']
-data = io.read_data(inp_file, columns = columns)
+#columns = features + ['Jet_mcPt'] + ['Jet_corr_JEC'] # + ['Jet_corr_JER']
+data_valid = (io.read_data(inp_file_valid, columns = None))
+df_list = [(io.read_data(inf,columns = None)) for inf in inp_files]
+for data in df_list+[data_valid]:
+  ###############Unweighting#################
+  #  data['rdn'] = np.random.uniform(0,1,data.shape[0])
+  #  data['unweight_value'] = [unweight_values[k-1] for k in np.digitize(data['Jet_pt'], unweight_bins)]
+  #  data.drop(data[data.rdn > data.unweight_value].index, inplace=True) # if random number is greater then unweighting function, drop event
+  ###########################################
+    data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mass']=data['Jet_mass']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_leptonPtRelInv']=data['Jet_leptonPtRelInv']*data['Jet_rawEnergy']/data['Jet_e']
+    data['Jet_mcPt_Jet_pt']=data['Jet_mcPt']/(data['Jet_pt']*data['Jet_corr_JEC'])
 
-#Get rid of JEC and JER and bring back to raw
-for ring in rings:
-    data['%s_Jet_rawEnergy'%ring]=data['%s'%ring]/data['Jet_rawEnergy']
-data['Jet_pt']=data['Jet_pt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
-data['Jet_mt']=data['Jet_mt']*data['Jet_rawEnergy']/data['Jet_e']*data['Jet_corr_JEC']
 
-X = data[features].values
-y = (data['Jet_mcPt']/data['Jet_pt']).values.reshape(-1,1)
+X_shape = (data_valid[features].values).shape[1:]
+y_valid = (data_valid[['Jet_mcPt_Jet_pt','Jet_pt']])#.values#.reshape(-1,1)
+X_valid = data_valid[features].values
 
-y_mean = np.median(y)
-y_std = y.std()
+
+mygen = ffwd.Generator(df_list,options.batch_size,features,['Jet_mcPt_Jet_pt','Jet_pt'])
+mygen_call = mygen()
+
+y_mean,y_std = mygen.compute_stats()
 print(y_mean,y_std)
-
-# normalize target
+# normalize target in validation, for training it is done in the class
 if options.normalize_target:
-    y -= y_mean
-    y /= y_std
-
+    y_valid['Jet_mcPt_Jet_pt'] -= y_mean
+    y_valid['Jet_mcPt_Jet_pt'] /= y_std
+    for data in df_list:
+        data['Jet_mcPt_Jet_pt']-=y_mean
+        data['Jet_mcPt_Jet_pt']/=y_std
+ 
 
 
 # sort out model parameters
@@ -133,12 +155,13 @@ def get_kwargs(fn,**kwargs):
 loss_params=dict()
 #if options.loss == 'QuantileLoss' : loss_params=dict(taus=[0.4,0.25,0.75])
 init_kwargs = get_kwargs(ffwd.FFWDRegression.__init__,monitor_dir=options.out_dir,loss_params=loss_params)
-fit_kwargs = get_kwargs(ffwd.FFWDRegression.fit,batch_size=options.batch_size,epochs=options.epochs)
+#fit_kwargs = get_kwargs(ffwd.FFWDRegression.fit,batch_size=options.batch_size,epochs=options.epochs)
+fit_kwargs = get_kwargs(ffwd.FFWDRegression.fit,epochs=options.epochs,steps_per_epoch=mygen.steps)
 
 print(init_kwargs)
 print(fit_kwargs)
 
-reg = ffwd.FFWDRegression('ffwd',X.shape[1:],**init_kwargs)
+reg = ffwd.FFWDRegression('ffwd',X_shape,**init_kwargs)
 
 pprint(reg.get_params())
 
@@ -167,20 +190,20 @@ with open(options.out_dir+'/config.json','w+') as fo:
     fo.write( json.dumps( store, indent=4 ) )
     fo.close()
 
-if options.x_val==True:
-    kf = KFold(n_splits=int(1./options.valid_frac),shuffle=True,random_state=options.seed) 
-    kf_idx = iter(kf.split(X)) 
-    for kfold in range(options.nkfolds):
-        # split data
-        train_idx,valid_idx = next(kf_idx)
-        X_train, X_valid = X[train_idx], X[valid_idx]
-        y_train, y_valid = y[train_idx], y[valid_idx]
-        reg.fit(X_train,y_train,kfold=kfold, 
-            validation_data=(X_valid,y_valid),
-            **fit_kwargs)
-else :
-    X_train,X_valid,y_train,y_valid = train_test_split(X,y,test_size=options.valid_frac,random_state=options.seed)
-    reg.fit(X_train,y_train,kfold=-1,  ### here if you want to save hdf file after each better epoch, put -1
+#if options.x_val==True:
+#    kf = KFold(n_splits=int(1./options.valid_frac),shuffle=True,random_state=options.seed) 
+#    kf_idx = iter(kf.split(X)) 
+#    for kfold in range(options.nkfolds):
+#        # split data
+#        train_idx,valid_idx = next(kf_idx)
+#        X_train, X_valid = X[train_idx], X[valid_idx]
+#        y_train, y_valid = y[train_idx], y[valid_idx]
+#        reg.fit(X_train,y_train,kfold=kfold, 
+#            validation_data=(X_valid,y_valid),
+#            **fit_kwargs)
+#else :
+if options.x_val==False:
+    reg.fit_generator(mygen_call,kfold=-1,  ### here if you want to save hdf file after each better epoch, put -1
         validation_data=(X_valid,y_valid),
         **fit_kwargs)
 
