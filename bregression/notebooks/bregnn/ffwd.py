@@ -42,8 +42,8 @@ class FFWDRegression(BaseEstimator):
                  non_neg=False,
                  dropout=0.2, # 0.5 0.2
                  batch_norm=True,activations="lrelu",
-                # layers=[1024]*1+[512,256,128], # 1024 / 2048
-                 layers=[128], # 1024 / 2048
+                 layers=[1024]*5+[512,256,128], # 1024 / 2048
+#                 layers=[128], # 1024 / 2048
                  do_bn0=True,
                  const_output_biases=None, 
                  optimizer="Adam", optimizer_params=dict(lr=1.e-03), # mse: 1e-3/5e-4

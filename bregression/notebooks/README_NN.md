@@ -6,23 +6,27 @@ Connecting to CSCS
 ssh username@ela.cscs.ch
 ssh daint
 ```
-Copy /users/musella/env.sh in '~ /env.sh'. In the copied file '~' has to be changed into "~musella" in order to be able to source Pasquale's environment. 
+Copy /users/musella/env.sh in '~ /env.sh'. In the copied file '~' has to be
+changed into "~musella" in order to be able to source Pasquale's environment. 
 
 Source Pasqaule's environment :
 ```
 source /users/musella/my-env/bin/activate
 ```
-Close daint. To check out the repo first generate the key by 'ssh-keygen' and add it to github. Then checko-out repo
+Close daint. To check out the repo first generate the key by 'ssh-keygen' and
+add it to github. Then checko-out repo
 ```
 git clone -b ETH_regression git@github.com:chernyavskaya/HHbbgg_ETH.git
 ```
-Create jupyter folder and link it notebooks(or python maybe better) to bregression project inside
+Create jupyter folder and link it notebooks(or python maybe better) to
+bregression project inside
 ```
 mkdir jupyter
 cd jupyter
 ln -s ../HHbbgg_ETH/bregression/notebooks/ bregression
 ```
-Inside bin/ create bin/start_jupyter . Change the port number to something else.
+Inside bin/ create bin/start_jupyter . Change the port number to something
+else.
 ```
 #!/bin/bash 
 source ~/env.sh
@@ -35,7 +39,8 @@ jupyter notebook --port 9999 --no-browser
  ```
  
  
- Create .ssh/config. The port numbers inside this confid should be the same as in the one above.
+ Create .ssh/config. The port numbers inside this confid should be the same as
+ in the one above.
  ```
 Host daint*
 LocalForward 9999 localhost:9999
@@ -46,7 +51,8 @@ ControlMaster auto
 ControlPath ~/.ssh/master-%r@%h:%p
 ```
 
-On your own laptop create .ssh/config. The port numbers inside this confid should be the same as in the one above.
+On your own laptop create .ssh/config. The port numbers inside this confid
+should be the same as in the one above.
 ```
 Host cscs
 LocalForward 9999 localhost:9999
@@ -54,7 +60,8 @@ LocalForward 6666 localhost:6666
 User username
 HostName ela.cscs.ch
 ```
-To be able to access the jupyter notebook later from the web-interface connect to local host:
+To be able to access the jupyter notebook later from the web-interface connect
+to local host:
 ```
 ssh cscs
 ```
@@ -98,7 +105,8 @@ start_jupyter
 ```
 Open the notebook in the browser with the printed by jupyter token.
 
-Add config file to run jobs 'my_jobs.sh' in the bregression directory(where you run the training), in this case the directory is '~/jupyter/bregression'
+Add config file to run jobs 'my_jobs.sh' in the bregression directory(where
+you run the training), in this case the directory is '~/jupyter/bregression'
 ```
 cat my_job.sh
 #!/bin/bash -l
@@ -135,12 +143,14 @@ Training file :
 ./train_ffwd.py --help
 
 To train locally : 
-train_ffwd.py --inp-dir=/scratch/snx3000/musella/bregression --out-dir test --loss mse
+train_ffwd.py --inp-dir=/scratch/snx3000/musella/bregression --out-dir test
+--loss mse
 
 To submit a job and run interactively on the resources allocated by the job:
 ```
 salloc -C gpu
-srun ./train_ffwd.py --inp-dir=/scratch/snx3000/musella/bregression --out-dir test --loss mse
+srun ./train_ffwd.py --inp-dir=/scratch/snx3000/musella/bregression --out-dir
+test --loss mse
 ```
 To stop the interactive process ctr+C ctrl+C twice
 To exit the job : exit
@@ -151,18 +161,22 @@ sbatch my_job.sh -J <name> <command> <options>
 ```
 e.g
 ```
-sbatch my_job.sh -J  test_job  train_ffwd.py --inp-dir=/scratch/snx3000/musella/bregression --out-dir test2 --loss mse 
+sbatch my_job.sh -J  test_job  train_ffwd.py
+--inp-dir=/scratch/snx3000/musella/bregression --out-dir test2 --loss mse 
 ```
 To check allocated job resources:
 ```
 sacct 
 ```
-The log file is writen in the same directory unless it is changed by giving the option -o 'where_to_write_log'
+The log file is writen in the same directory unless it is changed by giving
+the option -o 'where_to_write_log'
 
 ```
 tail -f slurm-5610450.out
 ```
-After the job is done (or during the job) all the hdf5 files and metrics.csv and config.json with all hyper parameters of the NN are written to the output directory specified in the command option
+After the job is done (or during the job) all the hdf5 files and metrics.csv
+and config.json with all hyper parameters of the NN are written to the output
+directory specified in the command option
 
 
 #### To prepare a json file with hyperparameters and architecture  
@@ -174,5 +188,7 @@ Print command to submit jobs
 ```
 python submit_jobs.py --njobs 1 --jdir 2018-02-03_17_55_01
 ```
-This will print the command that runs the jobs on GPUs. Copy and paste the output to run the jobs. Script can be modified very easily to submit jobs directly, I just prefer to have a look before I submit
+This will print the command that runs the jobs on GPUs. Copy and paste the
+output to run the jobs. Script can be modified very easily to submit jobs
+directly, I just prefer to have a look before I submit
 
