@@ -304,7 +304,196 @@ def plot_rel_pt_diff(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString
     c2.Draw()
  
     
+def fit_dijetmass(rel_diff_regressed,rel_diff,style=False,n_bins=50,outString=None):  
+    if style==True:
+        gROOT.SetBatch(True)
+        gROOT.ProcessLineSync(".x ~/HHbbgg_ETH/scripts/setTDRStyle.C")
+        gROOT.ForceStyle()
+        gStyle.SetPadTopMargin(0.06)
+        gStyle.SetPadRightMargin(0.04)
+        gStyle.SetPadLeftMargin(0.15)
+
+    c_min = min(min(rel_diff_regressed),min(rel_diff))
+    c_max = max(max(rel_diff_regressed),max(rel_diff))
+    c_min=50
+    c_max=200.
     
+    Histo_rel_diff = np.histogram(rel_diff,bins=n_bins,range=(c_min,c_max))
+    Histo_rel_diff_reg = np.histogram(rel_diff_regressed,bins=n_bins,range=(c_min,c_max))
+    
+    h_rel_diff = TH1F("hrel_diff", "hrel_diff", n_bins, c_min, c_max)
+    for i in range(len(rel_diff)): 
+        h_rel_diff.Fill(rel_diff[i])
+    h_rel_diff_reg = TH1F("hrel_diff_reg", "hrel_diff_reg", n_bins, c_min, c_max)
+    for i in range(len(rel_diff_regressed)): 
+        h_rel_diff_reg.Fill(rel_diff_regressed[i])
+    h_rel_diff.SetLineColor(ROOT.kBlue)
+    h_rel_diff.SetMarkerColor(ROOT.kBlue)
+    h_rel_diff.SetLineWidth(2)
+    h_rel_diff_reg.SetLineColor(ROOT.kRed)
+    h_rel_diff_reg.SetMarkerColor(ROOT.kRed)
+    h_rel_diff_reg.SetLineWidth(2)
+   
+
+    
+    AllHistos= [Histo_rel_diff, Histo_rel_diff_reg]
+    h_max = max([histo[0].max() for histo in AllHistos])*1.2
+    h_min = min([histo[0].min() for histo in AllHistos])
+    
+    c = ROOT.TCanvas("c","c",900,900)
+    c.cd()
+    frame = TH1F("hframe", "hframe", n_bins, c_min, c_max)
+    frame.SetStats(0)
+    frame.GetXaxis().SetTitleOffset(0.91);
+    frame.GetYaxis().SetTitle("Events")
+  #  frame.GetXaxis().SetTitle("(p_{T}^{Reco}-p_{T}^{gen})/p_{T}^{gen}")
+    frame.GetXaxis().SetTitle("p_{T}^{gen}/p_{T}^{reco}")
+    frame.GetYaxis().SetLabelSize(0.04)
+    frame.GetYaxis().SetRangeUser(h_min,h_max)
+    
+    frame.Draw()
+    h_rel_diff.Draw("samePE")
+    h_rel_diff_reg.Draw("samePE")
+    print('Nominal : mean, RMS :',h_rel_diff.GetMean(), h_rel_diff.GetRMS())
+    print('Regresesd : mean, RMS : ',h_rel_diff_reg.GetMean(), h_rel_diff_reg.GetRMS())
+
+  
+
+    
+    
+    
+    leg = ROOT.TLegend(0.55,0.75,0.9,0.9)
+    leg.SetFillStyle(-1)
+    leg.SetBorderSize(0)
+    leg.SetTextFont(42)
+    leg.SetTextSize(0.03)
+  #  leg.Draw()
+    
+
+    h_names = ['nom','reg']
+    datahists = [h_rel_diff,h_rel_diff_reg]
+    x=[]
+    datahist=[]
+    m=[]
+    m_initial=[120.0103e+00,9.5381e-01]
+    s=[]
+    s_initial=[ 13.210,13.967]
+    a=[]
+    a_initial=[-7.7802e-01,-1.1260e+00]
+    n=[]
+    n_initial=[ 6.0149e+00,5.5622e+00]
+    
+    Ap,Xp,sigp,xi,rho1,rho2 = [],[],[],[],[],[]
+    Xp_initial,sigp_initial,xi_initial,rho1_initial,rho2_initial =  120., 13.11,2.2695e-01, 6.4189e-02,  9.0282e-02 
+    meanr, sigmaL, sigmaR, alphaL, alphaR = [],[],[],[],[]   
+ 
+    fsig=[]
+    sig=[]
+    model=[]
+    res=[]
+    integral=[]
+    formula=[]
+    scale_factors=[]
+    scaled_cb=[]
+    func=[]
+    colors=[ROOT.kBlue,ROOT.kRed]
+    chi_squares=[]
+    fwhm_bukin=[]
+    fwhm=[]
+    fwhm.append( -1 *(h_rel_diff.GetBinCenter( h_rel_diff.FindFirstBinAbove(h_rel_diff.GetMaximum()/2.)  )  - h_rel_diff.GetBinCenter( h_rel_diff.FindLastBinAbove(h_rel_diff.GetMaximum()/2.) ) )  )
+    fwhm.append( -1 *(h_rel_diff_reg.GetBinCenter( h_rel_diff_reg.FindFirstBinAbove(h_rel_diff_reg.GetMaximum()/2.)  )  - h_rel_diff_reg.GetBinCenter( h_rel_diff_reg.FindLastBinAbove(h_rel_diff_reg.GetMaximum()/2.) ) )  )
+
+    for num,h in enumerate(h_names):
+        x.append(RooRealVar("x_%s"%h,"x_%s"%h,c_min,c_max))
+        datahist.append(RooDataHist("roohist_%s"%h,"roohist_%s"%h,RooArgList(x[num]),datahists[num]))
+       #######################Crystal ball################ 
+        m.append(RooRealVar("mean_%s"%h,"mean_%s"%h,m_initial[num],0.5,1.5))
+        s.append(RooRealVar("sigma_%s"%h,"sigma_%s"%h,s_initial[num],0.01,0.3))
+        a.append(RooRealVar("alpha_%s"%h,"alpha_%s"%h,a_initial[num],-10,0.))
+        n.append(RooRealVar("exp_%s"%h,"exp_%s"%h,n_initial[num],1.,100.))
+      #  sig.append(RooCBShape("signal_gauss_%s"%h,"signal_gauss_%s"%h,x[num],m[num],s[num],a[num],n[num]))
+
+      #######################Bukin function ################## 
+    
+        Xp.append(RooRealVar("Xp_%s"%h,"Xp_%s"%h,Xp_initial,0.,3.))
+        sigp.append(RooRealVar("sigp_%s"%h,"sigp_%s"%h,sigp_initial,0.01,0.3))
+        xi.append(RooRealVar("xi_%s"%h,"xi_%s"%h,xi_initial,-1,1))
+        rho1.append(RooRealVar("rho1_%s"%h,"rho1_%s"%h,rho1_initial,-1,1)) #left
+        rho2.append(RooRealVar("rho2_%s"%h,"rho2_%s"%h,rho2_initial,-1,1)) #right
+        sig.append(RooBukinPdf("signal_bukin_%s"%h,"signal_bukin_%s"%h,x[num],Xp[num],sigp[num],xi[num],rho1[num],rho2[num]))
+
+###########################RooCruijff##################
+
+        meanr.append(RooRealVar("meanr_%s"%h,"meanr_%s"%h,m_initial[num],0.5,1.5))
+        sigmaL.append(RooRealVar("sigmaL_%s"%h,"sigmaL_%s"%h,s_initial[num],0.01,0.3))
+        sigmaR.append(RooRealVar("sigmaR_%s"%h,"sigmaR_%s"%h,s_initial[num],0.01,0.3))
+        alphaL.append(RooRealVar("alphaL_%s"%h,"alphaL_%s"%h,0.01,0,2.))
+        alphaR.append(RooRealVar("alphaR_%s"%h,"alphaR_%s"%h,0.1,0.,2.))
+#  RooGenericPdf genpdf("genpdf","genpdf","(1+0.1*abs(x)+sin(sqrt(abs(x*alpha+0.1))))",RooArgSet(x,alpha)) ;
+        formula_rooCruijff = "( ( (x_%s-meanr_%s)<0) ? (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaL_%s,2)+alphaL_%s*pow((x_%s-meanr_%s),2) ))) : (exp( -1*pow((x_%s-meanr_%s),2)/(2*pow(sigmaR_%s,2)+alphaR_%s*pow((x_%s-meanr_%s),2) )))  )"%(h,h,h,h,h,h,h,h,h,h,h,h,h,h) 
+    #    sig.append(RooGenericPdf("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,formula_rooCruijff,RooArgList(x[num],meanr[num],sigmaL[num],sigmaR[num],alphaL[num],alphaR[num])))
+    #    sig.append(RooBifurGauss("signal_cruijff_%s"%h,"signal_cruijjff_%s"%h,x[num],meanr[num],sigmaL[num],sigmaR[num]))
+
+     #   fit_range_min = h_rel_diff.GetMean()-fwhm[num]
+     #   fit_range_max = h_rel_diff.GetMean()+fwhm[num]
+     #   print 'range of the fit : ', fit_range_min, fit_range_max
+     #   res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE),ROOT.RooFit.Range(fit_range_min,fit_range_max))) # take Mean of each histogram and add 1/2 of the RMS  ? -> try that
+
+        res.append(sig[num].fitTo(datahist[num],ROOT.RooFit.Save(ROOT.kTRUE)))
+        res[num].Print()
+
+       # chi_squares.append((x[num].frame()).chiSquare())
+        x[num].setRange("integralRange%s"%h, c_min,c_max)  
+        integral.append(sig[num].createIntegral(RooArgSet(x[num]), ROOT.RooFit.Range("integralRange%s"%h)))
+
+        scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
+        scale_factors.append(datahists[num].Integral()*datahists[num].GetBinWidth(1)/integral[num].getVal())
+      #  formula.append("%f *signal_gauss_%s"%(scale_factors[num],h))
+        formula.append("%f *signal_bukin_%s"%(scale_factors[num],h))
+     #   formula.append("%f *signal_cruijff_%s"%(scale_factors[num],h))
+       # create a scaled  function = scale * function
+        scaled_cb.append(RooFormulaVar("scaled_cb_%s"%h,formula[num],RooArgList(sig[num])))
+        func.append(scaled_cb[num].asTF(RooArgList(x[num])))
+        func[num].SetLineColor(colors[num])
+        datahists[num].SetMarkerColor(colors[num])
+        fwhm_bukin.append(sigp[num].getVal()*2*math.sqrt(2*math.log(2)))
+      
+      #  chi_squares.append(RooChi2Var("chi2_%s"%h,"chi2_%s"%h,sig[num],datahist[num]))
+
+    
+    fitfunc='Bukin'
+  #  fitfunc='Bifurgaus'
+    fit_result_file = std.ofstream(utils.IO.plotFolder+"../fitResults/fitResult_%s"%(fitfunc)+str(outString)+'.txt')
+    res[0].floatParsFinal().printMultiline(fit_result_file, 1111, True)
+    res[1].floatParsFinal().printMultiline(fit_result_file, 1111, True)
+    fit_result_file.close()
+
+    
+    leg.AddEntry(h_rel_diff,"Nominal JEC" ,"P")
+    leg.AddEntry(h_rel_diff_reg,"Regressed" ,"P")
+
+	
+    c2 = ROOT.TCanvas("c2","c2",900,900)
+    c2.cd()
+    frame.Draw()
+    func[0].Draw("same")
+    func[1].Draw("same")
+    h_rel_diff.Draw("PEHISTsame")
+    h_rel_diff_reg.Draw("PEHISTsame")    
+    leg.Draw()
+  
+    c2.SaveAs(utils.IO.plotFolder+"dijet_%s_"%(fitfunc)+str(outString)+'.png')
+    c2.SaveAs(utils.IO.plotFolder+"dijet_%s_"%(fitfunc)+str(outString)+'.pdf')
+    c2.Draw()
+    
+
+   
+
+
+
+
+
+############################## 
 def plot_regions(X_region,names,style=True,n_bins=50,outString=None,log=False,title='',titleName=''):  
     if style==True:
         gROOT.SetBatch(True)

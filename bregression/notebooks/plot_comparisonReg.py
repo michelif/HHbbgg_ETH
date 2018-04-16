@@ -81,6 +81,7 @@ for i in range(0,3):
  
     if (ifile==0) : bins=np.linspace(ranges[i][0],ranges[i][1],binning[i])
     if ifile==0 and i==0 :  bins = np.array([0,20,40,60,80,100,150,200,250,300,400,500]) #ttbar
+    if ifile==0 and i==0 :  bins = np.array([0,20,40,60,80,100,150,200,250,300,400]) #ttbar
    # if ifile==0 and i==0 :  bins = np.array([0,20,40,60,80,100,150,200,250,300]) #ttbar
    # if ifile==0 and i==0 :   bins = np.array([0,20,40,60,80,100,150,200]) #ZHbbll
  

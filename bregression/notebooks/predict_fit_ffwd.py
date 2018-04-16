@@ -52,6 +52,7 @@ for idx,name in enumerate(input_trainings):
     for i,f in enumerate(features): 
         if f == 'Jet_pt' or f == 'Jet_mt'  : features[i] = features[i]+'_raw'
     X = data[features].values
+    print(X)
     
     model = keras.models.load_model(models[0],compile=False)
     y_pred = model.predict(X)
