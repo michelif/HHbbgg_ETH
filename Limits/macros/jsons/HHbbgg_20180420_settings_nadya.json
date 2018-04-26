@@ -1,0 +1,34 @@
+{
+    "#file" : "/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/outfiles/20180416/20180416_ggHHbbgg_DiPhotonJets_diffNaming.root",
+    "file" : "/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/outfiles/20180426/20180426_preselection_diffNaming.root",
+    "observable": [
+        "Mgg", 
+        100.000, 
+        180.000
+    ], 
+    "subcategories": [
+	 [
+            "subcat0",
+            "MX >250. && MX<=341.4"
+        ],
+	 [
+            "subcat1",
+            "MX >341.4 && MX<=426.1"
+        ],
+	 [
+            "subcat2",
+            "MX >426.1 && MX<=544."
+        ],
+	 [
+            "subcat3",
+            "MX >544."
+        ]
+
+], 
+	"addBSMNodes":1,
+	"variables": [
+	"HHTagger2017transform"
+	],
+     	"selections": []
+}
+

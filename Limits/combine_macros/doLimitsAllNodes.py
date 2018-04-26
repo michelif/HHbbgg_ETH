@@ -17,6 +17,7 @@ def main(options,args):
 
     ## setTDRStyle()
     ROOT.gStyle.SetOptStat(0)
+#    outDir = os.path.dirname(os.path.realpath(options.datacard)) + options.datacard.replace(".txt","")
     outDir = options.datacard.replace(".txt","")
     if not os.path.exists(outDir):
         os.mkdir(outDir)
@@ -38,19 +39,24 @@ def main(options,args):
     if options.doCombine:
         os.chdir(outDir)
         nameFile=str(options.datacard)
+        print nameFile
+       # outDirLimits = outDir+"/Limits/"
         outDirLimits = "./Limits/"
         if not os.path.exists(outDirLimits):
             os.mkdir(outDirLimits)
         os.system("combine -M Asymptotic "+nameFile+" -S 0 |grep \"Expected 50.0\"| awk '{print $5}' >"+outDirLimits+"lim_"+str(nameFile))  
-        for node in range(2,14):
-            nameFile = outDir+str("_node_"+str(node)+".txt")
-            os.system("combine -M Asymptotic "+nameFile+" -S 0 |grep \"Expected 50.0\"| awk '{print $5}' >"+outDirLimits+"lim_"+str(nameFile))              
+        if options.doDatacards:
+            for node in range(2,14):
+                nameFile = outDir+str("_node_"+str(node)+".txt")
+                os.system("combine -M Asymptotic "+nameFile+" -S 0 |grep \"Expected 50.0\"| awk '{print $5}' >"+outDirLimits+"lim_"+str(nameFile))              
 
     if options.doPlots:
         limits = array('f')
         nodeIndex = array('f')
         if not options.doCombine:
             os.chdir(outDir)  
+    #    outDirLimits = outDir+"/Limits/"
+    #    outDirPlots = outDir+"/Plots/"
         outDirLimits = "./Limits/"
         outDirPlots = "./Plots"
         if not os.path.exists(outDirPlots):
@@ -62,13 +68,14 @@ def main(options,args):
         inFile.close()
         limits.append(float(linelist[0]))
         nodeIndex.append(1)
-        for node in range(2,14):
-            nameFile = outDirLimits+"lim_"+outDir+str("_node_"+str(node)+".txt")
-            inFile = open(nameFile,"r")
-            linelist =  inFile.readlines()
-            inFile.close()
-            limits.append(float(linelist[0]))
-            nodeIndex.append(node)
+        if options.doDatacards:
+            for node in range(2,14):
+                nameFile = outDirLimits+"lim_"+outDir+str("_node_"+str(node)+".txt")
+                inFile = open(nameFile,"r")
+                linelist =  inFile.readlines()
+                inFile.close()
+                limits.append(float(linelist[0]))
+                nodeIndex.append(node)
 
             
         outFile = ROOT.TFile.Open(outDirPlots+"/limitPlots.root","recreate")

@@ -17,11 +17,12 @@ import root_pandas as rpd
 
 def addSamples():#define here the samples you want to process
     ntuples = options.ntup
-    samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","GluGluHToGG","VBFHToGG","VHToGG","bbHToGG_M-125_4FS_yb2","ttHToGG"]#is bbH correct?
+    samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","GluGluHToGG","VBFHToGG","VHToGG","bbHToGG_M-125_4FS_yb2","bbHToGG_M-125_4FS_ybyt","ttHToGG"]#is bbH correct?
 
     files= os.listdir(utils.IO.ldata+ntuples)
 
-    for iSample in samples:
+   # for iSample in samples:
+    for num,iSample in enumerate(samples):
         process  = [s for s in files if iSample in s]
         if iSample == "GluGluToHHTo2B2G_node_SM":
             utils.IO.add_signal(ntuples,process,1)
@@ -68,17 +69,21 @@ def main(options,args):
     # no need to shuffle here, we just count events
     preprocessing.set_signals_and_backgrounds("bbggSelectionTree",branch_names,shuffle=False)
     X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig=preprocessing.set_variables(branch_names)
-    
-    X_data,y_data,weights_data = preprocessing.set_data("bbggSelectionTree",branch_names)
-    X_data,y_data,weights_data = preprocessing.clean_signal_events_single_dataset(X_data,y_data,weights_data)
+ 
+#when no data is present   
+##    X_data,y_data,weights_data = preprocessing.set_data("bbggSelectionTree",branch_names)
+##    X_data,y_data,weights_data = preprocessing.clean_signal_events_single_dataset(X_data,y_data,weights_data)
     
     #bbggTrees have by default signal and CR events, let's be sure that we clean it
-    X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig=preprocessing.clean_signal_events(X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig)
+    if y_bkg.shape[1]==1 : 
+        X_bkg,y_bkg,weights_bkg = preprocessing.clean_signal_events_single_dataset(X_bkg,y_bkg,weights_bkg)
+        X_sig,y_sig,weights_sig = preprocessing.clean_signal_events_single_dataset(X_sig,y_sig,weights_sig)
+    else : 
+        X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig=preprocessing.clean_signal_events(X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig)
     
     
     # load the model from disk
     from sklearn.externals import joblib
-    loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/Training/output_files/'+options.trainingVersion+'.pkl'))
     
     bkg = []
     for i in range(0,len(utils.IO.backgroundName)-1): 
@@ -87,6 +92,7 @@ def main(options,args):
         
     #compute the MVA
     if not options.addHHTagger:
+        loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/Training/output_files/'+options.trainingVersion+'.pkl'))
         Y_pred_sig = loaded_model.predict_proba(X_sig)[:,loaded_model.n_classes_-1].astype(np.float64)
         Y_pred_bkg = []
         for i in range(0,len(utils.IO.backgroundName)-1):  
@@ -102,7 +108,7 @@ def main(options,args):
     additionalCut_names = 'noexpand:diphotonCandidate.M(),noexpand:dijetCandidate.M(),MX,isSignal'.split(",")
     #mva output
     if options.addHHTagger:
-        additionalCut_names += 'HHTagger2017'.split(",")
+        additionalCut_names += 'HHTagger2017,HHTagger2017_transform'.split(",")
     outTag = options.outTag
     outDir=os.path.expanduser("~/HHbbgg_ETH_devel/outfiles/"+outTag)
     if not os.path.exists(outDir):
@@ -174,7 +180,7 @@ def main(options,args):
         ##gJets which are two samples for one process are skipped
         iSample=iProcess
         if iProcess == 1 or iProcess ==2:
-                continue
+            continue
         if iProcess > 2:
             iSample = iProcess-1
         
@@ -201,7 +207,7 @@ def main(options,args):
         
         processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
         if "GluGluToHHTo2B2G_node_"in processPath:
-            treeName = "reducedTree_sig_node_"+str(iProcess-6)
+            treeName = "reducedTree_sig_node_"+str(iProcess-7)
         else:
             treeName = "reducedTree_bkg_"+str(iProcess)
         if not options.addHHTagger:        
@@ -210,30 +216,30 @@ def main(options,args):
             postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree=treeName)    
     
     ##data    
-    data_count_df = rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = branch_names+additionalCut_names)
+ #   data_count_df = rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = branch_names+additionalCut_names)
     
-    nTot,dictVar = postprocessing.stackFeatures(data_count_df,branch_names+additionalCut_names,isData=1)
+ #   nTot,dictVar = postprocessing.stackFeatures(data_count_df,branch_names+additionalCut_names,isData=1)
     
     
     #apply isSignal cleaning
-    nCleaned = nTot[np.where(nTot[:,dictVar['weight']]!=0),:][0]
-    print "nCleaned"
-    print nCleaned.shape
-    
-    #save preselection data
-    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
-    if not options.addHHTagger:        
-        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data)
-    else:
-        postprocessing.saveTree(processPath,dictVar,nCleaned)
-    
-    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
-    if not options.addHHTagger:        
-        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data,nameTree="reducedTree_bkg")
-    else:
-        postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_bkg")
-    
-    os.system('hadd '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
+#    nCleaned = nTot[np.where(nTot[:,dictVar['weight']]!=0),:][0]
+#    print "nCleaned"
+#    print nCleaned.shape
+#    
+#    #save preselection data
+#    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
+#    if not options.addHHTagger:        
+#        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data)
+#    else:
+#        postprocessing.saveTree(processPath,dictVar,nCleaned)
+#    
+#    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
+#    if not options.addHHTagger:        
+ #       postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data,nameTree="reducedTree_bkg")
+ #   else:
+#        postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_bkg")
+#    
+#    os.system('hadd '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
     
 
 

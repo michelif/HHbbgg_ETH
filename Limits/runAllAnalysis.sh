@@ -4,10 +4,10 @@
 OPTIND=1         # Reset in case getopts has been used previously in the shell.
 
 # Initialize our own variables:
-ntup="20170620"
-addHHTagger=0
+ntup="20180426"
+addHHTagger=1
 training="allMC_resWeighting_F_noDR_minDRGJet"
-outTag="20180108_test" 
+outTag="20180426" 
 
 while getopts ":n:at:o:" opt; do
     case "${opt}" in
@@ -34,5 +34,5 @@ else
 fi
     
 ####transform MVA output
-python $HOME/HHbbgg_ETH_devel/Limits/macros/transformMVAOutput.py -i $HOME'/HHbbgg_ETH_devel/outfiles/'$outTag'/Total_preselection_diffNaming.root'
+#python $HOME/HHbbgg_ETH_devel/Limits/macros/transformMVAOutput.py -i $HOME'/HHbbgg_ETH_devel/outfiles/'$outTag'/Total_preselection_diffNaming.root'
 

@@ -105,7 +105,8 @@ def main(options,args):
     fin = ROOT.TFile.Open(options.file)
 
 #    samples = { "sig" : ["sigRv","sigWv"] , "bkg" : ["bkg"] }
-    samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg"], "higgs" : ["reducedTree_bkg_3","reducedTree_bkg_4","reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7"] }
+    samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0","reducedTree_bkg_2"], "higgs" : ["reducedTree_bkg_3","reducedTree_bkg_4","reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7","reducedTree_bkg_8"] }
+   # samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0"] }
     trees = {}
 
     catdef = open(options.catdef)
@@ -119,7 +120,8 @@ def main(options,args):
     cats = summary[options.ncat]["boundaries"]
     ncat = int(options.ncat)
     
-    poly = [ 0, 60, 500, 10000, 20000, 40000 ]
+   # poly = [ 0, 60, 500, 10000, 20000, 40000 ]
+    poly = [ 0, 20, 500, 10000, 20000, 40000 ]
     
     nvars = len(varnames)
     bounds = [ [ float(cats[ivar*(ncat+1)+icat]) for ivar in range(nvars) ]  for icat in range(ncat+1) ]
@@ -179,12 +181,13 @@ def main(options,args):
     for name,sel in cuts+cats+[("cat",catvar),("selection",selection)]:
         print name, sel.GetTitle()
         
-    tmp = ROOT.TFile.Open("/tmp/micheli/tmp.root","recreate")
+    tmp = ROOT.TFile.Open("/tmp/$USER/tmp.root","recreate")
     for sname,samp in samples.iteritems():
         print "Reading ", sname, samp
         tlist = ROOT.TList()
         for name in samp:
             tree = fin.Get(name)
+            print name
             tlist.Add(tree)
         tout=ROOT.TTree.MergeTrees(tlist)
         tout.SetName(sname)
