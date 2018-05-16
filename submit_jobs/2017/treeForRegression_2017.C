@@ -47,7 +47,9 @@ TString name = argv[4];
 //
 //	TString inputfilename = "root://xrootd-cms.infn.it//store/user/legianni/NanoBReg01Fall17/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X-NanoBReg01Fall17/180324_124006/0000/";
 //	TString inputfilename = "root://cms-xrd-global.cern.ch//store/user/legianni/NanoBReg02Fall17/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X-NanoBReg02Fall17/180328_230216/0000/";
-	TString inputfilename = "/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/submit_jobs/2017/";
+//	TString inputfilename = "/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/submit_jobs/2017/";
+//	TString inputfilename = "root://xrootd-cms.infn.it///store/user/arizzi/NanoRegression2/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODV2-NanoRegr2__017_realistic_v14-v1/180506_192512/0000/";
+	TString inputfilename = "root://xrootd-cms.infn.it////store/user/arizzi/NanoRegression2/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODV2-NanoRegr2__017_realistic_v14-v1/180508_083758/0000/";
 
 	TChain *tree=new TChain("Events");
    TString full_file_name="";
@@ -55,8 +57,9 @@ TString name = argv[4];
 		TString str_tmp;
 		str_tmp.Form("%d",num);
 		cout<<str_tmp<<endl;
-    //  full_file_name = inputfilename+"test94X_NANO_"+str_tmp+".root";
-      full_file_name = "nano_variables3.root";
+   //   full_file_name = inputfilename+"test94X_NANO_"+str_tmp+".root";
+      full_file_name = inputfilename+"test94X_NANO_"+str_tmp+".root";
+    //  full_file_name = "nano_variables3.root";
 		tree->Add(full_file_name);
 	   std::cout<<"Added input file "<<full_file_name<<std::endl;
 	}
@@ -349,7 +352,7 @@ TString name = argv[4];
 //	TRandom2 random_gen(0);
 
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
-//	for (Long64_t jentry=0; jentry<1000;jentry++) {
+//	for (Long64_t jentry=0; jentry<100;jentry++) {
 		tree->GetEvent(jentry);
 		event_ = event;
 		run_ = run;
