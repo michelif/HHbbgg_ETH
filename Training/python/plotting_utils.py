@@ -216,7 +216,12 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
     plt.ylabel('True Positive Rate')
     plt.title('ROC Curve')
     plt.legend(loc="lower right")
+    plt.text(0.6,0.2, 'Bkg Class = %d'%backgroundClassOutput)
     plt.grid()
+    
+    plt.savefig(utils.IO.plotFolder+"rocCurveBkgClass"+str(backgroundClassOutput)+"_"+str(outString)+".png")
+    plt.savefig(utils.IO.plotFolder+"rocCurveBkgClass"+str(backgroundClassOutput)+"_"+str(outString)+".pdf")
+
     return fpr,tpr
 
 
@@ -267,3 +272,7 @@ def bisection(array,value):#be careful, works with sorted arrays
     else:
         return jl
     
+
+def test():
+    print 'test'
+    return 0

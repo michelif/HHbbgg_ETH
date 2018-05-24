@@ -7,6 +7,7 @@ source /afs/cern.ch/sw/lcg/app/releases/ROOT/6.05.02/x86_64-slc6-gcc49-opt/root/
 #export PYTHONPATH=$PYTHONPATH:~/HHbbgg_ETH/Training/python/
 #export PYTHONPATH=$PYTHONPATH:~/HHbbgg_ETH_devel/Training/python/
 #export PYTHONPATH=$PYTHONPATH:~/HHbbgg_ETH_devel/bregression/python/
-export PYTHONPATH=/mnt/t3nfs01/data01/shome/nchernya/xgboost/python-package/:/afs/cern.ch/sw/lcg/app/releases/ROOT/6.05.02/x86_64-slc6-gcc49-opt/root/lib/:~/HHbbgg_ETH_devel/bregression/python/
+#export PYTHONPATH=/mnt/t3nfs01/data01/shome/nchernya/xgboost/python-package/:/afs/cern.ch/sw/lcg/app/releases/ROOT/6.05.02/x86_64-slc6-gcc49-opt/root/lib/:~/HHbbgg_ETH_devel/bregression/python/
+export PYTHONPATH=/mnt/t3nfs01/data01/shome/nchernya/xgboost/python-package/:/afs/cern.ch/sw/lcg/app/releases/ROOT/6.05.02/x86_64-slc6-gcc49-opt/root/lib/
 export PYTHONPATH=$PYTHONPATH:~/HHbbgg_ETH_devel/Training/python/
 export PYTHONPATH=$PYTHONPATH:~/HHbbgg_ETH_devel/ConversionUtils/python/

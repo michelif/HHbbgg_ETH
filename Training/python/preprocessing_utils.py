@@ -107,6 +107,17 @@ def weight_signal_with_resolution(w_s,y_s):
 
     return utils.IO.signal_df[i][['weight']]
 
+def weight_signal_with_resolution_bjet(w_s,y_s):
+    proc=999
+    for i in range(utils.IO.nSig):
+         w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
+	 proc = utils.IO.sigProc[i]
+	 utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['dijetSigmaMOverM']])
+
+    return utils.IO.signal_df[i][['weight']]
+
+
+
 def weight_background_with_resolution(w_b,y_b,proc):
     w_bkg = []
     process=999
