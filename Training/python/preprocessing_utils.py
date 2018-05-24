@@ -103,7 +103,7 @@ def weight_signal_with_resolution(w_s,y_s):
     for i in range(utils.IO.nSig):
          w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
 	 proc = utils.IO.sigProc[i]
-	 utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['sigmaMOverMDecorr']])
+	 utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['sigmaMOverM']])
 
     return utils.IO.signal_df[i][['weight']]
 

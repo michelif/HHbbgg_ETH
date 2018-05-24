@@ -208,7 +208,7 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
         
     roc_auc = auc(fpr, tpr,reorder=True)
         
-    plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f)'%(roc_auc))
+    plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.3f)'%(roc_auc))
     
     plt.xlim([-0.05, 1.05])
     plt.ylim([-0.05, 1.05])
