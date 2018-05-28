@@ -271,8 +271,3 @@ def bisection(array,value):#be careful, works with sorted arrays
         return n-1
     else:
         return jl
-    
-
-def test():
-    print 'test'
-    return 0

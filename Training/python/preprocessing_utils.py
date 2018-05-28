@@ -221,8 +221,9 @@ def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
     set_backgrounds(treeName,branch_names,shuffle)
 
 
-def randomize(X,y,w):
+def randomize(X,y,w,seed=0):
     randomize=np.arange(len(X))
+    np.random.seed(seed)
     np.random.shuffle(randomize)
     X = X[randomize]
     y = np.asarray(y)[randomize]
