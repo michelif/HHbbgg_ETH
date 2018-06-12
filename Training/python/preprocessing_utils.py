@@ -29,8 +29,10 @@ def define_process_weight_CR(df,proc,name):
     df['weight']=w
 
  
-def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s):#some trees include also the control region,select only good events
-    return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], np.asarray(y_s)[np.where(w_s!=0)],np.asarray(w_s)[np.where(w_s!=0)]
+def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s,event_num_bkg = None, event_num_sig = None):#some trees include also the control region,select only good events
+    if (event_num_bkg is None and event_num_sig is None) : return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], np.asarray(y_s)[np.where(w_s!=0)],np.asarray(w_s)[np.where(w_s!=0)]
+    else : 
+        return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)],event_num_bkg[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], y_s[np.where(w_s!=0)],w_s[np.where(w_s!=0)],event_num_sig[np.where(w_s!=0)]
 
  
 def clean_signal_events_single_dataset(x_b, y_b, w_b):#some trees include also the control region,select only good events
@@ -52,7 +54,7 @@ def normalize_process_weights(w_b,y_b,w_s,y_s):
                 w_bkg = np.divide(w_proc,sum_weights)
             else:
                 w_bkg = np.concatenate((w_bkg, np.divide(w_proc,sum_weights)))
-                utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],sum_weights)
+            utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],sum_weights)
 
 
     proc=999
@@ -63,6 +65,7 @@ def normalize_process_weights(w_b,y_b,w_s,y_s):
             w_proc = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
             sum_weights = np.sum(w_proc)
             proc = utils.IO.sigProc[i]
+            print sum_weights
         if i==0:
             w_sig = np.divide(w_proc,sum_weights)
         else:
@@ -101,18 +104,18 @@ def scale_process_weight(w_b,y_b,proc,sf):
 def weight_signal_with_resolution(w_s,y_s):
     proc=999
     for i in range(utils.IO.nSig):
-         w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
-	 proc = utils.IO.sigProc[i]
-	 utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['sigmaMOverM']])
+        w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
+        proc = utils.IO.sigProc[i]
+        utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['sigmaMOverM']])
 
     return utils.IO.signal_df[i][['weight']]
 
 def weight_signal_with_resolution_bjet(w_s,y_s):
     proc=999
     for i in range(utils.IO.nSig):
-         w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
-	 proc = utils.IO.sigProc[i]
-	 utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['dijetSigmaMOverM']])
+        w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
+        proc = utils.IO.sigProc[i]
+        utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['(dijetSigmaMOverM*1.4826)']])
 
     return utils.IO.signal_df[i][['weight']]
 
@@ -123,6 +126,7 @@ def weight_background_with_resolution(w_b,y_b,proc):
     process=999
     for i in range(utils.IO.nBkg):
         if utils.IO.bkgProc[i] == proc:
+            
             utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],utils.IO.background_df[i][['sigmaMOverMDecorr']])
             w_proc = np.asarray(utils.IO.background_df[i][['weight']])
             np.reshape(w_proc,(len(utils.IO.background_df[i][['weight']]),))
@@ -168,6 +172,17 @@ def get_total_test_sample(x_sig,x_bkg,splitting=0.5):
     halfSample_b = int((x_b.size/len(x_b.columns))*splitting)
     return np.concatenate([np.split(x_s,[halfSample_s])[1],np.split(x_b,[halfSample_b])[1]])
 
+def get_total_test_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
+    x_s = x_sig[np.where(event_sig%2==0)]
+    x_b = x_bkg[np.where(event_bkg%2==0)]
+    return np.concatenate((x_s,x_b))
+
+def get_total_training_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
+    x_s = x_sig[np.where(event_sig%2!=0)]
+    x_b = x_bkg[np.where(event_bkg%2!=0)]
+    return np.concatenate((x_s,x_b))
+
+
 
 def set_signals(treeName,branch_names,shuffle):
     print "using tree:"+treeName
@@ -180,6 +195,25 @@ def set_signals(treeName,branch_names,shuffle):
             
 #         adjust_and_compress(utils.IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
 
+    
+    
+def set_signals_drop(treeName,branch_names,shuffle):
+    print "using tree:"+treeName
+    for i in range(utils.IO.nSig):
+        df = rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)
+     #   index = [21365, 37561, 45119, 140896, 169444, 178771]
+      #  df = drop_from_df(df,index)
+        df = drop_nan(df)
+        utils.IO.signal_df.append(df)
+        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i])
+        if shuffle:
+            utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
+            utils.IO.signal_df[i].sort_values(by='random_index',inplace=True)
+            
+#         adjust_and_compress(utils.IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
+    
+    
+    
     
 
 def set_backgrounds(treeName,branch_names,shuffle):
@@ -220,24 +254,36 @@ def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
     set_signals(treeName,branch_names,shuffle)
     set_backgrounds(treeName,branch_names,shuffle)
 
+    
+def set_signals_and_backgrounds_drop(treeName,branch_names,shuffle=True):
+    #signals will have positive process number while bkg negative ones
+    print "using tree:"+treeName
+    set_signals_drop(treeName,branch_names,shuffle)
+    set_backgrounds(treeName,branch_names,shuffle)
+    
+    
 
-def randomize(X,y,w,seed=0):
+def randomize(X,y,w,event_num=None,seed=0):
     randomize=np.arange(len(X))
     np.random.seed(seed)
     np.random.shuffle(randomize)
     X = X[randomize]
     y = np.asarray(y)[randomize]
     w = np.asarray(w)[randomize]
-
-    return X,y,w
+    if event_num is None :
+        event_num = np.asarray(event_num)[randomize]
+        return X,y,w
+    else : 
+        return X,y,w,event_num
 
 
  
-def set_variables(branch_names):
+def set_variables(branch_names,use_event_num=False):
     for i in range(utils.IO.nSig):
         if i ==0:
             y_sig = utils.IO.signal_df[i][['proc']]
             w_sig = utils.IO.signal_df[i][['weight']]
+            if use_event_num :  event_sig = utils.IO.signal_df[i][['event']]
             for j in range(len(branch_names)):
                 if j == 0:
                     X_sig = utils.IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -246,6 +292,7 @@ def set_variables(branch_names):
         else:
             y_sig = np.concatenate((y_sig,utils.IO.signal_df[i][['proc']]))
             w_sig = np.concatenate((w_sig,utils.IO.signal_df[i][['weight']]))
+            if use_event_num : event_sig = np.concatenate((event_sig,utils.IO.signal_df[i][['event']]))
             for j in range(len(branch_names)):
                 if j == 0:
                     X_sig_2 = utils.IO.signal_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -257,6 +304,7 @@ def set_variables(branch_names):
         if i ==0:
             y_bkg = utils.IO.background_df[i][['proc']]
             w_bkg = utils.IO.background_df[i][['weight']]
+            if use_event_num : event_bkg = utils.IO.background_df[i][['event']]
             for j in range(len(branch_names)):
                 if j == 0:
                     X_bkg = utils.IO.background_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -265,6 +313,7 @@ def set_variables(branch_names):
         else:
             y_bkg = np.concatenate((y_bkg,utils.IO.background_df[i][['proc']]))
             w_bkg = np.concatenate((w_bkg,utils.IO.background_df[i][['weight']]))
+            if use_event_num : event_bkg = np.concatenate((event_bkg,utils.IO.background_df[i][['event']]))
             for j in range(len(branch_names)):
                 if j == 0:
                     X_bkg_2 = utils.IO.background_df[i][[branch_names[j].replace('noexpand:','')]]
@@ -272,5 +321,64 @@ def set_variables(branch_names):
                     X_bkg_2 = np.concatenate([X_bkg_2,utils.IO.background_df[i][[branch_names[j].replace('noexpand:','')]]],axis=1)
             X_bkg=np.concatenate((X_bkg,X_bkg_2))
 
-    return np.round(X_bkg,5),y_bkg,w_bkg,np.round(X_sig,5),y_sig,w_sig
+    if not use_event_num :  return np.round(X_bkg,5),y_bkg,w_bkg,np.round(X_sig,5),y_sig,w_sig
+    else :   return np.round(X_bkg,5),y_bkg,w_bkg,event_bkg,np.round(X_sig,5),y_sig,w_sig,event_sig
 
+   
+
+def check_for_nan(df,branch_name='event'):
+    print df.isnull().sum()
+    index = df[branch_name].index[df[branch_name].apply(np.isnan)]
+    print 'event numbers for nan events : ', df['event'][index]
+    new_df = df.drop(df.index[index])
+    return new_df
+
+
+    
+def drop_from_df(df,index):
+    return df.drop(df.index[index])
+
+def drop_nan(df):
+    return df.dropna()
+
+def profile(target,xvar,bins=10,range=None,uniform=False,moments=True,
+            quantiles=np.array([0.25,0.5,0.75])):
+
+    if range is None:
+        if type(bins) is not int:
+            xmin, xmax = bins.min(), bins.max()
+        else:
+            xmin, xmax = xvar.min(),xvar.max()
+    else:
+        xmin, xmax = range
+    mask = ( xvar >= xmin ) & ( xvar <= xmax )
+    xvar = xvar[mask]
+    target = target[mask]
+    if type(bins) == int:
+        if uniform:
+            bins = np.linspace(xmin,xmax,num=bins+1)
+        else:
+            ## print(xmin,xmax)
+            ## xvar = np.clip( xvar, xmin, xmax )
+            bins = np.percentile( xvar, np.linspace(0,100.,num=bins+1) )
+            bins[0] = xmin
+            bins[-1] = xmax
+    print bins.shape 
+    ibins = np.digitize(xvar,bins)-1
+    categories = np.eye(np.max( ibins ) + 1)[ibins]
+
+    ret = [bins]
+    if moments:
+        mtarget = target.reshape(-1,1) * categories
+        weights = categories
+        mean = np.average(mtarget,weights=categories,axis=0)
+        mean2 = np.average(mtarget**2,weights=categories,axis=0)
+        ret.extend( [mean, np.sqrt( mean2 - mean**2)] )
+    if quantiles is not None:
+        values = []
+        print(categories.shape[1])
+        for ibin in np.arange(categories.shape[1],dtype=int):
+            values.append( np.percentile(target[categories[:,ibin].astype(np.bool)],quantiles*100.,axis=0).reshape(-1,1) )
+            ## print(values)
+        ret.append( np.concatenate(values,axis=-1) )
+    return tuple(ret)
