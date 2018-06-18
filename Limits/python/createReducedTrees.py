@@ -14,10 +14,11 @@ import pandas as pd
 import root_pandas as rpd
 
 
+samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","DiPhotonJetsBox2BJets_","DiPhotonJetsBox1BJet_"]#
 
 def addSamples():#define here the samples you want to process
     ntuples = options.ntup
-    samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","GluGluHToGG","VBFHToGG","VHToGG","bbHToGG_M-125_4FS_yb2","bbHToGG_M-125_4FS_ybyt","ttHToGG"]#is bbH correct?
+   # samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","GluGluHToGG","VBFHToGG","VHToGG","bbHToGG_M-125_4FS_yb2","bbHToGG_M-125_4FS_ybyt","ttHToGG"]#is bbH correct?
 
     files= os.listdir(utils.IO.ldata+ntuples)
 
@@ -40,8 +41,9 @@ def addSamples():#define here the samples you want to process
     
     #add all nodes
     nodes = []
-    for i in range(2,14):
-        nodes.append([s for s in files if "GluGluToHHTo2B2G_node_"+str(i) in s])
+    if not options.addnodes:
+        for i in range(2,14):
+            nodes.append([s for s in files if "GluGluToHHTo2B2G_node_"+str(i) in s])
     for i in range(len(utils.IO.backgroundName),len(utils.IO.backgroundName)+len(nodes)):
         utils.IO.add_background(ntuples,nodes[i-nBkg],-i)
         
@@ -54,21 +56,30 @@ def addSamples():#define here the samples you want to process
 
 
 def main(options,args):
+    
 
     addSamples()
     
     #mva variables, use noexpand for root expressions, it needs this file https://github.com/ibab/root_pandas/blob/master/root_pandas/readwrite.py
     branch_names = 'leadingJet_bDis,subleadingJet_bDis,noexpand:fabs(CosThetaStar_CS),noexpand:fabs(CosTheta_bb),noexpand:fabs(CosTheta_gg)'.split(",")
     branch_names += 'noexpand:diphotonCandidate.Pt()/diHiggsCandidate.M(),noexpand:dijetCandidate.Pt()/diHiggsCandidate.M()'.split(",")
-    branch_names += 'customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverMDecorr,PhoJetMinDr'.split(",")
+ ###   branch_names += 'customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverMDecorr,PhoJetMinDr'.split(",")
+    branch_names += 'customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverM,PhoJetMinDr'.split(",")
+   ############ branch names with regression ############
+#    branch_names = 'leadingJetCorr_bDis,subleadingJetCorr_bDis,noexpand:fabs(CosThetaStar_CS),noexpand:fabs(CosTheta_bb),noexpand:fabs(CosTheta_gg)'.split(",")
+#    branch_names += 'noexpand:diphotonCandidate.Pt()/diHiggsCandidateCorr.M(),noexpand:dijetCandidateCorr.Pt()/diHiggsCandidateCorr.M()'.split(",")
+#    branch_names += 'customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverM,PhoJetMinDr'.split(",") #set of variables March 2017 but regressed
+#    branch_names += 'noexpand:(leadingJet_bRegNNResolution*1.4826),noexpand:(subleadingJet_bRegNNResolution*1.4826),noexpand:(dijetSigmaMOverM*1.4826)'.split(",")
+
     branch_names = [c.strip() for c in branch_names]
     print "using following variables for MVA: " 
     print branch_names
     
     
     # no need to shuffle here, we just count events
-    preprocessing.set_signals_and_backgrounds("bbggSelectionTree",branch_names,shuffle=False)
-    X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig=preprocessing.set_variables(branch_names)
+   # preprocessing.set_signals_and_backgrounds("bbggSelectionTree",branch_names,shuffle=False)
+    preprocessing.set_signals_and_backgrounds_drop("bbggSelectionTree",branch_names,shuffle=False)  #############Temporary fix to drop all NAN events
+    X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig=preprocessing.set_variables(branch_names)  
  
 #when no data is present   
 ##    X_data,y_data,weights_data = preprocessing.set_data("bbggSelectionTree",branch_names)
@@ -99,13 +110,14 @@ def main(options,args):
             print str(i)
             Y_pred_bkg.append(loaded_model.predict_proba(bkg[i])[:,loaded_model.n_classes_-1].astype(np.float64))
     
-        Y_pred_data = loaded_model.predict_proba(X_data)[:,loaded_model.n_classes_-1].astype(np.float64)
-        print Y_pred_data 
+#when no data is present   
+       # Y_pred_data = loaded_model.predict_proba(X_data)[:,loaded_model.n_classes_-1].astype(np.float64)
+       # print Y_pred_data 
     
     
     
     #define MVA cut and additional variables needed
-    additionalCut_names = 'noexpand:diphotonCandidate.M(),noexpand:dijetCandidate.M(),MX,isSignal'.split(",")
+    additionalCut_names = 'noexpand:diphotonCandidate.M(),noexpand:dijetCandidate.M(),MX,isSignal,event,noexpand:dijetCandidateCorr.M(),noexpand:(event%2!=0),subleadingJet_genHadronFlavourb,leadingJet_genHadronFlavourb'.split(",")
     #mva output
     if options.addHHTagger:
         additionalCut_names += 'HHTagger2017,HHTagger2017_transform'.split(",")
@@ -199,15 +211,18 @@ def main(options,args):
         print "nCleaned"
         print nCleaned.shape
     
-        processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
+    #    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
+        processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[(len(samples)-3)].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
         if not options.addHHTagger:
             postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[iSample])
         else:
             postprocessing.saveTree(processPath,dictVar,nCleaned)
         
-        processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
+       # processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
+        processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[(len(samples)-3)].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
         if "GluGluToHHTo2B2G_node_"in processPath:
-            treeName = "reducedTree_sig_node_"+str(iProcess-7)
+         #   treeName = "reducedTree_sig_node_"+str(iProcess-7)
+            treeName = "reducedTree_sig_node_"+str(iProcess-(len(samples)-3))
         else:
             treeName = "reducedTree_bkg_"+str(iProcess)
         if not options.addHHTagger:        
@@ -215,7 +230,7 @@ def main(options,args):
         else:
             postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree=treeName)    
     
-    ##data    
+###########################  data  block starts  ################################################################### 
  #   data_count_df = rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = branch_names+additionalCut_names)
     
  #   nTot,dictVar = postprocessing.stackFeatures(data_count_df,branch_names+additionalCut_names,isData=1)
@@ -239,7 +254,8 @@ def main(options,args):
  #   else:
 #        postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_bkg")
 #    
-#    os.system('hadd '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
+    os.system('hadd '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
+###########################   data  block  ends  ################################################################### 
     
 
 
@@ -265,6 +281,10 @@ if __name__ == "__main__":
                         action="store", type="string", dest="outTag",
                         default="20180108_test",
                         help="output folder name",
+                        ),
+            make_option("-k","--nodes",
+                        action="store_true",dest="addnodes",default=False,
+                        help="add or not nodes",
                         ),
             ]
                           )

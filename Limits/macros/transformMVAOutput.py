@@ -10,8 +10,8 @@ def main(options,args):
     ROOT.gStyle.SetOptStat(0)
         
     fin = ROOT.TFile.Open(options.file)
-   # tree = fin.Get("reducedTree_sig")
-    tree = fin.Get("bbggSelectionTree")
+    tree = fin.Get("reducedTree_sig")
+   # tree = fin.Get("bbggSelectionTree")
 
 
     for nameTagPos,s in enumerate(options.file.split("/")):
@@ -28,11 +28,13 @@ def main(options,args):
     fout = ROOT.TFile.Open("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/cumulativeTransformation_"+name+".root","recreate")
 
     nbins = 40000
-    xlow = -1.
+   # xlow = -1. # -> from  TMVA xml weights (0-1 -> -1-1)
+    xlow = 0.
     xup = 1.
     histoMVA = ROOT.TH1F("histoMVA","histoMVA",nbins,xlow,xup)
  #   tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
-    tree.Draw("HHTagger2017>>histoMVA")
+   # tree.Draw("HHTagger2017>>histoMVA",ROOT.TCut("isSignal==1"))
+    tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("isSignal==1"))
 #    histoMVA.FillRandom("gaus",1000000)
 
     cumulativeHisto = histoMVA.GetCumulative()
@@ -82,15 +84,16 @@ def main(options,args):
     fin.cd()
 
     processes = [
-        "reducedTree_sig",
-        "reducedTree_bkg"
+        "reducedTree_sig"#,
+    #    "reducedTree_bkg"
         ]
 
     for i in range(2,14):
         processes.append("reducedTree_sig_node_"+str(i))
 
-    for i in range(0,8):
-        if i == 1: continue
+  #  for i in range(0,8):
+    for i in range(0,5):
+        if i == 1: continue #gJets are combined in one, i==2
         processes.append("reducedTree_bkg_"+str(i))
 
 
@@ -116,7 +119,8 @@ def main(options,args):
         
         for i,event in enumerate(copyTree):
             if i>tree.GetEntries():break
-            mva = event.HHTagger2017
+           # mva = event.HHTagger2017
+            mva = event.MVAOutput
             transfMVA[0] = cumulativeGraph.Eval(mva)
             transfBranch.Fill()
     

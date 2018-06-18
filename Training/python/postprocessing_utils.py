@@ -70,6 +70,12 @@ def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTre
              name = 'Mjj'
          elif key == 'HHTagger2017':
              name = 'MVAOutput'
+         elif key == 'dijetCandicateCorr.M()':
+             name = 'MjjCorr'
+         elif '*1.4826' in key:
+             name = key.replace('*1.4826','_gauss')
+         elif 'event%2!=0' in key:
+             name = key.replace('event%2!=0','event_odd')
 
          if SF != 1:
              if key == 'weight':

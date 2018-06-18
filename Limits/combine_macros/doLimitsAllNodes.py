@@ -17,13 +17,15 @@ def main(options,args):
 
     ## setTDRStyle()
     ROOT.gStyle.SetOptStat(0)
-#    outDir = os.path.dirname(os.path.realpath(options.datacard)) + options.datacard.replace(".txt","")
+   # outDir = os.path.dirname(os.path.realpath(options.datacard)) + options.datacard.replace(".txt","")
+  #  outDir = options.datacard.replace(".txt","")
     outDir = options.datacard.replace(".txt","")
+    print outDir
     if not os.path.exists(outDir):
         os.mkdir(outDir)
-    shutil.copy2(options.datacard,outDir)
+    shutil.copy2(options.indir+options.datacard,outDir)
 
-    datacard = open(options.datacard,"r")
+    datacard = open(options.indir+options.datacard,"r")
     linelist =  datacard.readlines()
     datacard.close()
     
@@ -121,6 +123,11 @@ if __name__ == "__main__":
                         action="store", type="string", dest="datacard",
                         default="",
                         help="input datacard",
+                        ),
+            make_option("--dir",
+                        action="store", type="string", dest="indir",
+                        default="",
+                        help="input directory for datacard",
                         ),
             make_option("-D", "--doDatacards",
                         action="store",type="int", dest="doDatacards",

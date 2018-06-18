@@ -105,8 +105,10 @@ def main(options,args):
     fin = ROOT.TFile.Open(options.file)
 
 #    samples = { "sig" : ["sigRv","sigWv"] , "bkg" : ["bkg"] }
-    samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0","reducedTree_bkg_2"], "higgs" : ["reducedTree_bkg_3","reducedTree_bkg_4","reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7","reducedTree_bkg_8"] }
+  #  samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0","reducedTree_bkg_2"], "higgs" : ["reducedTree_bkg_3","reducedTree_bkg_4","reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7","reducedTree_bkg_8"] }
+ #   samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0","reducedTree_bkg_2"] }
    # samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0"] }
+    samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_3","reducedTree_bkg_4"] }
     trees = {}
 
     catdef = open(options.catdef)
@@ -121,7 +123,8 @@ def main(options,args):
     ncat = int(options.ncat)
     
    # poly = [ 0, 60, 500, 10000, 20000, 40000 ]
-    poly = [ 0, 20, 500, 10000, 20000, 40000 ]
+  #  poly = [ 0, 20, 500, 10000, 20000, 40000 ]
+    poly = [ 0, 100, 500, 10000, 20000, 40000 ]
     
     nvars = len(varnames)
     bounds = [ [ float(cats[ivar*(ncat+1)+icat]) for ivar in range(nvars) ]  for icat in range(ncat+1) ]
@@ -229,8 +232,9 @@ def main(options,args):
         for tname, tsel in todos:
             mname = name
             if tname != "": mname += "_%s" % tname
-#            sel = ROOT.TCut("_weight") * selection
-            sel = ROOT.TCut("weight") * selection
+            print mname
+            sel = ROOT.TCut("2*weight") * selection
+           # sel = ROOT.TCut("weight") * selection
 
             if tsel != "":
                 sel *= ROOT.TCut(tsel)            
