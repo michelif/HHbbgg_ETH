@@ -14,7 +14,8 @@ from numpy import mean
 
 # -----------------------------------------------------------------------------------------------------------
 def main(options,args):
-
+   
+    nNodes = 15
     ## setTDRStyle()
     ROOT.gStyle.SetOptStat(0)
    # outDir = os.path.dirname(os.path.realpath(options.datacard)) + options.datacard.replace(".txt","")
@@ -30,7 +31,7 @@ def main(options,args):
     datacard.close()
     
     if options.doDatacards:
-        for node in range(2,14):
+        for node in range(2,nNodes): #15 if plus box
             outDatacard = open(outDir+"/"+outDir+str("_node_"+str(node)+".txt"),"w+")
             for line in linelist:
                 line = line.replace("cms_hgg:sig_","cms_hgg:sig_node_"+str(node)+"_")
@@ -48,7 +49,7 @@ def main(options,args):
             os.mkdir(outDirLimits)
         os.system("combine -M Asymptotic "+nameFile+" -S 0 |grep \"Expected 50.0\"| awk '{print $5}' >"+outDirLimits+"lim_"+str(nameFile))  
         if options.doDatacards:
-            for node in range(2,14):
+            for node in range(2,nNodes):
                 nameFile = outDir+str("_node_"+str(node)+".txt")
                 os.system("combine -M Asymptotic "+nameFile+" -S 0 |grep \"Expected 50.0\"| awk '{print $5}' >"+outDirLimits+"lim_"+str(nameFile))              
 
@@ -71,7 +72,7 @@ def main(options,args):
         limits.append(float(linelist[0]))
         nodeIndex.append(1)
         if options.doDatacards:
-            for node in range(2,14):
+            for node in range(2,nNodes):
                 nameFile = outDirLimits+"lim_"+outDir+str("_node_"+str(node)+".txt")
                 inFile = open(nameFile,"r")
                 linelist =  inFile.readlines()

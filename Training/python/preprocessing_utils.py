@@ -5,26 +5,27 @@ import pandas as pd
 import root_pandas as rpd
 
 
-def define_process_weight(df,proc,name,cleanSignal=True):
+def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=True):
+    df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
+    if treename=='bbggSelectionTree':
+        df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
+        input_df=rpd.read_root(name,treename, columns = ['genTotalWeight', 'lumiFactor','isSignal','puweight'])
+        w = np.multiply(input_df[['lumiFactor']],input_df[['genTotalWeight']])
+        w = np.multiply(w,input_df[['puweight']])
+        df['lumiFactor'] = input_df[['lumiFactor']]
+        df['genTotalWeight'] = input_df[['genTotalWeight']]
+        df['isSignal'] = input_df[['isSignal']]
+        if cleanSignal:#some trees include also the control region,select only good events
+            df['weight']= np.multiply(w,input_df[['isSignal']])
+        else:
+            df['weight']=w
+
+
+
+def define_process_weight_CR(df,proc,name,treename='bbggSelectionTree'):
     df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
     df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
-    input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['genTotalWeight', 'lumiFactor','isSignal','puweight'])
-    w = np.multiply(input_df[['lumiFactor']],input_df[['genTotalWeight']])
-    w = np.multiply(w,input_df[['puweight']])
-    df['lumiFactor'] = input_df[['lumiFactor']]
-    df['genTotalWeight'] = input_df[['genTotalWeight']]
-    df['isSignal'] = input_df[['isSignal']]
-    if cleanSignal:#some trees include also the control region,select only good events
-        df['weight']= np.multiply(w,input_df[['isSignal']])
-    else:
-        df['weight']=w
-
-
-
-def define_process_weight_CR(df,proc,name):
-    df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
-    df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
-    input_df=rpd.read_root(name,"bbggSelectionTree", columns = ['isPhotonCR'])
+    input_df=rpd.read_root(name,treename, columns = ['isPhotonCR'])
     w = input_df[['isPhotonCR']]
     df['weight']=w
 
@@ -101,33 +102,33 @@ def scale_process_weight(w_b,y_b,proc,sf):
 
     return w_bkg.reshape(len(w_bkg),1) 
 
-def weight_signal_with_resolution(w_s,y_s):
+def weight_signal_with_resolution(w_s,y_s,branch='sigmaMOverMDecorr'):
     proc=999
     for i in range(utils.IO.nSig):
         w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
         proc = utils.IO.sigProc[i]
-        utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['sigmaMOverM']])
+        utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][[branch]])
 
     return utils.IO.signal_df[i][['weight']]
 
-def weight_signal_with_resolution_bjet(w_s,y_s):
+def weight_signal_with_resolution_bjet(w_s,y_s,branch='(sigmaMJets*1.4826)'):
     proc=999
     for i in range(utils.IO.nSig):
         w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
         proc = utils.IO.sigProc[i]
-        utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][['(dijetSigmaMOverM*1.4826)']])
+        utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][[branch]])
 
     return utils.IO.signal_df[i][['weight']]
 
 
 
-def weight_background_with_resolution(w_b,y_b,proc):
+def weight_background_with_resolution(w_b,y_b,proc,branch='sigmaMOverMDecorr'):
     w_bkg = []
     process=999
     for i in range(utils.IO.nBkg):
         if utils.IO.bkgProc[i] == proc:
             
-            utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],utils.IO.background_df[i][['sigmaMOverMDecorr']])
+            utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],utils.IO.background_df[i][[branch]])
             w_proc = np.asarray(utils.IO.background_df[i][['weight']])
             np.reshape(w_proc,(len(utils.IO.background_df[i][['weight']]),))
         else:
@@ -174,21 +175,22 @@ def get_total_test_sample(x_sig,x_bkg,splitting=0.5):
 
 def get_total_test_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
     x_s = x_sig[np.where(event_sig%2==0)]
-    x_b = x_bkg[np.where(event_bkg%2==0)]
+    x_b = x_bkg[np.where(event_bkg%5==0)]
     return np.concatenate((x_s,x_b))
 
 def get_total_training_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
     x_s = x_sig[np.where(event_sig%2!=0)]
-    x_b = x_bkg[np.where(event_bkg%2!=0)]
+    x_b = x_bkg[np.where(event_bkg%5!=0)]
     return np.concatenate((x_s,x_b))
 
 
 
-def set_signals(treeName,branch_names,shuffle):
-    print "using tree:"+treeName
+def set_signals(branch_names,shuffle,cuts='event>=0'):
     for i in range(utils.IO.nSig):
-        utils.IO.signal_df.append(rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names))
-        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i])
+        treeName = utils.IO.signalTreeName[i]
+        print "using tree:"+treeName
+        utils.IO.signal_df.append((rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)).query(cuts))
+        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName)
         if shuffle:
             utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
             utils.IO.signal_df[i].sort_values(by='random_index',inplace=True)
@@ -197,15 +199,16 @@ def set_signals(treeName,branch_names,shuffle):
 
     
     
-def set_signals_drop(treeName,branch_names,shuffle):
-    print "using tree:"+treeName
+def set_signals_drop(branch_names,shuffle,cuts='event>=0'):
     for i in range(utils.IO.nSig):
-        df = rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)
+        treeName = utils.IO.signalTreeName[i]
+        print "using tree:"+treeName
+        df = (rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)).query(cuts)
      #   index = [21365, 37561, 45119, 140896, 169444, 178771]
       #  df = drop_from_df(df,index)
         df = drop_nan(df)
         utils.IO.signal_df.append(df)
-        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i])
+        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName)
         if shuffle:
             utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
             utils.IO.signal_df[i].sort_values(by='random_index',inplace=True)
@@ -216,10 +219,12 @@ def set_signals_drop(treeName,branch_names,shuffle):
     
     
 
-def set_backgrounds(treeName,branch_names,shuffle):
+def set_backgrounds(branch_names,shuffle,cuts='event>=0'):
     for i in range(utils.IO.nBkg):
-        utils.IO.background_df.append(rpd.read_root(utils.IO.backgroundName[i],treeName, columns = branch_names))
-        define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i])
+        treeName = utils.IO.bkgTreeName[i]
+        print "using tree:"+treeName
+        utils.IO.background_df.append((rpd.read_root(utils.IO.backgroundName[i],treeName, columns = branch_names)).query(cuts))
+        define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i],treeName)
         if shuffle:
             utils.IO.background_df[i]['random_index'] = np.random.permutation(range(utils.IO.background_df[i].index.size))
             utils.IO.background_df[i].sort_values(by='random_index',inplace=True)
@@ -228,16 +233,19 @@ def set_backgrounds(treeName,branch_names,shuffle):
 
 
 
-def set_data(treeName,branch_names):
-    utils.IO.data_df.append(rpd.read_root(utils.IO.dataName[0],treeName, columns = branch_names))
+def set_data(branch_names,cuts='event>=0'):
+    treeName = utils.IO.dataTreeName[0]
+    utils.IO.data_df.append((rpd.read_root(utils.IO.dataName[0],treeName, columns = branch_names)).query(cuts))
     utils.IO.data_df[0]['proc'] =  ( np.ones_like(utils.IO.data_df[0].index)*utils.IO.dataProc[0] ).astype(np.int8)
-    input_df=rpd.read_root(utils.IO.dataName[0],treeName, columns = ['isSignal'])
-    w = (np.ones_like(utils.IO.data_df[0].index)).astype(np.int8)
-    utils.IO.data_df[0]['weight'] = np.multiply(w,input_df['isSignal'])
+    if treeName=='bbggSelectionTree':
+       input_df=rpd.read_root(utils.IO.dataName[0],treeName, columns = ['isSignal'])
+       w = (np.ones_like(utils.IO.data_df[0].index)).astype(np.int8)
+       utils.IO.data_df[0]['weight'] = np.multiply(w,input_df['isSignal'])
 
+
+def set_variables_data(branch_names):
     y_data = utils.IO.data_df[0][['proc']]
     w_data = utils.IO.data_df[0][['weight']]
-
     for j in range(len(branch_names)):
         if j == 0:
             X_data = utils.IO.data_df[0][[branch_names[j].replace('noexpand:','')]]
@@ -248,18 +256,16 @@ def set_data(treeName,branch_names):
     
     
 
-def set_signals_and_backgrounds(treeName,branch_names,shuffle=True):
+def set_signals_and_backgrounds(branch_names,shuffle=True,cuts='event>=0'):
     #signals will have positive process number while bkg negative ones
-    print "using tree:"+treeName
-    set_signals(treeName,branch_names,shuffle)
-    set_backgrounds(treeName,branch_names,shuffle)
+    set_signals(branch_names,shuffle,cuts)
+    set_backgrounds(branch_names,shuffle,cuts)
 
     
-def set_signals_and_backgrounds_drop(treeName,branch_names,shuffle=True):
+def set_signals_and_backgrounds_drop(branch_names,shuffle=True,cuts='event>=0'):
     #signals will have positive process number while bkg negative ones
-    print "using tree:"+treeName
-    set_signals_drop(treeName,branch_names,shuffle)
-    set_backgrounds(treeName,branch_names,shuffle)
+    set_signals_drop(branch_names,shuffle,cuts)
+    set_backgrounds(branch_names,shuffle,cuts)
     
     
 

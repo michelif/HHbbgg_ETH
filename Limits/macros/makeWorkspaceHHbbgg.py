@@ -107,8 +107,12 @@ def main(options,args):
 #    samples = { "sig" : ["sigRv","sigWv"] , "bkg" : ["bkg"] }
   #  samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0","reducedTree_bkg_2"], "higgs" : ["reducedTree_bkg_3","reducedTree_bkg_4","reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7","reducedTree_bkg_8"] }
  #   samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0","reducedTree_bkg_2"] }
-   # samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0"] }
-    samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_3","reducedTree_bkg_4"] }
+    #samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0"] }
+ #   samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_3","reducedTree_bkg_4"] }# diphoton plus bjets
+   # samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0","reducedTree_bkg_2"], "higgs" : ["reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7","reducedTree_bkg_8"] } #diphoton and single higgs 
+   # samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_0"], "higgs" : ["reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7","reducedTree_bkg_8"] } #diphotonOnly and single higgs 
+   # samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_bkg_3","reducedTree_bkg_4"], "higgs" : ["reducedTree_bkg_5","reducedTree_bkg_6","reducedTree_bkg_7","reducedTree_bkg_8"] } #diphoton+2 bjets and single higgs 
+    samples = { "sig" : ["reducedTree_sig"] , "bkg" : ["reducedTree_data"] }# estimation with data
     trees = {}
 
     catdef = open(options.catdef)
@@ -123,15 +127,16 @@ def main(options,args):
     ncat = int(options.ncat)
     
    # poly = [ 0, 60, 500, 10000, 20000, 40000 ]
-  #  poly = [ 0, 20, 500, 10000, 20000, 40000 ]
-    poly = [ 0, 100, 500, 10000, 20000, 40000 ]
+    poly = [ 0, 20, 500, 10000, 20000, 40000 ]
+  #  poly = [ 0, 100, 500, 10000, 20000, 40000 ]
     
     nvars = len(varnames)
     bounds = [ [ float(cats[ivar*(ncat+1)+icat]) for ivar in range(nvars) ]  for icat in range(ncat+1) ]
 
     #add bsm nodes
     if  "addBSMNodes" in options.__dict__.keys():
-        for i in range(2,14):
+       # for i in range(2,14):
+        for i in range(2,15):   #box is #14
             samples["sig_node_"+str(i)]=["reducedTree_sig_node_"+str(i)]
         
     print "var and boundaries"
@@ -179,7 +184,10 @@ def main(options,args):
             print "----------------------additionalCuts-----------------"  
 
     print selection
-
+    lumi = 1.
+    if "lumi" in summary[options.ncat]:
+        lumi = summary[options.ncat]["lumi"]
+        print 'Normalizing to Luminosity : ',lumi
 
     for name,sel in cuts+cats+[("cat",catvar),("selection",selection)]:
         print name, sel.GetTitle()
@@ -189,8 +197,8 @@ def main(options,args):
         print "Reading ", sname, samp
         tlist = ROOT.TList()
         for name in samp:
-            tree = fin.Get(name)
             print name
+            tree = fin.Get(name)
             tlist.Add(tree)
         tout=ROOT.TTree.MergeTrees(tlist)
         tout.SetName(sname)
@@ -233,8 +241,12 @@ def main(options,args):
             mname = name
             if tname != "": mname += "_%s" % tname
             print mname
-            sel = ROOT.TCut("2*weight") * selection
-           # sel = ROOT.TCut("weight") * selection
+           # sel = ROOT.TCut("2*weight") * selection  #FIXME temporary times two when considered half events (testing set) only
+            if options.dodata ==0 : sel = ROOT.TCut("weight*%.2f"%lumi) * selection 
+            else : 
+               if 'sig' in name or 'bkg_' in name :  sel = ROOT.TCut("weight*%.2f"%lumi) * selection 
+               else : sel = ROOT.TCut("weight")*selection
+             
 
             if tsel != "":
                 sel *= ROOT.TCut(tsel)            
@@ -434,6 +446,11 @@ if __name__ == "__main__":
                         action="store", type="string", dest="ncat",
                         default="",
                         help="number of categories",
+                        ),
+            make_option("--dodata",
+                        action="store", type="int", dest="dodata",
+                        default=0,
+                        help="do expect limit with data or without",
                         ),
 
             ]

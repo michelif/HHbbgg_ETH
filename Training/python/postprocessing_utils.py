@@ -17,7 +17,8 @@ def stackFeatures(df,additionalCut_names,rounding=6,SF=1,isData=0):
         vec.append(np.multiply(np.asarray(df['weight']),SF))  
     else:
         w = (np.ones_like(utils.IO.data_df[0].index)).astype(np.int8)
-        vec.append(np.multiply(w,df['isSignal']))
+        if 'bbggSelectionTree' in utils.IO.dataTreeName[0] : vec.append(np.multiply(w,df['isSignal']))
+        else : vec.append(np.asarray(df['weight']))
     dictVar['weight'] = i
         
 
@@ -55,36 +56,42 @@ def saveTree(processPath,dictVar,vector,MVAVector=None,SF=1,nameTree="reducedTre
     i=0
     for key in dictVar.keys():
 
-         if i == 0:
-             writeMode='recreate'
-             i=1
-         else:
-             writeMode='update'
+        if i == 0:
+            writeMode='recreate'
+            i=1
+        else:
+            writeMode='update'
 
-         v=(np.asarray(vector[:,dictVar[key]]))
-         name = key
+        v=(np.asarray(vector[:,dictVar[key]]))
+        name = key
 
-         if key == 'diphotonCandidate.M()':
-             name = 'Mgg'
-         elif key == 'dijetCandidate.M()':
-             name = 'Mjj'
-         elif key == 'HHTagger2017':
-             name = 'MVAOutput'
-         elif key == 'dijetCandicateCorr.M()':
-             name = 'MjjCorr'
-         elif '*1.4826' in key:
-             name = key.replace('*1.4826','_gauss')
-         elif 'event%2!=0' in key:
-             name = key.replace('event%2!=0','event_odd')
+        if key == 'diphotonCandidate.M()':
+            name = 'Mgg'
+        elif 'CMS_hgg_mass' in key:
+            name = 'Mgg'
+        elif key == 'dijetCandidate.M()':
+            name = 'Mjj'
+        elif key == 'HHTagger2017':
+            name = 'MVAOutput'
+        elif key == 'dijetCandicateCorr.M()':
+            name = 'MjjCorr'
+        elif '*1.4826' in key:
+            name = key.replace('*1.4826','_gauss')
+    #    elif 'event%2!=0' in key:
+    #        name = key.replace('event%2!=0','event_odd')
+    #    elif 'event%5!=0' in key:
+    #        name = key.replace('event%5!=0','event_odd5')
+        elif 'event%' in key:
+            name = 'eventTrainedOn'
 
-         if SF != 1:
-             if key == 'weight':
-                 v = (np.multiply(np.asarray(v),SF))
+        if SF != 1:
+            if key == 'weight':
+                v = (np.multiply(np.asarray(v),SF))
 
-         v.dtype = [(name.replace(".","").replace("(","").replace(")","").replace("/","_Over_").replace("_","").replace("Candidate",""), np.float64)]
+        v.dtype = [(name.replace(".","").replace("(","").replace(")","").replace("/","_Over_").replace("_","").replace("Candidate",""), np.float64)]
 
 
-         array2root(v, processPath, nameTree, mode = writeMode)
+        array2root(v, processPath, nameTree, mode = writeMode)
 
     if MVAVector is not None: 
         v=(np.asarray(MVAVector.ravel()))

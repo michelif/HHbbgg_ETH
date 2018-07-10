@@ -34,7 +34,8 @@ def main(options,args):
     histoMVA = ROOT.TH1F("histoMVA","histoMVA",nbins,xlow,xup)
  #   tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
    # tree.Draw("HHTagger2017>>histoMVA",ROOT.TCut("isSignal==1"))
-    tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("isSignal==1"))
+   # tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("isSignal==1"))
+    tree.Draw("MVAOutput>>histoMVA")
 #    histoMVA.FillRandom("gaus",1000000)
 
     cumulativeHisto = histoMVA.GetCumulative()
@@ -84,15 +85,15 @@ def main(options,args):
     fin.cd()
 
     processes = [
-        "reducedTree_sig"#,
-    #    "reducedTree_bkg"
+        "reducedTree_sig",
+        "reducedTree_data"
         ]
 
-    for i in range(2,14):
+    for i in range(2,15): #15 13+box
         processes.append("reducedTree_sig_node_"+str(i))
 
   #  for i in range(0,8):
-    for i in range(0,5):
+    for i in range(0,9):
         if i == 1: continue #gJets are combined in one, i==2
         processes.append("reducedTree_bkg_"+str(i))
 
