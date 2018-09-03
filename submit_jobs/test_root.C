@@ -17,7 +17,7 @@ int main(int argc, char* argv[]){
 	cout<<argc<<argv[4]<<endl;
 
 //	sprintf(cmd,".L treeForRegression_unweight.C++");
-	sprintf(cmd2,"treeForRegression_advanced(%i,%i,%i,\"%s\")",atoi(argv[1]),atoi(argv[2]),atoi(argv[3]),argv[4]);
+	sprintf(cmd2,"treeForRegression_unweight(%i,%i,%i,\"%s\")",atoi(argv[1]),atoi(argv[2]),atoi(argv[3]),argv[4]);
 //	cout<<cmd<<endl;
 	cout<<cmd2<<endl;
 	gROOT->ProcessLine(".L treeForRegression_unweight.C++");

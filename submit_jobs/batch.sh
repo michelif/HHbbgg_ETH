@@ -16,9 +16,9 @@ cd $MYBATCHDIR
 
 ./a_root $1 $2 $3 $TMPDIR/$4 
 
-xrdfs t3se01.psi.ch rm  /store/user/nchernya/HHbbgg/b_regression/ZHbbll/${4}_RegressionPerJet_heppy_energyRings_forTraining_${3}_full.root
+xrdfs t3se01.psi.ch rm  /store/user/nchernya/HHbbgg/b_regression/ttbar_2016_legacy_JECv11/${4}_RegressionPerJet_heppy_energyRings_forTraining_${3}_legacy_2ptds.root
 
-xrdcp -f $TMPDIR/${4}_RegressionPerJet_heppy_energyRings_forTraining_${3}_full.root  root://t3dcachedb.psi.ch:1094//pnfs/psi.ch/cms/trivcat//store/user/nchernya/HHbbgg/b_regression/ZHbbll/
+xrdcp -f $TMPDIR/${4}_RegressionPerJet_heppy_energyRings_forTraining_${3}_legacy_2ptds.root  root://t3dcachedb.psi.ch:1094//pnfs/psi.ch/cms/trivcat//store/user/nchernya/HHbbgg/b_regression/ttbar_2016_legacy_JECv11/
 
 #$ -o /mnt/t3nfs01/data01/shome/nchernya/batch_logs/
 #$ -e /mnt/t3nfs01/data01/shome/nchernya/batch_logs/

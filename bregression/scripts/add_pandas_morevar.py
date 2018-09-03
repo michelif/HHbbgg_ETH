@@ -9,17 +9,15 @@ end = int(sys.argv[2])
 #targetdir='/scratch/nchernya/HHbbgg/ttbar_morevariables/'
 #targetdir = '/scratch/nchernya/HHbbgg/ttbar_2017_v2/'
 #targetdir = '/scratch/nchernya/HHbbgg/othersamples_morevar/'
-targetdir = '/scratch/nchernya/HHbbgg/ttbar_2017_v3_newJEC/'
+#targetdir = '/scratch/nchernya/HHbbgg/ttbar_2017_v3_newJEC/'
+targetdir = '/scratch/nchernya/HHbbgg/ttbar_2016_legacy_JECv11/'
 #targetdir = '/scratch/nchernya/HHbbgg/'
 #list the files
 #filelist = [targetdir+'/ttbar_full_jobs_RegressionPerJet_heppy_energyRings_forTraining_%d_full.hd5'%num for num in file_list]
-file_list  = [81 , 4 , 5 , 0 , 7 , 6 , 2 , 8 , 9 , 3 , 31 , 46 , 44 , 24 , 32 , 1 , 42 , 34 , 38 , 39 , 33 , 26 , 40 , 35 , 36 , 27 , 41 , 47 , 37 , 30 , 29 , 43 , 45 , 74 , 49 , 71 , 70 , 88 , 79 , 73 , 82 , 84 , 83 , 77 , 85 , 80 , 90 , 91 , 72 , 89 , 78 , 99 , 76 , 94 , 97 , 92 , 98 , 93 , 96 , 119 , 110 , 86 , 127 , 114 , 121 , 116 , 131 , 132 , 118 , 126 , 161 , 115 , 170 , 123 , 113 , 111 , 117 , 122 , 124 , 179 , 128 , 210 , 201 , 133 , 129 , 169 , 171 , 174 , 162 , 164 , 160 , 205 , 204 , 173 , 165 , 178 , 172 , 203 , 211 , 213 , 167 , 175 , 177 , 200 , 214 , 207 , 212 , 208 , 215 , 248 , 243 , 245 , 241 , 247 , 244 , 240 , 242 , 250 , 246 , 333 , 257 , 254 , 258 , 256 , 255 , 252 , 259 , 249 , 381 , 292 , 290 , 291 , 294 , 326 , 298 , 322 , 320 , 297 , 331 , 299 , 293 , 339 , 336 , 330 , 341 , 329 , 323 , 325 , 295 , 328 , 340 , 327 , 370 , 385 , 374 , 332 , 376 , 321 , 413 , 338 , 389 , 402 , 420 , 373 , 382 , 371 , 410 , 416 , 388 , 422 , 400 , 401 , 403 , 380 , 421 , 404 , 411 , 406 , 324 , 251 , 423 , 261 , 180 , 135 , 424 , 343 , 262 , 217 , 181 , 136 , 425 , 344 , 263 , 218 , 137 , 390 , 264 , 183 , 138 , 265 , 184 , 139 , 266 , 348 , 267 , 187 , 395 , 269 , 188 , 396 , 189 , 397 , 398 , 50 , 51 , 52 , 53 , 54 , 55 , 57 , 58 , 59 , 301 , 220 , 302 , 222 , 141 , 304 , 223 , 142 , 350 , 143 , 306 , 270 , 225 , 144 , 352 , 307 , 271 , 190 , 145 , 353 , 308 , 227 , 191 , 146 , 354 , 309 , 273 , 228 , 192 , 147 , 356 , 194 , 149 , 357 , 276 , 195 , 358 , 277 , 196 , 278 , 197 , 279 , 198 , 10 , 199 , 11 , 12 , 13 , 14 , 60 , 15 , 61 , 16 , 62 , 17 , 63 , 18 , 19 , 65 , 66 , 67 , 100 , 68 , 101 , 69 , 102 , 310 , 103 , 311 , 230 , 104 , 312 , 231 , 150 , 105 , 313 , 232 , 151 , 106 , 314 , 152 , 315 , 153 , 108 , 316 , 280 , 235 , 154 , 109 , 362 , 317 , 281 , 236 , 155 , 363 , 318 , 282 , 156 , 319 , 283 , 238 , 365 , 284 , 239 , 158 , 366 , 285 , 159 , 367 , 286 , 368 , 287 , 369 , 288 , 289 , 20 , 21 , 22] 
-#name='ZHbbll'i
-#name='nano_variables3_RegressionPerJet_nanoAOD_2017_5'
-#name='HHbbggSM_flashgg_test'
-#name='TT2lep_RegressionPerJet_nanoAOD_2017_2'
+file_list  = [94 , 18 , 2 , 55 , 16 , 40 , 97 , 35 , 37 , 98 , 7 , 31 , 51 , 45 , 8 , 65 , 41 , 56 , 83 , 89 , 69 , 99 , 88 , 79 , 21 , 12 , 17 , 3 , 30 , 32 , 26 , 27 , 70 , 73 , 13 , 92 , 59 , 93 , 64 , 100 , 22 , 46 , 50 , 78 , 84 , 54 , 60 , 20 , 36 , 11 , 75 , 74 , 149 , 124 , 129 , 142 , 114 , 147 , 148 , 109 , 138 , 115 , 120 , 144 , 106 , 133 , 104 , 110 , 152 , 153 , 101 , 125 , 105 , 134 , 119 , 128 , 139 , 143 , 123 , 25 , 113 , 44 , 132 , 63 , 151 , 118 , 82 , 49 , 137 , 68 , 87 , 1 , 6 , 10 , 15 , 103 , 34 , 122 , 53 , 141 , 108 , 72 , 39 , 127 , 91 , 58 , 146 , 77 , 96 , 24 , 112 , 43 , 131 , 62 , 150 , 29 , 117 , 81 , 48 , 136 , 67 , 155 , 86 , 5 , 14 , 102 , 33 , 121 , 52 , 140 , 19 , 107 , 71 , 38 , 126 , 90 , 57 , 145 , 76 , 95 , 23 , 111 , 42 , 130 , 61 , 28 , 116 , 80 , 47 , 135 , 66 , 154 , 85 , 4 , 9 ] 
+#name='TTbar_2ptds_RegressionPerJet_heppy_energyRings_forTraining_10_full_2ptd'
 #filelist=[targetdir+'%s.hd5'%name]
-filelist = [targetdir+'/TTbar_nanoAOD_RegressionPerJet_nanoAOD_2017_%d.hd5'%num for num in file_list]
+filelist = [targetdir+'/TTbar_legacy2016_JECv11_RegressionPerJet_heppy_energyRings_forTraining_%d_legacy_2ptds.hd5'%num for num in file_list]
 ##read them into pandas
 df_list = [pd.read_hdf(file,columns=None) for file in filelist[start:end]]
 #print 'list done'
@@ -30,12 +28,12 @@ big_df['isMu'] = np.zeros( (big_df.shape[0],1) )
 big_df['isOther'] = np.zeros( (big_df.shape[0],1) )
 big_df['Jet_withPtd'] = big_df['Jet_ptd']
 big_df.loc[abs(big_df.Jet_leptonPdgId) == 11,'isEle'] = 1
-big_df.loc[abs(big_df.Jet_leptonPdgId) == 13,'isMu'] = 1
-#big_df.loc[big_df.Jet_leptonPdgId == -99,'isOther'] = 1  #2016
-big_df.loc[big_df.Jet_leptonPdgId == 0,'isOther'] = 1  #2017
-#big_df.loc[big_df.Jet_ptd < 0 ,'Jet_withPtd' ] = big_df[ big_df['Jet_ptd'] > 0 ]['Jet_ptd'].median()  #2016
-#big_df.loc[big_df.Jet_leptonPtRelInv < 0 ,'Jet_leptonPtRelInv' ] = 0  #2016
+big_df.loc[abs(big_df.Jet_leptonPdgId) == 13,'isMu'] = 1#big_df.loc[big_df.Jet_leptonPdgId == -99,'isOther'] = 1  #2016
+big_df.loc[big_df.Jet_leptonPdgId == -99,'isOther'] = 1  #2016
+#big_df.loc[big_df.Jet_leptonPdgId == 0,'isOther'] = 1  #2017
+big_df.loc[big_df.Jet_ptd < 0 ,'Jet_withPtd' ] = big_df[ big_df['Jet_ptd'] > 0 ]['Jet_ptd'].median()  #2016
+big_df.loc[big_df.Jet_leptonPtRelInv < 0 ,'Jet_leptonPtRelInv' ] = 0  #2016
 #big_df.to_hdf(targetdir+'/ttbar_full_jobs_RegressionPerJet_heppy_energyRings_forTraining_con%d%d_morevar.hd5'%(start,end)  ,'w')
-#big_df.to_hdf(targetdir+'/ZHbbll_RegressionPerJet_heppy_energyRings_forTesting_morevar.hd5','w')
-big_df.to_hdf(targetdir+'/TTbar_nanoAOD_RegressionPerJet_nanoAOD_2017_v3_newJEC_con%d%d_allvar.hd5'%(start,end)  ,'w')
+#big_df.to_hdf(targetdir+'/ZHbbll_RegressionPerJet_heppy_energyRings_forTesting_morevar.hd5','w')big_df.to_hdf(targetdir+'/TTbar_nanoAOD_RegressionPerJet_nanoAOD_2017_v3_newJEC_con%d%d_allvar.hd5'%(start,end)  ,'w')
+big_df.to_hdf(targetdir+'/TTbar_legacy2016_JECv11_RegressionPerJet_heppy_energyRings_forTraining_legacy_2ptds_con%d%d_allvar.hd5'%(start,end)  ,'w')
 #big_df.to_hdf(targetdir+'/%s_morevar.hd5'%(name)  ,'w')

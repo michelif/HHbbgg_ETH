@@ -8,7 +8,7 @@ gStyle.SetPadTopMargin(0.06)
 gStyle.SetPadRightMargin(0.04)
 gStyle.SetPadLeftMargin(0.15)
 
-what ='Jet_eta'
+what ='target'
 what_name=''
 if what=='Jet_pt' :  
 	bins=100
@@ -20,6 +20,12 @@ if what=='Jet_eta' :
 	xmin=-5
 	xmax=5
 	what_name = '#eta'
+if what=='target' :
+	what='Jet_mcPt/(Jet_pt*Jet_rawEnergy/Jet_e*Jet_corr)'
+	bins=50
+	xmin=0
+	xmax=2
+	what_name = 'target'
 
 
 name="/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/root_files/heppy_05_10_2017/ttbar_RegressionPerJet_heppy_energyRings3_forTraining_LargeAll.root"
@@ -45,5 +51,5 @@ frame.GetYaxis().SetLabelSize(0.04)
 frame.GetYaxis().SetRangeUser(1e-01,hist.GetMaximum()*1.05)
 frame.Draw()
 hist.Draw("same")
-c.SaveAs("../plots/bjet_spectrum_%s.pdf"%what)
+c.SaveAs("../plots/bjet_spectrum_%s_v2.pdf"%what_name)
 

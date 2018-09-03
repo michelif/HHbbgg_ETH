@@ -10,7 +10,8 @@ def main(options,args):
     ROOT.gStyle.SetOptStat(0)
         
     fin = ROOT.TFile.Open(options.file)
-    tree = fin.Get("reducedTree_sig")
+   # tree = fin.Get("reducedTree_sig")
+    tree = fin.Get("tagsDumper/trees/GluGluToHHTo2B2G_node_SM_13TeV_madgraph_13TeV_DoubleHTag_0")
    # tree = fin.Get("bbggSelectionTree")
 
 
@@ -27,15 +28,16 @@ def main(options,args):
 
     fout = ROOT.TFile.Open("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/cumulativeTransformation_"+name+".root","recreate")
 
-    nbins = 40000
-   # xlow = -1. # -> from  TMVA xml weights (0-1 -> -1-1)
-    xlow = 0.
+    nbins = 80000
+    xlow = -1. # -> from  TMVA xml weights (0-1 -> -1-1)
+   # xlow = 0.
     xup = 1.
     histoMVA = ROOT.TH1F("histoMVA","histoMVA",nbins,xlow,xup)
- #   tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
-   # tree.Draw("HHTagger2017>>histoMVA",ROOT.TCut("isSignal==1"))
-   # tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("isSignal==1"))
-    tree.Draw("MVAOutput>>histoMVA")
+ ##   tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
+   ## tree.Draw("HHTagger2017>>histoMVA",ROOT.TCut("isSignal==1"))
+   ## tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("isSignal==1"))
+  #  tree.Draw("MVAOutput>>histoMVA")
+    tree.Draw("HHbbggMVA>>histoMVA")
 #    histoMVA.FillRandom("gaus",1000000)
 
     cumulativeHisto = histoMVA.GetCumulative()

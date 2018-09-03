@@ -52,24 +52,16 @@ TString name = argv[4];
 //	TString inputfilename = "/eos/cms/store/group/phys_higgs/vbfHbb/V25/ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8/VHBB_HEPPY_V25_newReg_energyRing_upd_Efloat/171130_153724/0000/";
  //  TString inputfilename = "/eos/cms/store/group/phys_higgs/vbfHbb/V25/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/VHBB_HEPPY_V25_newReg_energyRing_upd_Efloat/171205_215429/0000/";
  //  TString inputfilename = "root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/vbfHbb/V25/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/VHBB_HEPPY_V25_newReg_energyRing_upd_Efloat/171205_215429/0001/";
-	TString inputfilename = "root://eoscms.cern.ch///eos/cms/store/group/phys_higgs/vbfHbb/V25/ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8/VHBB_HEPPY_V25_newReg_energyRing_upd_Efloat/171130_153724/0000/";
-
-
+//	TString inputfilename = "root://eoscms.cern.ch///eos/cms/store/group/phys_higgs/vbfHbb/V25/ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8/VHBB_HEPPY_V25_newReg_energyRing_upd_Efloat/171130_153724/0000/";
+	TString inputfilename = "root://eoscms.cern.ch///eos/cms/store/group/phys_higgs/vbfHbb/V25/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/VHBB_HEPPY_V25_energyRings_JECv11_ptd/180718_093724/0001/";
 	TChain *tree=new TChain("tree");
 	for (int num=nstart;num<nend;num++){  //used for training as a test 
-//	for (int num=1;num<20;num++){  //used for training  Large0 
-//	for (int num=20;num<40;num++){  //used for training  Large1
-//	for (int num=40;num<60;num++){  //used for training  Large2
-//	for (int num=60;num<80;num++){  //used for training  Large3
-//	for (int num=80;num<100;num++){  //used for training  Large4
-//	for (int num=100;num<120;num++){  //used for training  Large5
-//	for (int num=120;num<130;num++){  //used for testing
-//	for (int num=200;num<220;num++){  //used for additional events for ttbar unweighting
-//	for (int num=200;num<280;num++){  //used for additional events for ttbar unweighting
 		TString str_tmp;
 		str_tmp.Form("%d",num);
 		cout<<str_tmp<<endl;
 		tree->Add(inputfilename+"tree_"+str_tmp+".root");
+   //   TString full_file_name = "TTbar_tptds.root";
+	//	tree->Add(full_file_name);
 	}
 	std::cout<<"Opened input file "<<inputfilename<<std::endl;
 	tree->SetBranchAddress("*", 0);
@@ -78,7 +70,7 @@ TString name = argv[4];
 	float GenJet_wNuPt[15];
 	int          nhJCidx, nhJidx, nJet,nGenBQuarkFromTop;
 	int         hJCidx[2], hJidx[2],Jet_mult[30],Jet_mcIdx[30],Jet_mcFlavour[30];  
-	float      nPVs,Jet_btagCSV[30],Jet_rawPt[30],Jet_corr[30],Jet_pt_reg[30],Jet_pt[30],Jet_rawPtAfterSmearing[30],Jet_corr_JEC[30],Jet_corr_JER[30],Jet_eta[30],Jet_phi[30],Jet_mass[30],Jet_chHEF[30],Jet_neHEF[30], Jet_muEF[30],Jet_chEmEF[30],Jet_neEmEF[30],Jet_chMult[30],Jet_nhMult[30],Jet_leadTrackPt[30],Jet_leptonPt[30],Jet_leptonPtRel[30],Jet_leptonDeltaR[30],Jet_vtxMass[30],Jet_vtxNtracks[30],Jet_vtxPt[30],Jet_vtx3DSig[30],Jet_vtx3DVal[30],GenBQuarkFromTop_pt[4],GenBQuarkFromTop_eta[4],GenBQuarkFromTop_phi[4],GenBQuarkFromTop_mass[4], Jet_ptd[30],Jet_axis2[30],Jet_leptonPdgId[30],Jet_leptonPtRelInv[30];
+	float      nPVs,Jet_btagCSV[30],Jet_rawPt[30],Jet_corr[30],Jet_pt_reg[30],Jet_pt[30],Jet_rawPtAfterSmearing[30],Jet_corr_JEC[30],Jet_corr_JER[30],Jet_eta[30],Jet_phi[30],Jet_mass[30],Jet_chHEF[30],Jet_neHEF[30], Jet_muEF[30],Jet_chEmEF[30],Jet_neEmEF[30],Jet_chMult[30],Jet_nhMult[30],Jet_leadTrackPt[30],Jet_leptonPt[30],Jet_leptonPtRel[30],Jet_leptonDeltaR[30],Jet_vtxMass[30],Jet_vtxNtracks[30],Jet_vtxPt[30],Jet_vtx3DSig[30],Jet_vtx3DVal[30],GenBQuarkFromTop_pt[4],GenBQuarkFromTop_eta[4],GenBQuarkFromTop_phi[4],GenBQuarkFromTop_mass[4], Jet_ptd[30],Jet_axis2[30],Jet_leptonPdgId[30],Jet_leptonPtRelInv[30],Jet_ptd_breg[30];
 	Int_t Jet_puId[30],Jet_id[30];
 	float genweight, puweight, genweight_, puweight_, bTagWeight_, bTagWeight;
    float Jet_rawEnergy[30];
@@ -142,6 +134,7 @@ TString name = argv[4];
 	tree->SetBranchAddress("Jet_vtx3DVal", &Jet_vtx3DVal);
 	tree->SetBranchAddress("Jet_mult", &Jet_mult);
 	tree->SetBranchAddress("Jet_ptd", &Jet_ptd);
+	tree->SetBranchAddress("Jet_ptd_breg", &Jet_ptd_breg);
 	tree->SetBranchAddress("Jet_axis2", &Jet_axis2);
 	tree->SetBranchAddress("Jet_mcIdx",&Jet_mcIdx);
 	tree->SetBranchAddress("GenJet_wNuPt",&GenJet_wNuPt);
@@ -194,10 +187,11 @@ TString name = argv[4];
 	TString outname ;
    outname.Form("%d",fileout);
 //	TFile *outfile=new TFile(name+"_RegressionPerJet_heppy_energyRings3_forTraining_Large"+outname+"_unweighted.root", "recreate");
-	TFile *outfile=new TFile(name+"_RegressionPerJet_heppy_energyRings_forTraining_"+outname+"_full.root", "recreate");
+//	TFile *outfile=new TFile(name+"_RegressionPerJet_heppy_energyRings_forTraining_"+outname+"_full.root", "recreate");
+	TFile *outfile=new TFile(name+"_RegressionPerJet_heppy_energyRings_forTraining_"+outname+"_legacy_2ptds.root", "recreate");
 	int Jet_vtxNtrk;
 	Int_t Jet_puId_, Jet_id_;
-	float nPVs_, Jet_mass_,Jet_corr_, Jet_e_, rho_, Jet_pt_,Jet_pt_reg_,Jet_eta_,Jet_phi_, Jet_leptonPtRel_,Jet_leptonDeltaR_,Jet_leptonPt_, Jet_muEF_, Jet_leadTrackPt_, Jet_chHEF_, Jet_chEmEF_, Jet_neHEF_, Jet_neEmEF_, Jet_vtx3dL_, Jet_vtx3deL_, Jet_chMult_, Jet_nhMult_,Jet_mcPt_, Jet_mcEta_, Jet_mcPhi_, Jet_mcM_,  Jet_csv_, Jet_flavor_,  met_pt_, met_phi_, Jet_mcFlavour_,  Jet_met_dPhi_, Jet_mcE_, Jet_btagCSV_, Jet_mt_, Jet_vtxMass_, Jet_vtx3dL, Jet_vtx3deL, Jet_vtxPt_, dR_, Jet_mcPtq_, Jet_corr_JER_, Jet_corr_JEC_, Jet_rawPtAfterSmearing_,Jet_ptd_,Jet_axis2_,Jet_leptonPdgId_, Jet_leptonPtRelInv_;
+	float nPVs_, Jet_mass_,Jet_corr_, Jet_e_, rho_, Jet_pt_,Jet_pt_reg_,Jet_eta_,Jet_phi_, Jet_leptonPtRel_,Jet_leptonDeltaR_,Jet_leptonPt_, Jet_muEF_, Jet_leadTrackPt_, Jet_chHEF_, Jet_chEmEF_, Jet_neHEF_, Jet_neEmEF_, Jet_vtx3dL_, Jet_vtx3deL_, Jet_chMult_, Jet_nhMult_,Jet_mcPt_, Jet_mcEta_, Jet_mcPhi_, Jet_mcM_,  Jet_csv_, Jet_flavor_,  met_pt_, met_phi_, Jet_mcFlavour_,  Jet_met_dPhi_, Jet_mcE_, Jet_btagCSV_, Jet_mt_, Jet_vtxMass_, Jet_vtx3dL, Jet_vtx3deL, Jet_vtxPt_, dR_, Jet_mcPtq_, Jet_corr_JER_, Jet_corr_JEC_, Jet_rawPtAfterSmearing_,Jet_ptd_,Jet_ptd_breg_,Jet_axis2_,Jet_leptonPdgId_, Jet_leptonPtRelInv_;
 	Jet_mass_=-999,Jet_corr_=-999, Jet_e_=-999, Jet_mt_=-999, rho_=-999, nPVs_=-999,Jet_pt_=-999,Jet_eta_=-999,Jet_phi_=-999, Jet_leptonPtRel_=-999,Jet_leptonDeltaR_=-999,Jet_leptonPt_=-999,Jet_leadTrackPt_=-999, Jet_chHEF_=-999, Jet_chEmEF_=-999, Jet_neHEF_=-999, Jet_muEF_=-999 ,Jet_neEmEF_=-999, Jet_vtx3dL_=-999, Jet_vtx3deL_=-999, Jet_chMult_=-999, Jet_nhMult_=-999, Jet_mcPt_=-999, Jet_mcEta_=-999, Jet_mcPhi_=-999, Jet_mcM_=-999,   Jet_csv_=-999, Jet_flavor_=-999,  met_pt_=-999, met_phi_=-999, Jet_btagCSV_=-999, Jet_mcFlavour_=-999,  Jet_puId_=-999 , Jet_id_=-999, Jet_met_dPhi_=-999, Jet_mcE_=-999,  Jet_vtxMass_=-999., Jet_vtx3dL=-999., Jet_vtx3deL=-999., Jet_vtxPt_ =-999., Jet_mcPtq_=-999.;
 	Jet_vtxNtrk= -999;
 
@@ -323,6 +317,7 @@ TString name = argv[4];
 	outtree->Branch("Jet_corr_JER", &Jet_corr_JER_,"Jet_corr_JER_/F");
 	outtree->Branch("Jet_rawPtAfterSmearing", &Jet_rawPtAfterSmearing_,"Jet_rawPtAfterSmearing_/F");
 	outtree->Branch("Jet_ptd", &Jet_ptd_,"Jet_ptd_/F");
+	outtree->Branch("Jet_ptd_breg", &Jet_ptd_breg_,"Jet_ptd_breg_/F");
 	outtree->Branch("Jet_axis2", &Jet_axis2_,"Jet_axis2_/F");
 	outtree->Branch("Jet_leptonPdgId",&Jet_leptonPdgId_,"Jet_leptonPdgId_/F");
 	outtree->Branch("Jet_leptonPtRelInv",&Jet_leptonPtRelInv_,"Jet_leptonPtRelInv_/F");
@@ -402,6 +397,7 @@ TString name = argv[4];
 			Jet_corr_JER_ = Jet_corr_JER[i];	
 			Jet_rawPtAfterSmearing_ = Jet_rawPtAfterSmearing[i];
 			Jet_ptd_ = Jet_ptd[i];	
+			Jet_ptd_breg_ = Jet_ptd_breg[i];	
 			Jet_axis2_ = Jet_axis2[i];	
 			Jet_leptonPdgId_ = Jet_leptonPdgId[i];
 			Jet_leptonPtRelInv_ = Jet_leptonPtRelInv[i];
