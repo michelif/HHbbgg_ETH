@@ -3,9 +3,43 @@ import os
 import numpy as np
 import pandas as pd
 import root_pandas as rpd
+from ROOT import TFile, TH1F
 
 
-def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=True):
+def cleanOverlapDiphotons(name,dataframe):
+    dataframe['overlapSave']  = np.ones_like(dataframe.index).astype(np.int8)
+    if (not ('DoubleEG' in name)) or  ('DiPhotonJetsBox_MGG-80toInf' in name) : 
+      #for data this wont be called anyway
+      for index, df in dataframe.iterrows(): 
+        cflavLeading = 0 #correct flavours
+        hflav = df['leadingJet_hflav'] #4 if c, 5 if b, 0 if light jets
+        pflav = df['leadingJet_pflav']
+        if  hflav != 0 :
+            cflavLeading = hflav
+        else : #not a heavy jet
+            if abs(pflav) == 4 or abs(pflav) == 5 :
+                cflavLeading = 0 
+            else : cflavLeading = pflav
+        
+        cflavSubLeading = 0 
+        hflav = df['subleadingJet_hflav'] #4 if c, 5 if b, 0 if light jets
+        pflav = df['subleadingJet_pflav']
+        if  hflav != 0 :
+            cflavSubLeading = hflav
+        else : #not a heavy jet
+            if abs(pflav) == 4 or abs(pflav) == 5 :
+                cflavSubLeading = 0 
+            else : cflavSubLeading = pflav
+            
+            
+        if abs(cflavSubLeading)==5 or abs(cflavLeading)==5 :
+            dataframe.at[index,'overlapSave']=0
+        else : dataframe.at[index,'overlapSave']=1
+    
+        
+
+
+def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=True,cleanOverlapDiphotons=False):
     df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
     if treename=='bbggSelectionTree':
         df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
@@ -19,9 +53,51 @@ def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=
             df['weight']= np.multiply(w,input_df[['isSignal']])
         else:
             df['weight']=w
+            
+    if cleanOverlapDiphotons : cleanOverlapDiphotons(name,df)
+
+
+  
+def reweight_MX():
+    df0, df1 = utils.IO.signal_df
+    m0, bins = np.histogram(df0['MX'],bins=np.linspace(200.,2000.,101),weights=df0["weight"],normed=True)
+    m1, _ = np.histogram(df1['MX'],bins=bins,weights=df1["weight"],normed=True)
+    weights = m0.astype(np.float32) / m1.astype(np.float32)
+    weights[np.where(bins[:-1]>1000)] = 1.
+    weights[np.isnan(weights)] = 1.
+    bins[-1] = df1["MX"].max()+1.
+    df1["MXbin"] = pd.cut(df1["MX"],bins,labels=range(0,bins.shape[-1]-1))
+    rewei = df1[["MXbin","weight"]].apply(lambda x: weights[x[0]]*x[1], axis=1, raw=True)
+    df1["weight"] = rewei * df1["weight"].sum() / rewei.sum()
 
 
 
+def reweight_MX_old(dataframe):
+    dataframe['tmp']  = np.ones_like(dataframe.index).astype(np.int8)
+    file = TFile("/mnt/t3nfs01/data01/shome/nchernya/HHbbgg_ETH_devel/root_files/ntuples_2017data_20181023/Node_reweighting_hist.root")
+    hist = file.Get("ratio")
+    integral_before = dataframe['weight'].sum()
+    for index, df in dataframe.iterrows(): 
+        MX = df['MX']
+        weight = df['weight']
+        if (MX<1000):
+            print dataframe['weight']
+            dataframe.at[index,'weight']=weight*hist.GetBinContent(hist.FindBin(MX))
+            print dataframe['weight']
+            #dataframe.at[index,'weight']=weight*hist.GetBinContent(hist.FindBin(MX))
+        break
+    print dataframe['weight']
+    integral_after = dataframe['weight'].sum()
+    print 'Reweighting MX : '
+    print 'Integral before, after and ratio = ',integral_before,integral_after,integral_before/integral_after
+    dataframe['weight'] *= integral_before/integral_after
+
+
+def scale_lumi(dataframe):
+    print 'Weighting with lumi : '
+    dataframe['weight'] *= 41.5/39.5  #scale with lumi 2017
+    
+    
 def define_process_weight_CR(df,proc,name,treename='bbggSelectionTree'):
     df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
     df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
@@ -103,23 +179,28 @@ def scale_process_weight(w_b,y_b,proc,sf):
     return w_bkg.reshape(len(w_bkg),1) 
 
 def weight_signal_with_resolution(w_s,y_s,branch='sigmaMOverMDecorr'):
+    w = []
     proc=999
     for i in range(utils.IO.nSig):
         w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
         proc = utils.IO.sigProc[i]
         utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][[branch]])
-
-    return utils.IO.signal_df[i][['weight']]
+        w.append(utils.IO.signal_df[i][['weight']])
+    #return utils.IO.signal_df[i][['weight']]
+    all_signal = pd.concat([w[i] for i in range(0,len(w))],ignore_index=True)
+    return all_signal
 
 def weight_signal_with_resolution_bjet(w_s,y_s,branch='(sigmaMJets*1.4826)'):
+    w = []
     proc=999
     for i in range(utils.IO.nSig):
         w_sig = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
         proc = utils.IO.sigProc[i]
         utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][[branch]])
-
-    return utils.IO.signal_df[i][['weight']]
-
+        w.append(utils.IO.signal_df[i][['weight']])
+    #return utils.IO.signal_df[i][['weight']]
+    all_signal = pd.concat([w[i] for i in range(0,len(w))],ignore_index=True)
+    return all_signal
 
 
 def weight_background_with_resolution(w_b,y_b,proc,branch='sigmaMOverMDecorr'):
@@ -185,12 +266,16 @@ def get_total_training_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
 
 
 
-def set_signals(branch_names,shuffle,cuts='event>=0'):
+def set_signals(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False):
     for i in range(utils.IO.nSig):
         treeName = utils.IO.signalTreeName[i]
         print "using tree:"+treeName
         utils.IO.signal_df.append((rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)).query(cuts))
-        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName)
+        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName,cleanOverlapDiphotons)
+        if utils.IO.sigYear[i]==1 : scale_lumi(utils.IO.signal_df[i])
+        if utils.IO.sigYear[i]==1 : reweight_MX()
+        utils.IO.signal_df[i]['year'] = (np.ones_like(utils.IO.signal_df[i].index)*utils.IO.sigYear[i] ).astype(np.int8)
+
         if shuffle:
             utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
             utils.IO.signal_df[i].sort_values(by='random_index',inplace=True)
@@ -199,7 +284,7 @@ def set_signals(branch_names,shuffle,cuts='event>=0'):
 
     
     
-def set_signals_drop(branch_names,shuffle,cuts='event>=0'):
+def set_signals_drop(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False):
     for i in range(utils.IO.nSig):
         treeName = utils.IO.signalTreeName[i]
         print "using tree:"+treeName
@@ -208,7 +293,7 @@ def set_signals_drop(branch_names,shuffle,cuts='event>=0'):
       #  df = drop_from_df(df,index)
         df = drop_nan(df)
         utils.IO.signal_df.append(df)
-        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName)
+        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName,cleanOverlapDiphotons)
         if shuffle:
             utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
             utils.IO.signal_df[i].sort_values(by='random_index',inplace=True)
@@ -219,12 +304,16 @@ def set_signals_drop(branch_names,shuffle,cuts='event>=0'):
     
     
 
-def set_backgrounds(branch_names,shuffle,cuts='event>=0'):
+def set_backgrounds(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False):
     for i in range(utils.IO.nBkg):
         treeName = utils.IO.bkgTreeName[i]
         print "using tree:"+treeName
         utils.IO.background_df.append((rpd.read_root(utils.IO.backgroundName[i],treeName, columns = branch_names)).query(cuts))
-        define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i],treeName)
+        define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i],treeName,
+                              cleanOverlapDiphotons)
+        if utils.IO.bkgYear[i]==1 : scale_lumi(utils.IO.background_df[i])
+        utils.IO.background_df[i]['year'] = (np.ones_like(utils.IO.background_df[i].index)*utils.IO.bkgYear[i] ).astype(np.int8)
+
         if shuffle:
             utils.IO.background_df[i]['random_index'] = np.random.permutation(range(utils.IO.background_df[i].index.size))
             utils.IO.background_df[i].sort_values(by='random_index',inplace=True)
@@ -237,6 +326,8 @@ def set_data(branch_names,cuts='event>=0'):
     treeName = utils.IO.dataTreeName[0]
     utils.IO.data_df.append((rpd.read_root(utils.IO.dataName[0],treeName, columns = branch_names)).query(cuts))
     utils.IO.data_df[0]['proc'] =  ( np.ones_like(utils.IO.data_df[0].index)*utils.IO.dataProc[0] ).astype(np.int8)
+    utils.IO.data_df[i]['year'] = (np.ones_like(utils.IO.data_df[i].index)*utils.IO.dataYear[i] ).astype(np.int8)
+
     if treeName=='bbggSelectionTree':
        input_df=rpd.read_root(utils.IO.dataName[0],treeName, columns = ['isSignal'])
        w = (np.ones_like(utils.IO.data_df[0].index)).astype(np.int8)

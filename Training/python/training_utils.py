@@ -26,6 +26,9 @@ class IO:
     sigProc = []
     bkgProc = []
     dataProc = []
+    sigYear = []  ### year : 0-2016,1-2017,2-2018. Categorical var
+    bkgYear = []
+    dataYear = []
     nSig=0
     nBkg=0
     nData=0
@@ -36,26 +39,31 @@ class IO:
     cross_sections = {}
 
     @staticmethod
-    def add_signal(ntuples,sig, proc,treeName):
+    def add_signal(ntuples,sig, proc, treeName,year=0):
         IO.signalName.append(IO.ldata+ntuples+"/"+''.join(sig))
         IO.sigProc.append(proc)
         IO.nSig+=1
         IO.signalTreeName.append(treeName)
-
+        IO.sigYear.append(year)
+        
     @staticmethod
-    def add_background(ntuples,bkg,proc,treeName):
+    def add_background(ntuples,bkg,proc,treeName,year=0):
         IO.backgroundName.append(IO.ldata+ntuples+"/"+''.join(bkg))
         IO.bkgProc.append(proc)
         IO.nBkg+=1
         IO.bkgTreeName.append(treeName)
+        IO.bkgYear.append(year)
+
 
     
     @staticmethod
-    def add_data(ntuples,data,proc,treeName):
+    def add_data(ntuples,data,proc,treeName,year=0):
         IO.dataName.append(IO.ldata+ntuples+"/"+''.join(data))
         IO.dataProc.append(proc)
         IO.nData+=1
         IO.dataTreeName.append(treeName)
+        IO.dataYear.append(year)
+
 
 
 
