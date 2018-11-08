@@ -14,9 +14,9 @@ import random
 
 # ---------------------------------------------------------------------------------------------------
 class IO:
-    ldata = os.path.expanduser("~/HHbbgg_ETH_devel/root_files/")
-    xdata = "~/HHbbgg_ETH_devel/Training/output_files/"
-    plotFolder = os.path.expanduser("~/HHbbgg_ETH_devel/Training/plots/")
+    ldata = os.path.expanduser("/shome/nchernya/HHbbgg_ETH_devel/root_files/")
+    xdata = "/shome/nchernya//HHbbgg_ETH_devel/Training/output_files/"
+    plotFolder = os.path.expanduser("/shome/nchernya//HHbbgg_ETH_devel/Training/plots/")
     signalName = []
     signalTreeName = []
     backgroundName = []

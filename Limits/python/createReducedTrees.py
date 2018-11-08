@@ -2,7 +2,7 @@ from optparse import OptionParser, make_option
 from  pprint import pprint
 
 import os
-import sys; sys.path.append("~/HHbbgg_ETH_devel/Training/python") # to load packages
+import sys; sys.path.append("/shome/nchernya/HHbbgg_ETH_devel/Training/python") # to load packages
 import training_utils as utils
 import numpy as np
 import preprocessing_utils as preprocessing
@@ -14,12 +14,13 @@ import pandas as pd
 import root_pandas as rpd
 
 
-samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","DiPhotonJetsBox2BJets_","DiPhotonJetsBox1BJet_","GluGluHToGG_","VBFHToGG_","VHToGG_","ttHToGG_"]#
-#samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40"]#
+#samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","DiPhotonJetsBox2BJets_","DiPhotonJetsBox1BJet_","GluGluHToGG_","VBFHToGG_","VHToGG_","ttHToGG_"]#
+samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40"]#
 treeDir = 'tagsDumper/trees/'
 
 def addSamples():#define here the samples you want to process
     ntuples = options.ntup
+    year = options.year
    # samples = ["GluGluToHHTo2B2G_node_SM","DiPhotonJetsBox_","GJet_Pt-20to40","GJet_Pt-40","GluGluHToGG","VBFHToGG","VHToGG","bbHToGG_M-125_4FS_yb2","bbHToGG_M-125_4FS_ybyt","ttHToGG"]#is bbH correct?
 
     files= os.listdir(utils.IO.ldata+ntuples)
@@ -29,11 +30,11 @@ def addSamples():#define here the samples you want to process
         process  = [s for s in files if iSample in s]
         print 'process : ',process
         if iSample == "GluGluToHHTo2B2G_node_SM":
-            utils.IO.add_signal(ntuples,process,1,treeDir+process[0][process[0].find('output_')+7:process[0].find('.root')].replace('-','_')+'_13TeV_DoubleHTag_0')
+            utils.IO.add_signal(ntuples,process,1,treeDir+process[0][process[0].find('output_')+7:process[0].find('.root')].replace('-','_')+'_13TeV_DoubleHTag_0',year)
         elif not "GJet" in str(iSample):
-            utils.IO.add_background(ntuples,process,-(samples.index(iSample)-(samples.index(iSample)>2)),treeDir+process[0][process[0].find('output_')+7:process[0].find('.root')].replace('-','_')+'_13TeV_DoubleHTag_0')
+            utils.IO.add_background(ntuples,process,-(samples.index(iSample)-(samples.index(iSample)>2)),treeDir+process[0][process[0].find('output_')+7:process[0].find('.root')].replace('-','_')+'_13TeV_DoubleHTag_0',year)
         else:
-            utils.IO.add_background(ntuples,process,-2,treeDir+process[0][process[0].find('output_')+7:process[0].find('.root')].replace('-','_')+'_13TeV_DoubleHTag_0')
+            utils.IO.add_background(ntuples,process,-2,treeDir+process[0][process[0].find('output_')+7:process[0].find('.root')].replace('-','_')+'_13TeV_DoubleHTag_0',year)
 
     
 
@@ -78,10 +79,12 @@ def main(options,args):
 #    branch_names += 'customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverM,PhoJetMinDr'.split(",") #set of variables March 2017 but regressed
 #    branch_names += 'noexpand:(leadingJet_bRegNNResolution*1.4826),noexpand:(subleadingJet_bRegNNResolution*1.4826),noexpand:(dijetSigmaMOverM*1.4826)'.split(",")
 ######################new codea#################################
-    branch_names = 'leadingJet_bDis,subleadingJet_bDis,absCosThetaStar_CS,absCosTheta_bb,absCosTheta_gg,diphotonCandidatePtOverdiHiggsM,dijetCandidatePtOverdiHiggsM,customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverMDecorr,PhoJetMinDr'.split(",") #set of variables March 2017 but regressed
+   # branch_names = 'leadingJet_bDis,subleadingJet_bDis,absCosThetaStar_CS,absCosTheta_bb,absCosTheta_gg,diphotonCandidatePtOverdiHiggsM,dijetCandidatePtOverdiHiggsM,customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverMDecorr,PhoJetMinDr'.split(",") #set of variables March 2017 but regressed
+    branch_names = 'leadingJet_DeepCSV,subleadingJet_DeepCSV,absCosThetaStar_CS,absCosTheta_bb,absCosTheta_gg,diphotonCandidatePtOverdiHiggsM,dijetCandidatePtOverdiHiggsM,customLeadingPhotonIDMVA,customSubLeadingPhotonIDMVA,leadingPhotonSigOverE,subleadingPhotonSigOverE,sigmaMOverMDecorr,PhoJetMinDr'.split(",") #set of variables March 2017 but regressed
+    branch_names +=['rho']
     branch_names += 'noexpand:(leadingJet_bRegNNResolution*1.4826),noexpand:(subleadingJet_bRegNNResolution*1.4826),noexpand:(sigmaMJets*1.4826)'.split(",")
     branch_cuts = 'leadingJet_pt,subleadingJet_pt,leadingJet_bRegNNCorr,subleadingJet_bRegNNCorr,noexpand:(leadingJet_pt/leadingJet_bRegNNCorr),noexpand:(subleadingJet_pt/subleadingJet_bRegNNCorr)'.split(',')
-    event_branches = ['event','weight']
+    event_branches = ['event','weight','leadingJet_hflav','leadingJet_pflav','subleadingJet_hflav','subleadingJet_pflav']
  #   cuts = 'leadingJet_pt>20 & subleadingJet_pt> 20 & (leadingJet_pt/leadingJet_bRegNNCorr>20) & (subleadingJet_pt/subleadingJet_bRegNNCorr>20) '
     cuts = 'leadingJet_pt>0 '
 ######################
@@ -95,15 +98,16 @@ def main(options,args):
     
     # no need to shuffle here, we just count events
    # preprocessing.set_signals_and_backgrounds("bbggSelectionTree",branch_names,shuffle=False)
-    preprocessing.set_signals_and_backgrounds_drop(branch_names+branch_cuts+event_branches,False,cuts)  #############Temporary fix to drop all NAN events
-    X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig=preprocessing.set_variables(branch_names)  
+    #preprocessing.set_signals_and_backgrounds_drop(branch_names+branch_cuts+event_branches,False,cuts)  #############Temporary fix to drop all NAN events
+    preprocessing.set_signals_and_backgrounds(branch_names+branch_cuts+event_branches,False,cuts) 
+    X_bkg,y_bkg,weights_bkg,X_sig,y_sig,weights_sig=preprocessing.set_variables(branch_names+['year'])  
  
 #when no data is present   
-##    X_data,y_data,weights_data = preprocessing.set_data("bbggSelectionTree",branch_names)
-##    X_data,y_data,weights_data = preprocessing.clean_signal_events_single_dataset(X_data,y_data,weights_data)
-    preprocessing.set_data(branch_names+branch_cuts+event_branches,cuts)
-    X_data,y_data,weights_data = preprocessing.set_variables_data(branch_names)
-    X_data,y_data,weights_data = preprocessing.clean_signal_events_single_dataset(X_data,y_data,weights_data)
+###    X_data,y_data,weights_data = preprocessing.set_data("bbggSelectionTree",branch_names)
+###    X_data,y_data,weights_data = preprocessing.clean_signal_events_single_dataset(X_data,y_data,weights_data)
+#    preprocessing.set_data(branch_names+branch_cuts+event_branches,cuts)
+#    X_data,y_data,weights_data = preprocessing.set_variables_data(branch_names)
+#    X_data,y_data,weights_data = preprocessing.clean_signal_events_single_dataset(X_data,y_data,weights_data)
     
     #bbggTrees have by default signal and CR events, let's be sure that we clean it
     if y_bkg.shape[1]==1 : 
@@ -123,7 +127,7 @@ def main(options,args):
         
     #compute the MVA
     if not options.addHHTagger:
-        loaded_model = joblib.load(os.path.expanduser('~/HHbbgg_ETH_devel/Training/output_files/'+options.trainingVersion+'.pkl'))
+        loaded_model = joblib.load(os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/Training/output_files/'+options.trainingVersion+'.pkl'))
         Y_pred_sig = loaded_model.predict_proba(X_sig)[:,loaded_model.n_classes_-1].astype(np.float64)
         Y_pred_bkg = []
         for i in range(0,len(utils.IO.backgroundName)-1):  
@@ -131,8 +135,8 @@ def main(options,args):
             Y_pred_bkg.append(loaded_model.predict_proba(bkg[i])[:,loaded_model.n_classes_-1].astype(np.float64))
     
 #when no data is present   
-        Y_pred_data = loaded_model.predict_proba(X_data)[:,loaded_model.n_classes_-1].astype(np.float64)
-        print Y_pred_data 
+  #      Y_pred_data = loaded_model.predict_proba(X_data)[:,loaded_model.n_classes_-1].astype(np.float64)
+  #      print Y_pred_data 
     
     
     
@@ -142,11 +146,12 @@ def main(options,args):
     additionalCut_names = 'CMS_hgg_mass,Mjj,MX'.split(',')
     signal_trainedOn = ['noexpand:(event%2!=0)']
     bkg_trainedOn = ['noexpand:(event%1==0)'] #to accept all events
+    overlap = ['overlapSave']
     #mva output
     if options.addHHTagger:
         additionalCut_names += 'HHTagger2017,HHTagger2017_transform'.split(",")
     outTag = options.outTag
-    outDir=os.path.expanduser("~/HHbbgg_ETH_devel/outfiles/"+outTag)
+    outDir=os.path.expanduser("/shome/nchernya/HHbbgg_ETH_devel/outfiles/"+outTag)
     if not os.path.exists(outDir):
         os.mkdir(outDir)
     
@@ -155,21 +160,22 @@ def main(options,args):
     
     sig_count_df = (rpd.read_root(utils.IO.signalName[0],utils.IO.signalTreeName[0], columns = branch_names+additionalCut_names+signal_trainedOn)).query(cuts)
     preprocessing.define_process_weight(sig_count_df,utils.IO.sigProc[0],utils.IO.signalName[0],utils.IO.signalTreeName[0])
-    
+       
+ 
     #nTot is a multidim vector with all additional variables, dictVar is a dictionary associating a name of the variable
     #to a position in the vector
     nTot,dictVar = postprocessing.stackFeatures(sig_count_df,branch_names+additionalCut_names+signal_trainedOn)
     #apply isSignal cleaning
     nCleaned = nTot[np.where(nTot[:,dictVar['weight']]!=0),:][0]
     
-    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.signalName[0].split("/")[len(utils.IO.signalName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
+    processPath=os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.signalName[0].split("/")[len(utils.IO.signalName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
 
     if not options.addHHTagger:
         postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_sig)
     else:
         postprocessing.saveTree(processPath,dictVar,nCleaned)        
     
-    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.signalName[0].split("/")[len(utils.IO.signalName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
+    processPath=os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.signalName[0].split("/")[len(utils.IO.signalName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
 
     if not options.addHHTagger:
         postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_sig,nameTree="reducedTree_sig")
@@ -199,13 +205,13 @@ def main(options,args):
     print "nCleaned"
     print nCleaned.shape
     
-    processPath=(os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[1].split("/")[len(utils.IO.backgroundName[1].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root").replace("_Pt-20to40","")
+    processPath=(os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[1].split("/")[len(utils.IO.backgroundName[1].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root").replace("_Pt-20to40","")
     if not options.addHHTagger:
         postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[1])
     else:
         postprocessing.saveTree(processPath,dictVar,nCleaned) 
    
-    processPath=(os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[1].split("/")[len(utils.IO.backgroundName[1].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root").replace("_Pt-20to40","")
+    processPath=(os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[1].split("/")[len(utils.IO.backgroundName[1].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root").replace("_Pt-20to40","")
 
     if not options.addHHTagger:
         postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[1],nameTree="reducedTree_bkg_2")
@@ -238,14 +244,14 @@ def main(options,args):
         print nCleaned.shape
     
     #    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
-        processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[(len(samples)-3)].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
+        processPath=os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[(len(samples)-3)].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
         if not options.addHHTagger:
             postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_bkg[iSample])
         else:
             postprocessing.saveTree(processPath,dictVar,nCleaned)
         
        # processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[7].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
-        processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[(len(samples)-3)].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
+        processPath=os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.backgroundName[iProcess].split("/")[len(utils.IO.backgroundName[(len(samples)-3)].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
         if "GluGluToHHTo2B2G_node_"in processPath:
          #   treeName = "reducedTree_sig_node_"+str(iProcess-7)
             treeName = "reducedTree_sig_node_"+str(iProcess-(len(samples)-3))
@@ -257,31 +263,31 @@ def main(options,args):
             postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree=treeName)    
     
 ###########################  data  block starts  ################################################################### 
-    #data_count_df = (rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = branch_names+additionalCut_names)).query(cuts)
-    data_count_df = (rpd.read_root(utils.IO.dataName[0],utils.IO.dataTreeName[0], columns = branch_names+additionalCut_names+bkg_trainedOn)).query(cuts)
+ #   ####data_count_df = (rpd.read_root(utils.IO.dataName[0],"bbggSelectionTree", columns = branch_names+additionalCut_names)).query(cuts)
+ #   data_count_df = (rpd.read_root(utils.IO.dataName[0],utils.IO.dataTreeName[0], columns = branch_names+additionalCut_names+bkg_trainedOn)).query(cuts)
+ #   
+ #   nTot,dictVar = postprocessing.stackFeatures(data_count_df,branch_names+additionalCut_names,isData=1)
+ #   
+ #   
+ #   #apply isSignal cleaning
+ #   nCleaned = nTot[np.where(nTot[:,dictVar['weight']]!=0),:][0]
+ #   print "nCleaned"
+ #   print nCleaned.shape
+ #   
+ #   #save preselection data
+  #  processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
+  #  if not options.addHHTagger:        
+  #      postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data)
+  #  else:
+  #      postprocessing.saveTree(processPath,dictVar,nCleaned)
     
-    nTot,dictVar = postprocessing.stackFeatures(data_count_df,branch_names+additionalCut_names,isData=1)
+  #  processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
+  #  if not options.addHHTagger:        
+  #     postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data,nameTree="reducedTree_data")
+  #  else:
+  #      postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_data")
     
-    
-    #apply isSignal cleaning
-    nCleaned = nTot[np.where(nTot[:,dictVar['weight']]!=0),:][0]
-    print "nCleaned"
-    print nCleaned.shape
-    
-    #save preselection data
-    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection"+".root"
-    if not options.addHHTagger:        
-        postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data)
-    else:
-        postprocessing.saveTree(processPath,dictVar,nCleaned)
-    
-    processPath=os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+utils.IO.dataName[0].split("/")[len(utils.IO.dataName[0].split("/"))-1].replace("output_","").replace(".root","")+"_preselection_diffNaming"+".root"
-    if not options.addHHTagger:        
-       postprocessing.saveTree(processPath,dictVar,nCleaned,Y_pred_data,nameTree="reducedTree_data")
-    else:
-        postprocessing.saveTree(processPath,dictVar,nCleaned,nameTree="reducedTree_data")
-    
-    os.system('hadd '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('~/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
+    os.system('hadd '+ os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'Total_preselection_diffNaming.root '+ os.path.expanduser('/shome/nchernya/HHbbgg_ETH_devel/outfiles/')+outTag+'/'+'*diffNaming.root')
 ###########################   data  block  ends  ################################################################### 
     
 
@@ -312,6 +318,10 @@ if __name__ == "__main__":
             make_option("-k","--nodes",
                         action="store_true",dest="addnodes",default=False,
                         help="add or not nodes",
+                        ),
+            make_option("-y","--year",
+                        action="store",type=int,dest="year",default=0,
+                        help="which year : 2016-0,2017-1,2018-2",
                         ),
             ]
                           )

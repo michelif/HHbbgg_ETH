@@ -272,8 +272,8 @@ def set_signals(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False
         print "using tree:"+treeName
         utils.IO.signal_df.append((rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)).query(cuts))
         define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName,cleanOverlapDiphotons)
-        if utils.IO.sigYear[i]==1 : scale_lumi(utils.IO.signal_df[i])
-        if utils.IO.sigYear[i]==1 : reweight_MX()
+      #  if utils.IO.sigYear[i]==1 : scale_lumi(utils.IO.signal_df[i])
+      #  if utils.IO.sigYear[i]==1 : reweight_MX()
         utils.IO.signal_df[i]['year'] = (np.ones_like(utils.IO.signal_df[i].index)*utils.IO.sigYear[i] ).astype(np.int8)
 
         if shuffle:
@@ -311,7 +311,7 @@ def set_backgrounds(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=F
         utils.IO.background_df.append((rpd.read_root(utils.IO.backgroundName[i],treeName, columns = branch_names)).query(cuts))
         define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i],treeName,
                               cleanOverlapDiphotons)
-        if utils.IO.bkgYear[i]==1 : scale_lumi(utils.IO.background_df[i])
+      #  if utils.IO.bkgYear[i]==1 : scale_lumi(utils.IO.background_df[i])
         utils.IO.background_df[i]['year'] = (np.ones_like(utils.IO.background_df[i].index)*utils.IO.bkgYear[i] ).astype(np.int8)
 
         if shuffle:

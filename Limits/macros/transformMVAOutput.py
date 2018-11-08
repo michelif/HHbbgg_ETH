@@ -10,8 +10,8 @@ def main(options,args):
     ROOT.gStyle.SetOptStat(0)
         
     fin = ROOT.TFile.Open(options.file)
-   # tree = fin.Get("reducedTree_sig")
-    tree = fin.Get("tagsDumper/trees/GluGluToHHTo2B2G_node_SM_13TeV_madgraph_13TeV_DoubleHTag_0")
+    tree = fin.Get("reducedTree_sig")
+   # tree = fin.Get("tagsDumper/trees/GluGluToHHTo2B2G_node_SM_13TeV_madgraph_13TeV_DoubleHTag_0")
    # tree = fin.Get("bbggSelectionTree")
 
 
@@ -26,18 +26,16 @@ def main(options,args):
 
 
 
-    fout = ROOT.TFile.Open("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/cumulativeTransformation_"+name+".root","recreate")
+    #$HOME
+    fout = ROOT.TFile.Open("/shome/nchernya/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/cumulativeTransformation_"+name+".root","recreate")
 
     nbins = 80000
-    xlow = -1. # -> from  TMVA xml weights (0-1 -> -1-1)
-   # xlow = 0.
+    xlow = 0.
     xup = 1.
     histoMVA = ROOT.TH1F("histoMVA","histoMVA",nbins,xlow,xup)
- ##   tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
-   ## tree.Draw("HHTagger2017>>histoMVA",ROOT.TCut("isSignal==1"))
-   ## tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("isSignal==1"))
   #  tree.Draw("MVAOutput>>histoMVA")
-    tree.Draw("HHbbggMVA>>histoMVA")
+    tree.Draw("MVAOutput>>histoMVA",ROOT.TCut("weight"))
+  #  tree.Draw("HHbbggMVA>>histoMVA")
 #    histoMVA.FillRandom("gaus",1000000)
 
     cumulativeHisto = histoMVA.GetCumulative()
@@ -68,15 +66,15 @@ def main(options,args):
     formats = [".png",".pdf"]
 
     for format in formats:
-        c.SaveAs("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_func"+format)
+        c.SaveAs("/shome/nchernya/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_func"+format)
 
     cumulativeGraph.Draw("AP")
     for format in formats:
-        c.SaveAs("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_cum"+format)
+        c.SaveAs("/shome/nchernya/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_cum"+format)
 
     evalCumulatives.Draw("EP")
     for format in formats:
-        c.SaveAs("$HOME/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_evalx"+format)
+        c.SaveAs("/shome/nchernya/HHbbgg_ETH_devel/Limits/macros/plots/cumulatives/"+name+"_evalx"+format)
     
 
     cumulativeGraph.Write()
@@ -87,15 +85,15 @@ def main(options,args):
     fin.cd()
 
     processes = [
-        "reducedTree_sig",
-        "reducedTree_data"
+        "reducedTree_sig" #,
+       # "reducedTree_data"
         ]
 
-    for i in range(2,15): #15 13+box
-        processes.append("reducedTree_sig_node_"+str(i))
+   # for i in range(2,15): #15 13+box
+   #     processes.append("reducedTree_sig_node_"+str(i))
 
   #  for i in range(0,8):
-    for i in range(0,9):
+    for i in range(0,3):
         if i == 1: continue #gJets are combined in one, i==2
         processes.append("reducedTree_bkg_"+str(i))
 
