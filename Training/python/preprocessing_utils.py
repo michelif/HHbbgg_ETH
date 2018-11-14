@@ -8,7 +8,7 @@ from ROOT import TFile, TH1F
 
 def cleanOverlapDiphotons(name,dataframe):
     dataframe['overlapSave']  = np.ones_like(dataframe.index).astype(np.int8)
-    if (not ('DoubleEG' in name)) or  ('DiPhotonJetsBox_MGG-80toInf' in name) : 
+    if ('DiPhotonJetsBox_MGG' in name) : 
       #for data this wont be called anyway
       for index, df in dataframe.iterrows(): 
         cflavLeading = 0 #correct flavours
@@ -35,11 +35,13 @@ def cleanOverlapDiphotons(name,dataframe):
         if abs(cflavSubLeading)==5 or abs(cflavLeading)==5 :
             dataframe.at[index,'overlapSave']=0
         else : dataframe.at[index,'overlapSave']=1
+    dataframe["weight"] *= dataframe['overlapSave']
+
     
         
 
 
-def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=True,cleanOverlapDiphotons=False):
+def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=True):
     df['proc'] = ( np.ones_like(df.index)*proc ).astype(np.int8)
     if treename=='bbggSelectionTree':
         df['weight'] = ( np.ones_like(df.index)).astype(np.float32)
@@ -54,8 +56,6 @@ def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=
         else:
             df['weight']=w
             
-    if cleanOverlapDiphotons : cleanOverlapDiphotons(name,df)
-
 
         
 def reweight_MX():
@@ -330,12 +330,12 @@ def get_total_training_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
 
 
 
-def set_signals(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False):
+def set_signals(branch_names,shuffle,cuts='event>=0'):
     for i in range(utils.IO.nSig):
         treeName = utils.IO.signalTreeName[i]
         print "using tree:"+treeName
         utils.IO.signal_df.append((rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)).query(cuts))
-        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName,cleanOverlapDiphotons)
+        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName)
         utils.IO.signal_df[i]['year'] = (np.ones_like(utils.IO.signal_df[i].index)*utils.IO.sigYear[i] ).astype(np.int8)
 
         if shuffle:
@@ -344,35 +344,15 @@ def set_signals(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False
             
 #         adjust_and_compress(utils.IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
 
-    
-    
-def set_signals_drop(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False):
-    for i in range(utils.IO.nSig):
-        treeName = utils.IO.signalTreeName[i]
-        print "using tree:"+treeName
-        df = (rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)).query(cuts)
-     #   index = [21365, 37561, 45119, 140896, 169444, 178771]
-      #  df = drop_from_df(df,index)
-        df = drop_nan(df)
-        utils.IO.signal_df.append(df)
-        define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName,cleanOverlapDiphotons)
-        if shuffle:
-            utils.IO.signal_df[i]['random_index'] = np.random.permutation(range(utils.IO.signal_df[i].index.size))
-            utils.IO.signal_df[i].sort_values(by='random_index',inplace=True)
-            
-#         adjust_and_compress(utils.IO.signal_df[i]).to_hdf('/tmp/micheli/signal.hd5','sig',compression=9,complib='bzip2',mode='a')
-    
-    
-    
+       
     
 
-def set_backgrounds(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False):
+def set_backgrounds(branch_names,shuffle,cuts='event>=0'):
     for i in range(utils.IO.nBkg):
         treeName = utils.IO.bkgTreeName[i]
         print "using tree:"+treeName
         utils.IO.background_df.append((rpd.read_root(utils.IO.backgroundName[i],treeName, columns = branch_names)).query(cuts))
-        define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i],treeName,
-                              cleanOverlapDiphotons)
+        define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i],treeName)
         utils.IO.background_df[i]['year'] = (np.ones_like(utils.IO.background_df[i].index)*utils.IO.bkgYear[i] ).astype(np.int8)
 
         if shuffle:
