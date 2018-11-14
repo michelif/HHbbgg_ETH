@@ -57,7 +57,7 @@ def define_process_weight(df,proc,name,treename='bbggSelectionTree',cleanSignal=
     if cleanOverlapDiphotons : cleanOverlapDiphotons(name,df)
 
 
-  
+        
 def reweight_MX():
     df0, df1 = utils.IO.signal_df
     m0, bins = np.histogram(df0['MX'],bins=np.linspace(200.,2000.,101),weights=df0["weight"],normed=True)
@@ -71,6 +71,35 @@ def reweight_MX():
     df1["weight"] = rewei * df1["weight"].sum() / rewei.sum()
 
 
+def reweight(what,df0,df1):
+    c_min=int(round(np.min([np.min(df1[what]),np.min(df0[what])])))
+    c_max=int(round(np.max([np.max(df1[what]),np.max(df0[what])])))
+    if c_min==0 : c_min=int(-1)
+    m0, bins = np.histogram(df0[what],bins=np.linspace(c_min,c_max,101),weights=df0["weight"],normed=True)
+    m1, _ = np.histogram(df1[what],bins=bins,weights=df1["weight"],normed=True)
+    weights = m0.astype(np.float32) / m1.astype(np.float32)
+    weights[np.isnan(weights)] = 1.
+    bins[-1] = df1[what].max()+1.
+    df1["%s_bin"%what] = pd.cut(df1[what],bins,labels=range(0,bins.shape[-1]-1))
+    rewei = df1[["%s_bin"%what,"weight"]].apply(lambda x: weights[x[0]]*x[1], axis=1, raw=True)
+    df1["weight"] = rewei * df1["weight"].sum() / rewei.sum()
+    
+    
+    
+    
+def reweight_mhh():
+    df0, df1 = utils.IO.signal_df
+    m0, bins = np.histogram(df0['MX'],bins=np.linspace(200.,2000.,101),weights=df0["weight"],normed=True)
+    m1, _ = np.histogram(df1['MX'],bins=bins,weights=df1["weight"],normed=True)
+    weights = m0.astype(np.float32) / m1.astype(np.float32)
+    weights[np.where(bins[:-1]>1000)] = 1.
+    weights[np.isnan(weights)] = 1.
+    bins[-1] = df1["MX"].max()+1.
+    df1["MXbin"] = pd.cut(df1["MX"],bins,labels=range(0,bins.shape[-1]-1))
+    rewei = df1[["MXbin","weight"]].apply(lambda x: weights[x[0]]*x[1], axis=1, raw=True)
+    df1["weight"] = rewei * df1["weight"].sum() / rewei.sum()    
+    
+    
 
 def reweight_MX_old(dataframe):
     dataframe['tmp']  = np.ones_like(dataframe.index).astype(np.int8)
@@ -95,7 +124,7 @@ def reweight_MX_old(dataframe):
 
 def scale_lumi(dataframe):
     print 'Weighting with lumi : '
-    dataframe['weight'] *= 41.5/39.5  #scale with lumi 2017
+    dataframe['weight'] *= 41.5/35.9  #scale with lumi 2017
     
     
 def define_process_weight_CR(df,proc,name,treename='bbggSelectionTree'):
@@ -105,13 +134,14 @@ def define_process_weight_CR(df,proc,name,treename='bbggSelectionTree'):
     w = input_df[['isPhotonCR']]
     df['weight']=w
 
- 
+    
 def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s,event_num_bkg = None, event_num_sig = None):#some trees include also the control region,select only good events
     if (event_num_bkg is None and event_num_sig is None) : return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], np.asarray(y_s)[np.where(w_s!=0)],np.asarray(w_s)[np.where(w_s!=0)]
     else : 
         return x_b[np.where(w_b!=0),:][0],y_b[np.where(w_b!=0)],w_b[np.where(w_b!=0)],event_num_bkg[np.where(w_b!=0)], x_s[np.where(w_s!=0),:][0], y_s[np.where(w_s!=0)],w_s[np.where(w_s!=0)],event_num_sig[np.where(w_s!=0)]
 
- 
+    
+    
 def clean_signal_events_single_dataset(x_b, y_b, w_b):#some trees include also the control region,select only good events
     return x_b[np.where(w_b!=0),:][0],np.asarray(y_b)[np.where(w_b!=0)],np.asarray(w_b)[np.where(w_b!=0)]
 
@@ -119,40 +149,68 @@ def clean_signal_events_single_dataset(x_b, y_b, w_b):#some trees include also t
                        
 def normalize_process_weights(w_b,y_b,w_s,y_s):
     proc=999
+    proc_considered = []
     sum_weights = 1
     w_bkg = []
     for i in range(utils.IO.nBkg):
-        if utils.IO.bkgProc[i] != proc:
-#            w_proc = np.asarray(np.absolute(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]]))#absolute is important to normalize in case of negative weights
-            w_proc = np.asarray(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]])#absolute is important to normalize in case of negative weights
+        if utils.IO.bkgProc[i] not in proc_considered :
+            #w_proc = np.asarray(np.absolute(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]]))#absolute is important to normalize in case of negative weights
+            w_proc = np.asarray(w_b[np.asarray(y_b) == utils.IO.bkgProc[i]])
             sum_weights = float(np.sum(w_proc))
             proc = utils.IO.bkgProc[i]
+            proc_considered.append(proc)
             if i==0:
                 w_bkg = np.divide(w_proc,sum_weights)
             else:
                 w_bkg = np.concatenate((w_bkg, np.divide(w_proc,sum_weights)))
-            utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],sum_weights)
+           
+        utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],sum_weights)
 
 
     proc=999
+    proc_considered = []
     sum_weights = 1
     w_sig = []
     for i in range(utils.IO.nSig):
-        if utils.IO.sigProc[i] != proc:
+        if utils.IO.sigProc[i] not in proc_considered:
             w_proc = np.asarray(w_s[np.asarray(y_s) == utils.IO.sigProc[i]])
             sum_weights = np.sum(w_proc)
             proc = utils.IO.sigProc[i]
+            proc_considered.append(proc)
             print sum_weights
-        if i==0:
-            w_sig = np.divide(w_proc,sum_weights)
-        else:
-            w_sig = np.concatenate((w_sig, np.divide(w_proc,sum_weights)))
+            if i==0:
+                w_sig = np.divide(w_proc,sum_weights)
+            else:
+                w_sig = np.concatenate((w_sig, np.divide(w_proc,sum_weights)))
         utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],sum_weights)
-
-
 
     return w_bkg,w_sig
 
+
+
+
+def normalize_process_weights_all():
+    sum_weights = 1
+    
+    for proc in np.unique(utils.IO.bkgProc):
+        for i in range(utils.IO.nBkg):
+            if utils.IO.bkgProc[i]==proc:
+                sum_weights+=sum(utils.IO.background_df[i]['weight'])
+        for i in range(utils.IO.nBkg):
+            if utils.IO.bkgProc[i]==proc: 
+                utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],sum_weights)
+
+    sum_weights = 1
+        
+    for proc in np.unique(utils.IO.sigProc):
+        for i in range(utils.IO.nSig):
+            if utils.IO.sigProc[i]==proc:
+                sum_weights+=sum(utils.IO.signal_df[i]['weight'])
+        for i in range(utils.IO.nSig):
+            if utils.IO.sigProc[i]==proc: 
+                utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],sum_weights)
+        
+        
 
 def scale_process_weight(w_b,y_b,proc,sf):
     w_bkg = []
@@ -177,6 +235,11 @@ def scale_process_weight(w_b,y_b,proc,sf):
             w_bkg =  np.concatenate((w_bkg,w_proc))
 
     return w_bkg.reshape(len(w_bkg),1) 
+
+
+def weight_signal_with_resolution_all(branch='sigmaMOverMDecorr'):
+    for i in range(utils.IO.nSig):
+        utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],utils.IO.signal_df[i][[branch]])
 
 def weight_signal_with_resolution(w_s,y_s,branch='sigmaMOverMDecorr'):
     w = []
@@ -262,6 +325,7 @@ def get_total_test_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
 def get_total_training_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
     x_s = x_sig[np.where(event_sig%2!=0)]
     x_b = x_bkg[np.where(event_bkg%5!=0)]
+    print x_s.shape,x_b.shape
     return np.concatenate((x_s,x_b))
 
 
@@ -272,8 +336,6 @@ def set_signals(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=False
         print "using tree:"+treeName
         utils.IO.signal_df.append((rpd.read_root(utils.IO.signalName[i],treeName, columns = branch_names)).query(cuts))
         define_process_weight(utils.IO.signal_df[i],utils.IO.sigProc[i],utils.IO.signalName[i],treeName,cleanOverlapDiphotons)
-      #  if utils.IO.sigYear[i]==1 : scale_lumi(utils.IO.signal_df[i])
-      #  if utils.IO.sigYear[i]==1 : reweight_MX()
         utils.IO.signal_df[i]['year'] = (np.ones_like(utils.IO.signal_df[i].index)*utils.IO.sigYear[i] ).astype(np.int8)
 
         if shuffle:
@@ -311,7 +373,6 @@ def set_backgrounds(branch_names,shuffle,cuts='event>=0',cleanOverlapDiphotons=F
         utils.IO.background_df.append((rpd.read_root(utils.IO.backgroundName[i],treeName, columns = branch_names)).query(cuts))
         define_process_weight(utils.IO.background_df[i],utils.IO.bkgProc[i],utils.IO.backgroundName[i],treeName,
                               cleanOverlapDiphotons)
-      #  if utils.IO.bkgYear[i]==1 : scale_lumi(utils.IO.background_df[i])
         utils.IO.background_df[i]['year'] = (np.ones_like(utils.IO.background_df[i].index)*utils.IO.bkgYear[i] ).astype(np.int8)
 
         if shuffle:
@@ -372,9 +433,9 @@ def randomize(X,y,w,event_num=None,seed=0):
         return X,y,w
     else : 
         return X,y,w,event_num
-
-
- 
+    
+    
+    
 def set_variables(branch_names,use_event_num=False):
     for i in range(utils.IO.nSig):
         if i ==0:

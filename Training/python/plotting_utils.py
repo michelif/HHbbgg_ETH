@@ -91,7 +91,7 @@ def plot_classifier_output(clf,X_total_train,X_total_test,y_total_train,y_total_
     plt.savefig(utils.IO.plotFolder+"classifierOutputPlot_"+str(outString)+".pdf")
 
 
-def plot_input_variables(X_sig,X_bkg,branch_names,y_bkg=None,n_bins=30,outString=None,plotProcess=None):
+def plot_input_variables(X_sig,X_bkg,branch_names,y_bkg=None,n_bins=30,outString=None,plotProcess=None,labels=None):
 
     ncolumns = X_sig.size/len(X_sig)
     if plotProcess != None:
@@ -126,14 +126,16 @@ def plot_input_variables(X_sig,X_bkg,branch_names,y_bkg=None,n_bins=30,outString
     
 
         ax1 = plt.subplot(111)
-
-        ax1.bar(bin_centers-bin_widths/2.,Histo_S[0],facecolor='blue',linewidth=0,width=bin_widths,label='S ',alpha=0.5)
-        ax1.bar(bin_centers-bin_widths/2.,Histo_B[0],facecolor='red',linewidth=0,width=bin_widths,label='B ',alpha=0.5)
+        
+        if labels==None: labels=['S ','B ']
+        ax1.bar(bin_centers-bin_widths/2.,Histo_S[0],facecolor='blue',linewidth=0,width=bin_widths,label=labels[0],alpha=0.5)
+        ax1.bar(bin_centers-bin_widths/2.,Histo_B[0],facecolor='red',linewidth=0,width=bin_widths,label=labels[1],alpha=0.5)
 
         # Adjust the axis boundaries (just cosmetic)
         ax1.axis([c_min, c_max, h_min, h_max])
         plt.xlabel(branch_names[i].replace('noexpand:',''))
         plt.ylabel("Normalized Yields")
+        plt.legend(loc='upper center')
 
 
         plt.savefig(utils.IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".png")
@@ -142,6 +144,61 @@ def plot_input_variables(X_sig,X_bkg,branch_names,y_bkg=None,n_bins=30,outString
 
         plt.show()
 
+        
+def plot_input_variables_weights(X_sig,X_bkg,weights_sig,weights_bkg,branch_names,y_bkg=None,n_bins=30,outString=None,plotProcess=None,labels=None,normalize=True):
+
+    ncolumns = X_sig.size/len(X_sig)
+    if plotProcess != None:
+        X_bkg_2 = X_bkg[np.where(y_bkg==plotProcess),:][0] #this is to plot only one type of process
+    else:
+        X_bkg_2 = X_bkg
+
+    for i in range(ncolumns):
+
+        sig = X_sig[:,i]
+        bkg = X_bkg_2[:,i]
+
+        c_min=min(np.min(d) for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]]))
+        c_max=max(np.max(d) for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]]))
+
+        #trick to normalize
+        if weights_sig.any()==None or weights_bkg.any()==None :
+            weights_sig = np.ones_like(sig)/float(len(sig)) 
+            weights_bkg = np.ones_like(bkg)/float(len(bkg)) 
+        elif normalize==True:
+            weights_sig /=float(sum(weights_sig)) 
+            weights_bkg /= float(sum(weights_bkg)) 
+
+        Histo_S = np.histogram(sig,bins=30,range=(c_min,c_max),weights=weights_sig)
+        Histo_B = np.histogram(bkg,bins=30,range=(c_min,c_max),weights=weights_bkg)
+        
+        bin_edges = Histo_B[1]
+        bin_centers = ( bin_edges[:-1] + bin_edges[1:]  ) /2.
+        bin_widths = (bin_edges[1:] - bin_edges[:-1])
+
+        # Lets get the min/max of the Histograms
+        AllHistos= [Histo_S,Histo_B]
+        h_max = max([histo[0].max() for histo in AllHistos])*1.2
+        h_min = min([histo[0].min() for histo in AllHistos])
+
+        ax1 = plt.subplot(111)
+
+        if labels==None: labels=['S ','B ']
+        ax1.bar(bin_centers-bin_widths/2.,Histo_S[0],facecolor='blue',linewidth=0,width=bin_widths,label=labels[0],alpha=0.5)
+        ax1.bar(bin_centers-bin_widths/2.,Histo_B[0],facecolor='red',linewidth=0,width=bin_widths,label=labels[1],alpha=0.5)
+
+        # Adjust the axis boundaries (just cosmetic)
+        ax1.axis([c_min, c_max, h_min, h_max])
+        plt.xlabel(branch_names[i].replace('noexpand:',''))
+        plt.ylabel("Normalized Yields")
+        plt.legend(loc='upper center')
+
+        plt.savefig(utils.IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".png")
+        plt.savefig(utils.IO.plotFolder+"variableDist"+str(i)+"_"+str(outString)+".pdf")
+
+
+        plt.show()        
+        
 
 def plot_roc_curve(x,y,clf,outString=None):
     decisions = clf.predict_proba(x)[:,clf.n_classes_-1]
