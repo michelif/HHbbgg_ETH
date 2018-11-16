@@ -72,10 +72,7 @@ def reweight_MX():
 
 
 def reweight(what,df0,df1):
-    c_min=int(round(np.min([np.min(df1[what]),np.min(df0[what])])))
-    c_max=int(round(np.max([np.max(df1[what]),np.max(df0[what])])))
-    if c_min==0 : c_min=int(-1)
-    m0, bins = np.histogram(df0[what],bins=np.linspace(c_min,c_max,101),weights=df0["weight"],normed=True)
+    m0, bins = np.histogram(df0[what],bins=np.linspace(200,2000,101),weights=df0["weight"],normed=True)
     m1, _ = np.histogram(df1[what],bins=bins,weights=df1["weight"],normed=True)
     weights = m0.astype(np.float32) / m1.astype(np.float32)
     weights[np.isnan(weights)] = 1.
@@ -87,17 +84,17 @@ def reweight(what,df0,df1):
     
     
     
-def reweight_mhh():
-    df0, df1 = utils.IO.signal_df
-    m0, bins = np.histogram(df0['MX'],bins=np.linspace(200.,2000.,101),weights=df0["weight"],normed=True)
-    m1, _ = np.histogram(df1['MX'],bins=bins,weights=df1["weight"],normed=True)
+def reweight_gen_mhh(what,df0,df1,df_reweight):
+    m0, bins = np.histogram(df0[what],bins=np.linspace(200,2000,101),weights=df0["weight"],normed=True)
+    m1, _ = np.histogram(df1[what],bins=bins,weights=df1["weight"],normed=True)
     weights = m0.astype(np.float32) / m1.astype(np.float32)
-    weights[np.where(bins[:-1]>1000)] = 1.
+    weights[np.where(bins[:-1]>1800)] = 1.
     weights[np.isnan(weights)] = 1.
-    bins[-1] = df1["MX"].max()+1.
-    df1["MXbin"] = pd.cut(df1["MX"],bins,labels=range(0,bins.shape[-1]-1))
-    rewei = df1[["MXbin","weight"]].apply(lambda x: weights[x[0]]*x[1], axis=1, raw=True)
-    df1["weight"] = rewei * df1["weight"].sum() / rewei.sum()    
+    bins[-1] = df_reweight[what].max()+1.
+    df_reweight["%s_bin"%what] = pd.cut(df_reweight[what],bins,labels=range(0,bins.shape[-1]-1))
+    rewei = df_reweight[["%s_bin"%what,"weight"]].apply(lambda x: weights[x[0]]*x[1], axis=1, raw=True)
+    df_reweight["weight"] = rewei * df_reweight["weight"].sum() / rewei.sum()
+    
     
     
 
@@ -325,7 +322,6 @@ def get_total_test_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
 def get_total_training_sample_event_num(x_sig,x_bkg,event_sig,event_bkg):
     x_s = x_sig[np.where(event_sig%2!=0)]
     x_b = x_bkg[np.where(event_bkg%5!=0)]
-    print x_s.shape,x_b.shape
     return np.concatenate((x_s,x_b))
 
 
