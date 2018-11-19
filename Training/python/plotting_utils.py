@@ -169,8 +169,8 @@ def plot_input_variables_weights(X_sig,X_bkg,weights_sig,weights_bkg,branch_name
             weights_sig /=float(sum(weights_sig)) 
             weights_bkg /= float(sum(weights_bkg)) 
 
-        Histo_S = np.histogram(sig,bins=30,range=(c_min,c_max),weights=weights_sig)
-        Histo_B = np.histogram(bkg,bins=30,range=(c_min,c_max),weights=weights_bkg)
+        Histo_S = np.histogram(sig,bins=n_bins,range=(c_min,c_max),weights=weights_sig)
+        Histo_B = np.histogram(bkg,bins=n_bins,range=(c_min,c_max),weights=weights_bkg)
         
         bin_edges = Histo_B[1]
         bin_centers = ( bin_edges[:-1] + bin_edges[1:]  ) /2.
