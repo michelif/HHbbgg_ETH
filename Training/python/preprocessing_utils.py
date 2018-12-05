@@ -84,15 +84,15 @@ def reweight(what,df0,df1):
     
     
     
-def reweight_gen_mhh(what,df0,df1,df_reweight):
+def reweight_gen_mhh(what,df0,df1,df_reweight,what2):
     m0, bins = np.histogram(df0[what],bins=np.linspace(200,2000,101),weights=df0["weight"],normed=True)
     m1, _ = np.histogram(df1[what],bins=bins,weights=df1["weight"],normed=True)
     weights = m0.astype(np.float32) / m1.astype(np.float32)
     weights[np.where(bins[:-1]>1800)] = 1.
     weights[np.isnan(weights)] = 1.
-    bins[-1] = df_reweight[what].max()+1.
-    df_reweight["%s_bin"%what] = pd.cut(df_reweight[what],bins,labels=range(0,bins.shape[-1]-1))
-    rewei = df_reweight[["%s_bin"%what,"weight"]].apply(lambda x: weights[x[0]]*x[1], axis=1, raw=True)
+    bins[-1] = df_reweight[what2].max()+1.
+    df_reweight["%s_bin"%what2] = pd.cut(df_reweight[what2],bins,labels=range(0,bins.shape[-1]-1))
+    rewei = df_reweight[["%s_bin"%what2,"weight"]].apply(lambda x: weights[x[0]]*x[1], axis=1, raw=True)
     df_reweight["weight"] = rewei * df_reweight["weight"].sum() / rewei.sum()
     
     
