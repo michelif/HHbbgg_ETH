@@ -142,6 +142,51 @@ def clean_signal_events(x_b, y_b, w_b,x_s,y_s,w_s,event_num_bkg = None, event_nu
 def clean_signal_events_single_dataset(x_b, y_b, w_b):#some trees include also the control region,select only good events
     return x_b[np.where(w_b!=0),:][0],np.asarray(y_b)[np.where(w_b!=0)],np.asarray(w_b)[np.where(w_b!=0)]
 
+   
+    
+    
+def normalize_process_weights_split_all(w,y):
+    sum_weights_b = 0
+    sum_weights_s = 0
+    proc_considered = []
+    for proc in np.unique(y):
+        if proc!=1:  #fist bkg
+            w_proc = np.asarray(w[np.asarray(y) == proc])
+            sum_weights_b += float(np.sum(w_proc))
+        else : 
+            w_proc = np.asarray(w[np.asarray(y) == proc])
+            sum_weights_s += float(np.sum(w_proc))
+        proc_considered.append(proc)
+    w[np.where(y==1)] = np.divide(w[np.where(y==1)],sum_weights_s)
+    w[np.where(y!=1)] = np.divide(w[np.where(y!=1)],sum_weights_b)
+
+    return w
+
+
+
+                     
+def normalize_process_weights_split(w_b,y_b,w_s,y_s):
+    sum_weights = 0
+    proc_considered = []
+    for proc in np.unique(y_b):
+        w_proc = np.asarray(w_b[np.asarray(y_b) == proc])
+        sum_weights += float(np.sum(w_proc))
+        proc_considered.append(proc)
+    w_bkg = np.divide(w_b,sum_weights)
+
+
+    sum_weights = 0
+    proc_considered = []
+    for proc in np.unique(y_s):
+        w_proc = np.asarray(w_s[np.asarray(y_s) == proc])
+        sum_weights += float(np.sum(w_proc))
+        proc_considered.append(proc)
+    w_sig = np.divide(w_s,sum_weights)
+
+    return w_bkg,w_sig
+
+
+    
     
                        
 def normalize_process_weights(w_b,y_b,w_s,y_s):
@@ -174,7 +219,6 @@ def normalize_process_weights(w_b,y_b,w_s,y_s):
             sum_weights = np.sum(w_proc)
             proc = utils.IO.sigProc[i]
             proc_considered.append(proc)
-            print sum_weights
             if i==0:
                 w_sig = np.divide(w_proc,sum_weights)
             else:
@@ -186,26 +230,26 @@ def normalize_process_weights(w_b,y_b,w_s,y_s):
 
 
 
-def normalize_process_weights_all():
-    sum_weights = 1
-    
-    for proc in np.unique(utils.IO.bkgProc):
-        for i in range(utils.IO.nBkg):
-            if utils.IO.bkgProc[i]==proc:
-                sum_weights+=sum(utils.IO.background_df[i]['weight'])
-        for i in range(utils.IO.nBkg):
-            if utils.IO.bkgProc[i]==proc: 
-                utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],sum_weights)
-
-    sum_weights = 1
-        
-    for proc in np.unique(utils.IO.sigProc):
-        for i in range(utils.IO.nSig):
-            if utils.IO.sigProc[i]==proc:
-                sum_weights+=sum(utils.IO.signal_df[i]['weight'])
-        for i in range(utils.IO.nSig):
-            if utils.IO.sigProc[i]==proc: 
-                utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],sum_weights)
+#def normalize_process_weights_all():
+#    sum_weights = 1
+#    
+#    for proc in np.unique(utils.IO.bkgProc):
+#        for i in range(utils.IO.nBkg):
+#            if utils.IO.bkgProc[i]==proc:
+#                sum_weights+=sum(utils.IO.background_df[i]['weight'])
+#        for i in range(utils.IO.nBkg):
+#            if utils.IO.bkgProc[i]==proc: 
+#                utils.IO.background_df[i][['weight']] = np.divide(utils.IO.background_df[i][['weight']],sum_weights)
+#
+#    sum_weights = 1
+#        
+#    for proc in np.unique(utils.IO.sigProc):
+#        for i in range(utils.IO.nSig):
+#            if utils.IO.sigProc[i]==proc:
+#                sum_weights+=sum(utils.IO.signal_df[i]['weight'])
+#        for i in range(utils.IO.nSig):
+#            if utils.IO.sigProc[i]==proc: 
+#                utils.IO.signal_df[i][['weight']] = np.divide(utils.IO.signal_df[i][['weight']],sum_weights)
         
         
 

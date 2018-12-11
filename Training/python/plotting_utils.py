@@ -219,11 +219,14 @@ def plot_roc_curve(x,y,clf,outString=None):
     plt.savefig(utils.IO.plotFolder+"rocCurve"+"_"+str(outString)+".png")
     plt.savefig(utils.IO.plotFolder+"rocCurve"+"_"+str(outString)+".pdf")
 
+       
 
 
-def plot_roc_curve_multiclass(x,y,clf,classesSchema=[-2,-1,1],classNumber=2,outString=None):#roc curve signal vs all bkg, each one normalized to one
+def plot_roc_curve_multiclass(x,y,clf,classesSchema=[-2,-1,1],classNumber=2,outString=None,newWeight=None):#roc curve signal vs all bkg, each one normalized to one
     y=label_binarize(y,classes=classesSchema)
     decisions = clf.predict_proba(x)[:,classNumber]
+    if newWeight!=None :
+        decisions=decisions*newWeight
     # Compute ROC curve and area under the curve
     fpr, tpr, thresholds = roc_curve(y[:,classNumber].ravel(), decisions.ravel())
     roc_auc = auc(fpr, tpr)
@@ -242,7 +245,7 @@ def plot_roc_curve_multiclass(x,y,clf,classesSchema=[-2,-1,1],classNumber=2,outS
     return fpr,tpr
 
 #roc curve signal vs one bkg
-def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClassOutput=1,outString=None,weights=None):
+def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClassOutput=1,outString=None,weights=None,newWeight=None):
     x_bkg=np.asarray(x)[np.where(np.asarray(y)==backgroundClassOutput)]
     x_sig=np.asarray(x)[np.where(np.asarray(y)==signalClassOutput)]
     x_tot=np.concatenate((x_bkg,x_sig))
@@ -257,6 +260,8 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
     y_tot=np.concatenate((y_bkg,y_sig))
     
     decisions = clf.predict_proba(x_tot)[:,clf.n_classes_-1]
+    if newWeight!=None :
+        decisions=decisions*newWeight
     # Compute ROC curve and area under the curve
     if weights.all() == None:
         fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput)
