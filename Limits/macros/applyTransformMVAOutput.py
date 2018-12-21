@@ -6,6 +6,8 @@ from array import array
 # -----------------------------------------------------------------------------------------------------------
 def main(options,args):
 
+    newWeight = 1.011026
+
     ## setTDRStyle()
     ROOT.gStyle.SetOptStat(0)
         
@@ -50,7 +52,11 @@ def main(options,args):
             if i>tree.GetEntries():break
            # mva = event.HHTagger2017
             mva = event.MVAOutput
-            transfMVA[0] = cumulativeGraph.Eval(mva)
+            if 'common_2017' in options.file:
+                mva = mva/(mva*(1.-newWeight)+newWeight)
+                transfMVA[0] = cumulativeGraph.Eval(mva)
+            else :
+                transfMVA[0] = cumulativeGraph.Eval(mva)
             transfBranch.Fill()
     
     

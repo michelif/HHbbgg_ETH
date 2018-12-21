@@ -160,7 +160,10 @@ def plot_input_variables_weights(X_sig,X_bkg,weights_sig,weights_bkg,branch_name
 
         c_min=min(np.min(d) for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]]))
         c_max=max(np.max(d) for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]]))
+      #  c_min = min(np.percentile(d, 1)*0.9 for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]]))   ##super slow
+      #  c_max = max(np.percentile(d, 95)*1.1 for d in np.concatenate([X_sig[:,i],X_bkg_2[:,i]])) ##super slow
 
+        
         #trick to normalize
         if weights_sig.any()==None or weights_bkg.any()==None :
             weights_sig = np.ones_like(sig)/float(len(sig)) 
@@ -226,7 +229,7 @@ def plot_roc_curve_multiclass(x,y,clf,classesSchema=[-2,-1,1],classNumber=2,outS
     y=label_binarize(y,classes=classesSchema)
     decisions = clf.predict_proba(x)[:,classNumber]
     if newWeight!=None :
-        decisions=decisions*newWeight
+        decisions=decisions/(decisions*(1-newWeight)+newWeight)
     # Compute ROC curve and area under the curve
     fpr, tpr, thresholds = roc_curve(y[:,classNumber].ravel(), decisions.ravel())
     roc_auc = auc(fpr, tpr)
@@ -261,7 +264,7 @@ def plot_roc_curve_multiclass_singleBkg(x,y,clf,backgroundClassOutput,signalClas
     
     decisions = clf.predict_proba(x_tot)[:,clf.n_classes_-1]
     if newWeight!=None :
-        decisions=decisions*newWeight
+        decisions=decisions/(decisions*(1-newWeight)+newWeight)
     # Compute ROC curve and area under the curve
     if weights.all() == None:
         fpr, tpr, thresholds = roc_curve(y_tot.ravel(), decisions,signalClassOutput)
