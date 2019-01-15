@@ -1,9 +1,11 @@
 # HHbbgg_ETH
 ## Getting the code
-Fork to your directory the code here: https://github.com/michelif/HHbbgg_ETH <br />
+Fork to your directory the code here: https://github.com/chernyavskaya/HHbbgg_ETH <br />
 Clone it locally:<br />
 git clone git@github.com:[YOURNAME]/HHbbgg_ETH.git HHbbgg_ETH_devel <br />
 You should create your own branch, then do pull requests when you are done. <br />
+
+__The newest Nadya's branch is `common_trainng`__
 
 ## Training, optimization of MVAs and ntuple production
 In order to run the notebooks on the browser you need an ssh tunnel on a machine where jupyter is running.
@@ -32,12 +34,16 @@ It runs on ntuples, applies a given MVA and saves a reduced ntuples which includ
 Optimize parameters of the classifier. In Training/scropts/optimizeClassifier.py there is a (probably not-updated) version
 of this optimization code wich runs without using notebooks. 
 
-
 - Training/python/<br />
 This folder contains all the tools needed by the notebooks:
 data format, train/test splitting, plotting...
 These classes have to be loaded at the beginning of your notebook.
 
+## Training 
+The instructions for this part of the analysis are in the README in folder Training
+
+## Creating new ntuples with MVA output/transformed MVA output
+The instructions for this part of the analysis are in the README in folder Limits
 
 ## Workspaces and datacards production
 The instructions for this part of the analysis are in the README in folder Limits/macros
