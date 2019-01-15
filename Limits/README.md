@@ -20,9 +20,9 @@ When we add 2018, we will change this and each year will have a factor. This fac
 Right now, it is hardcoded in the code for the application [here](https://github.com/chernyavskaya/HHbbgg_ETH/blob/common_trainng/Limits/macros/transformMVAOutputCommon.py#L36)
 
 ### Run pseudo-limits :
-Prepare the workspaces from the trees:
+Prepare the workspaces from the trees, please, find the full readme here :
 ```
-Limits/macros/makeWorkspaceHHbbgg.py
+Limits/macros
 ```
 Run the limits as explained here :
 ```
