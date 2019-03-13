@@ -37,7 +37,7 @@ def build_tree(xgtree, base_xml_element, var_indices):
             parent_element_dict[lnode] = node_elementTree
             parent_element_dict[rnode] = node_elementTree
             
-def convert_model(model, input_variables, output_xml, input_variables_names):
+def convert_model(model, input_variables, output_xml, input_variables_names, kind="Classification"):
     NTrees = len(model)
     var_list = input_variables
     var_indices = {}
@@ -64,12 +64,23 @@ def convert_model(model, input_variables, output_xml, input_variables_names):
     # <GeneralInfo>
     GeneralInfo = ET.SubElement(MethodSetup, "GeneralInfo")
     Info_Creator = ET.SubElement(GeneralInfo, "Info", name="Creator", value="xgboost2TMVA")
-    Info_AnalysisType = ET.SubElement(GeneralInfo, "Info", name="AnalysisType", value="Classification")
-
+    if (kind=="Classification"):
+        Info_AnalysisType = ET.SubElement(GeneralInfo, "Info", name="AnalysisType", value="Classification")
+    elif (kind=="Multiclass"):
+        print("setting up conversion for multiclass classification")
+        Info_AnalysisType = ET.SubElement(GeneralInfo, "Info", name="AnalysisType", value="Multiclass")
+    
+    
     # <Options>
     Options = ET.SubElement(MethodSetup, "Options")
     Option_NodePurityLimit = ET.SubElement(Options, "Option", name="NodePurityLimit", modified="No").text = "5.00e-01"
     Option_BoostType = ET.SubElement(Options, "Option", name="BoostType", modified="Yes").text = "Grad"
+
+    if (kind=="Multiclass"):
+        Classes = ET.SubElement(MethodSetup, "Classes", NClass="3")
+        Classes_Name1 = ET.SubElement(Classes,"Class", Name="Background", Index="0")
+        Classes_Name2 = ET.SubElement(Classes,"Class", Name="Background2", Index="1")
+        Classes_Name3 = ET.SubElement(Classes,"Class", Name="Signal", Index="2")
     
     # <Weights>
     Weights = ET.SubElement(MethodSetup, "Weights", NTrees=str(NTrees), AnalysisType="1")
@@ -92,5 +103,5 @@ def convert_model(model, input_variables, output_xml, input_variables_names):
 #for i in range(0,len(branch_names)):
 #    print i
 #    varfakenames.append('f%s'%str(i))
-#x2tmva.convert_model(model,input_variables=zip(varfakenames,vartypes),output_xml='2017_training_Mjj.xml',input_variables_names=branch_names)
+#x2tmva.convert_model(model,input_variables=zip(varfakenames,vartypes,Multiclass),output_xml='2017_training_Mjj.xml',input_variables_names=branch_names)
 
